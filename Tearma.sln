@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.28010.2041
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TearmaWeb", "TearmaWeb\TearmaWeb.csproj", "{A7E4E19E-40D7-41FE-9EDF-B8E1540D19B6}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{A7E4E19E-40D7-41FE-9EDF-B8E1540D19B6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A7E4E19E-40D7-41FE-9EDF-B8E1540D19B6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A7E4E19E-40D7-41FE-9EDF-B8E1540D19B6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A7E4E19E-40D7-41FE-9EDF-B8E1540D19B6}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {8B7F6B3B-8531-4FEC-B696-E6A35166EEC8}
+	EndGlobalSection
+EndGlobal

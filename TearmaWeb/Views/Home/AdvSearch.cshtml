@@ -1,0 +1,116 @@
+﻿@model TearmaWeb.Models.Home.AdvSearch
+@using TearmaWeb.Models.Home
+@{
+    Layout="_HomeLayout";
+    ViewBag.swapper="plus";
+}
+
+@section Rightie {
+    @if(Model.word!=""){
+        <div class="kickbox">
+            @*<a class="sitelink" href="#">
+                <span class="icon fas fa-plus-square"></span>
+                <span class="ga" lang="ga">Taispeáin breis mionsonraí</span>
+                <span class="en" lang="en">Show more details</span>
+            </a>*@
+            <a class="sitelink" href="#">
+                <span class="icon fas fa-print"></span>
+                <span class="ga" lang="ga">Leagan furasta le priontáil</span>
+                <span class="en" lang="en">Printer-friendly version</span>
+            </a>
+        </div>
+    }
+}
+
+<form class="multiline" action="." onsubmit="return submitAdvSearch(this)">
+    <div class="lines">
+        <div class="line">
+            <div class="label"><span class="text ga" lang="ga">Foclaíocht</span><span class="text en" lang="en">Wording</span></div>
+            <input name="word" value="@Model.word"/>
+        </div>
+        <div class="line">
+            <div class="label"><span class="text ga" lang="ga">Fad</span><span class="text en" lang="en">Length</span></div>
+            <select name="length">
+                <option value="al" @(Model.length=="al" ? "selected" : "")>téarmaí aonfhoclacha agus ilfhoclacha &middot; single-word and muti-word terms</option>
+                <option value="sw" @(Model.length=="sw" ? "selected" : "")>téarmaí aonfhoclacha amháin &middot; single-word terms only</option>
+                <option value="ml" @(Model.length=="mw" ? "selected" : "")>téarmaí ilfhoclacha amháin &middot; multi-word terms only</option>
+            </select>
+        </div>
+        <div class="line">
+            <div class="label"><span class="text ga" lang="ga">Fairsinge</span><span class="text en" lang="en">Extent</span></div>
+            <select name="extent">
+                <option value="al" @(Model.extent=="al" ? "selected" : "")>téarma iomlán &middot; complete term</option>
+                <option value="st" @(Model.extent=="st" ? "selected" : "")>tús téarma &middot; start of term</option>
+                <option value="ed" @(Model.extent=="ed" ? "selected" : "")>deireadh téarma &middot; end of term</option>
+                <option value="pt" @(Model.extent=="pt" ? "selected" : "")>cuid ar bith de théarma &middot; any part of term</option>
+                <option value="md" @(Model.extent=="md" ? "selected" : "")>cuid ar bith seachas tús nó deireadh &middot; any part except start or end</option>
+                <option value="ft" @(Model.extent=="ft" ? "selected" : "")>téarmaí gaolmhara &middot; reated terms</option>
+            </select>
+        </div>
+        <div class="line">
+            <div class="label"><span class="text ga" lang="ga">Teanga</span><span class="text en" lang="en">Language</span></div>
+            <select name="lang">
+                <option value="" @(Model.lang=="" ? "selected" : "")>teanga ar bith &middot; any language</option>
+                @foreach(Language lang in Model.langs) {
+                    <option value="@lang.abbr" @(Model.lang==lang.abbr ? "selected" : "")>@lang.abbr.ToUpper() (@lang.name["ga"] &middot; @lang.name["en"])</option>
+                }
+            </select>
+        </div>
+    </div>
+    <button class="submit">
+        <span class="icon fas fa-search"></span>
+        <span class="text ga" lang="ga">Cuardaigh</span><span class="text en" lang="en">Search</span>
+    </button>
+</form>
+@if(Model.word==""){ <script type="text/javascript">document.forms[0]["word"].focus();</script> }
+<div class="underform">
+    <div class="left">
+        <span class="ga" lang="ga"><a href="#">Treoir don chuardach casta</a></span>
+        <span class="en" lang="en"><a href="#">Help with advanced search</a></span>
+    </div>
+</div>
+
+ @if(Model.word!=""){
+     <a class="kickboxToggler mergeUp" href="javascript:void(null)" onclick="$('.kickbox').insertAfter($('.kickboxToggler')).slideToggle()">
+        <span class="icon fas fa-bars"></span>
+        <span class="text ga" lang="ga">Roghanna</span>
+        <span class="text en" lang="en">Options</span>
+    </a>
+
+    @if(Model.pager.needed) {
+        <div class="pager alone">
+            @if(Model.pager.prevNum>0){ <a href="@Model.urlByPage(Model.pager.prevNum)" class="left arrow">«</a> }
+            @if(Model.pager.nextNum>0){ <a href="@Model.urlByPage(Model.pager.nextNum)" class="right arrow">»</a> }
+            @foreach(int num in Model.pager.startNums) { <a href="@Model.urlByPage(num)" class="page">@num</a> }
+            @if(Model.pager.preDots) { <span class="dots">&middot; &middot; &middot; &middot;</span> }
+            @foreach(int num in Model.pager.preNums) { <a href="@Model.urlByPage(num)" class="page">@num</a> }
+	        <a href="#" class="page current">@Model.pager.currentNum</a>
+            @foreach(int num in Model.pager.postNums) { <a href="@Model.urlByPage(num)" class="page">@num</a> }
+            @if(Model.pager.postDots) { <span class="dots">&middot; &middot; &middot; &middot;</span> }
+            @foreach(int num in Model.pager.endNums) { <a href="@Model.urlByPage(num)" class="page">@num</a> }
+        </div>
+    }
+
+    @if(Model.matches.Count == 0) {
+        <div class="nojoy">
+            <div class="ga">Níor aimsíodh téarma ar bith.</div>
+            <div class="en">No terms found.</div>
+        </div>
+    } else {
+        @foreach(string s in Model.matches){@Html.Raw(s)}
+    }
+
+    @if(Model.pager.needed) {
+        <div class="pager">
+            @if(Model.pager.prevNum>0){ <a href="@Model.urlByPage(Model.pager.prevNum)" class="left arrow">«</a> }
+            @if(Model.pager.nextNum>0){ <a href="@Model.urlByPage(Model.pager.nextNum)" class="right arrow">»</a> }
+            @foreach(int num in Model.pager.startNums) { <a href="@Model.urlByPage(num)" class="page">@num</a> }
+            @if(Model.pager.preDots) { <span class="dots">&middot; &middot; &middot; &middot;</span> }
+            @foreach(int num in Model.pager.preNums) { <a href="@Model.urlByPage(num)" class="page">@num</a> }
+	        <a href="#" class="page current">@Model.pager.currentNum</a>
+            @foreach(int num in Model.pager.postNums) { <a href="@Model.urlByPage(num)" class="page">@num</a> }
+            @if(Model.pager.postDots) { <span class="dots">&middot; &middot; &middot; &middot;</span> }
+            @foreach(int num in Model.pager.endNums) { <a href="@Model.urlByPage(num)" class="page">@num</a> }
+        </div>
+    }
+ }

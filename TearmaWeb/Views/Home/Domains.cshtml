@@ -1,0 +1,33 @@
+﻿@model TearmaWeb.Models.Home.Domains
+@using TearmaWeb.Models.Home
+@{
+    Layout="_HomeLayout";
+    ViewBag.swapper="dom";
+}
+
+@section Rightie {
+    <div class="kickbox">
+	    <a class="langlink @(Model.lang=="ga" ? "selected": "")" href="~/dom/ga/">
+            <span class="icon">GA</span>
+            <span class="ga" lang="ga">Sórtáil i nGaeilge</span>
+            <span class="en" lang="en">Sort by Irish</span>
+        </a>
+		<a class="langlink @(Model.lang=="en" ? "selected": "")" href="~/dom/en/">
+            <span class="icon">EN</span>
+            <span class="ga" lang="ga">Sórtáil i mBéarla</span>
+            <span class="en" lang="en">Sort by English</span>
+        </a>
+    </div>
+}
+
+<a class="kickboxToggler mergeWayUp" href="javascript:void(null)" onclick="$('.kickbox').insertAfter($('.kickboxToggler')).slideToggle()">
+    <span class="icon fas fa-bars"></span>
+    <span class="text ga" lang="ga">Roghanna</span>
+    <span class="text en" lang="en">Options</span>
+</a>
+
+<div class="domains formlike">
+    @foreach(DomainListing dom in Model.domains) {
+        <a href="~/dom/@dom.id/@Model.lang/" class="domain"><span class="ga" lang="ga">@dom.name["ga"]</span> <span class="en" lang="en">@dom.name["en"]</span> <span class="arrow">»</span></a>
+    }
+</div>

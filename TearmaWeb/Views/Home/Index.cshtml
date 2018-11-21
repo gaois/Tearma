@@ -1,0 +1,85 @@
+﻿@{
+    Layout="_HomeLayout";
+    ViewBag.swapper="q";
+}
+
+@section Rightie {
+    <a class="kickboxToggler" href="javascript:void(null)" onclick="$('.kickbox').insertAfter($('.kickboxToggler')).slideToggle()">
+        <span class="icon fas fa-bars"></span>
+        <span class="text ga" lang="ga">Roghchlár</span>
+        <span class="text en" lang="en">Menu</span>
+    </a>
+
+    <div class="kickbox">
+		<a class="sitelink" href="#">
+            <span class="icon fas fa-info-circle"></span>
+            <span class="ga" lang="ga">Eolas faoin suíomh seo</span>
+            <span class="en" lang="en">About this website</span>
+        </a>
+        <a class="sitelink" href="#">
+            <span class="icon fas fa-question-circle"></span>
+            <span class="ga" lang="ga">Conas an suíomh seo a úsáid</span>
+            <span class="en" lang="en">How to use this website</span>
+        </a>
+        <a class="sitelink" href="#">
+            <span class="icon fas fa-comment"></span>
+            <span class="ga" lang="ga">Cuir ceist téarmaíochta</span>
+            <span class="en" lang="en">Ask a terminological question</span>
+        </a>
+        <a class="sitelink" href="#">
+            <span class="icon fas fa-download"></span>
+            <span class="ga" lang="ga">Liostaí le híoslódáil</span>
+            <span class="en" lang="en">Downloadable lists</span>
+        </a>
+    </div>
+}
+
+<form class="textbox" action="." onsubmit="return submitQuickSearch(this)">
+    <div class="text"><input name="word"/></div>
+    <button class="submit">
+        <span class="icon fas fa-search"></span>
+    </button>
+</form>
+<script type="text/javascript">document.forms[0]["word"].focus();</script>
+<div class="underform">
+    <div class="left">
+        <span class="ga" lang="ga">Cuardaigh téarma Béarla nó Gaeilge</span>
+        <span class="en" lang="en">Search for a term in English or Irish</span>
+    </div>
+</div>
+
+<div class="sectitle">
+	<span class="icon fas fa-bullhorn"></span>
+	<span class="ga" lang="ga">Fógra</span>
+	<span class="en" lang="en">Announcement</span>
+</div>
+<div class="tbd" style="height: 100px;"></div>
+
+<div class="sectitle">
+	<span class="icon fas fa-calendar-alt"></span>
+	<span class="ga" lang="ga">Téarma an lae</span>
+	<span class="en" lang="en">Term of the day</span>
+</div>
+<div class="tbd" style="height: 300px;"></div>
+
+<div class="sectitle">
+	<span class="icon fas fa-clock"></span>
+	<span class="ga" lang="ga">Athruithe le déanaí</span>
+	<span class="en" lang="en">Recent changes</span>
+</div>
+<div class="tbd" style="height: 300px;"></div>
+
+<div class="sectitle">
+	<span class="icon fas fa-sitemap"></span>
+	<span class="ga" lang="ga">Brabhsáil</span>
+	<span class="en" lang="en">Browse</span>
+</div>
+<div class="domains">
+    <a href="~/dom/123/ga/" class="domain"><span class="ga" lang="ga">Aaa</span> <span class="en" lang="en">bbb</span> <span class="arrow">»</span></a>
+    <a href="~/dom/123/ga/" class="domain"><span class="ga" lang="ga">Aaa</span> <span class="en" lang="en">bbb</span> <span class="arrow">»</span></a>
+    <a href="~/dom/123/ga/" class="domain"><span class="ga" lang="ga">Aaa</span> <span class="en" lang="en">bbb</span> <span class="arrow">»</span></a>
+    <a href="~/dom/123/ga/" class="domain"><span class="ga" lang="ga">Aaa</span> <span class="en" lang="en">bbb</span> <span class="arrow">»</span></a>
+</div>
+
+@*<div>Hello, this is Views\Home\Index.cshtml</div>
+@foreach(string key in ViewData.Keys){ <div>@key = @ViewData[key] @ViewData[key]?.GetType()</div> }*@
