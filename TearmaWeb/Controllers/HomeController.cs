@@ -10,7 +10,9 @@ namespace TearmaWeb.Controllers {
 	public class HomeController : Controller {
 
 		public IActionResult Index() {
-			return View();
+			Models.Home.Index model=new Models.Home.Index();
+			Broker.DoIndex(model);
+			return View("Index", model);
 		}
 
 		public IActionResult Entry(int id) {
@@ -19,26 +21,42 @@ namespace TearmaWeb.Controllers {
 		}
 
 		public IActionResult QuickSearch(string word, string lang) {
-			Models.Home.QuickSearch model=new Models.Home.QuickSearch {word=word, lang=lang??""};
+			Models.Home.QuickSearch model=new Models.Home.QuickSearch();
+			model.word=word;
+			model.lang=lang ?? "";
+			Broker.DoQuickSearch(model);
 			return View("QuickSearch", model);
 		}
 
 		public IActionResult AdvSearch(string word, string length, string extent, string lang, int page) {
 			if(lang is null) lang="";
 			if(page<1) page=1;
-			Models.Home.AdvSearch model=new Models.Home.AdvSearch {word=word??"", length=length, extent=extent, lang=lang, page=page, pager=new Models.Home.Pager(page, 7)};
+			Models.Home.AdvSearch model=new Models.Home.AdvSearch(); 
+			model.word=word ?? "";
+			model.length=length;
+			model.extent=extent;
+			model.lang=lang;
+			model.page=page;
+			if(model.word=="") Broker.PrepareAdvSearch(model); else Broker.DoAdvSearch(model);
 			return View("AdvSearch", model);
 		}
 
 		public IActionResult Domains(string lang) {
 			if(lang is null) lang="";
-			Models.Home.Domains model=new Models.Home.Domains { lang=lang };
+			Models.Home.Domains model=new Models.Home.Domains();
+			model.lang=lang;
+			Broker.DoDomains(model);
 			return View("Domains", model);
 		}
 
 		public IActionResult Domain(int domID, int subdomID, string lang, int page) {
 			if(lang is null) lang="";
-			Models.Home.Domain model=new Models.Home.Domain { lang=lang, domID=domID, subdomID=subdomID, page=page, pager=new Models.Home.Pager(page, 7) };
+			Models.Home.Domain model=new Models.Home.Domain();
+			model.lang=lang;
+			model.domID=domID;
+			model.subdomID=subdomID;
+			model.page=page;
+			Broker.DoDomain(model);
 			return View("Domain", model);
 		}
 

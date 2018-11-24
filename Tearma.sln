@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.28010.2041
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TearmaWeb", "TearmaWeb\TearmaWeb.csproj", "{A7E4E19E-40D7-41FE-9EDF-B8E1540D19B6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TearmaWeb", "TearmaWeb\TearmaWeb.csproj", "{A7E4E19E-40D7-41FE-9EDF-B8E1540D19B6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Importer", "Importer\Importer.csproj", "{C671B3B4-8E78-4752-9A76-CE8E882EA80A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{A7E4E19E-40D7-41FE-9EDF-B8E1540D19B6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A7E4E19E-40D7-41FE-9EDF-B8E1540D19B6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A7E4E19E-40D7-41FE-9EDF-B8E1540D19B6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C671B3B4-8E78-4752-9A76-CE8E882EA80A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C671B3B4-8E78-4752-9A76-CE8E882EA80A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C671B3B4-8E78-4752-9A76-CE8E882EA80A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C671B3B4-8E78-4752-9A76-CE8E882EA80A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

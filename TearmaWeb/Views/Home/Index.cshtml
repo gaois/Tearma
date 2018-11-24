@@ -1,4 +1,6 @@
-﻿@{
+﻿@model TearmaWeb.Models.Home.Index
+@using TearmaWeb.Models.Home
+@{
     Layout="_HomeLayout";
     ViewBag.swapper="q";
 }
@@ -75,11 +77,7 @@
 	<span class="en" lang="en">Browse</span>
 </div>
 <div class="domains">
-    <a href="~/dom/123/ga/" class="domain"><span class="ga" lang="ga">Aaa</span> <span class="en" lang="en">bbb</span> <span class="arrow">»</span></a>
-    <a href="~/dom/123/ga/" class="domain"><span class="ga" lang="ga">Aaa</span> <span class="en" lang="en">bbb</span> <span class="arrow">»</span></a>
-    <a href="~/dom/123/ga/" class="domain"><span class="ga" lang="ga">Aaa</span> <span class="en" lang="en">bbb</span> <span class="arrow">»</span></a>
-    <a href="~/dom/123/ga/" class="domain"><span class="ga" lang="ga">Aaa</span> <span class="en" lang="en">bbb</span> <span class="arrow">»</span></a>
+    @foreach(DomainListing dom in Model.domains) {
+        <a href="~/dom/@dom.id/ga/" class="domain"><span class="ga" lang="ga">@dom.name["ga"]</span> <span class="en" lang="en">@dom.name["en"]</span> <span class="arrow">»</span></a>
+    }
 </div>
-
-@*<div>Hello, this is Views\Home\Index.cshtml</div>
-@foreach(string key in ViewData.Keys){ <div>@key = @ViewData[key] @ViewData[key]?.GetType()</div> }*@

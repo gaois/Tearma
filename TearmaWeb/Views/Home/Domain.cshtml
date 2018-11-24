@@ -37,7 +37,7 @@
 </a>
 
 <div class="domains formlike">
-    <a href="~/dom/@Model.domain.id/@Model.lang/" class="domain L0 current @(Model.subdomID==0 ? "selected" : "")"><span class="ga" lang="ga">@Model.domain.name["ga"]</span> <span class="en" lang="en">@Model.domain.name["ga"]</span></a>
+    <a href="~/dom/@Model.domain.id/@Model.lang/" class="domain L0 current @(Model.subdomID==0 ? "selected" : "")"><span class="ga" lang="ga">@Model.domain.name["ga"]</span> <span class="en" lang="en">@Model.domain.name["en"]</span></a>
     @foreach(SubdomainListing subdom in Model.subdomains) {
         <a href="~/dom/@Model.domID/@subdom.id/@Model.lang/" class="domain @("L"+subdom.level) @(subdom.visible ? "current" : "") @(subdom.id==Model.subdomID ? "selected" : "")"><span class="ga" lang="ga">»&nbsp; @subdom.name["ga"]</span> <span class="en" lang="en">»&nbsp; @subdom.name["en"]</span></a>
     }
