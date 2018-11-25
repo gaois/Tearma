@@ -8,7 +8,7 @@
 @section Rightie {
     @if(Model.exacts.Count>0 || Model.relateds.Count > 0) {
         <div class="kickbox">
-            @if(Model.langs.Count > 0) {
+            @if(Model.langs.Count > 1) {
                 <a class="langlink @(Model.lang=="" ? "selected" : "")" href="~/q/@Model.word/">
                     <span class="icon">&mdash;</span>
                     <span class="ga" lang="ga">Torthaí i ngach teanga</span>
@@ -59,7 +59,7 @@
     <span class="text en" lang="en">Options</span>
 </a>
 
-<div class="sectitle">
+<div class="sectitle strong">
 	<span class="icon far fa-dot-circle"></span>
 	<span class="ga" lang="ga">Torthaí beachta</span>
 	<span class="en" lang="en">Exact matches</span>
@@ -73,7 +73,7 @@
     @foreach(string s in Model.exacts){@Html.Raw(s)}
 }
 
-<div class="sectitle">
+<div class="sectitle strong">
     <span class="icon fas fa-bullseye"></span>
     <span class="ga" lang="ga">Torthaí gaolmhara</span>
     <span class="en" lang="en">Related matches</span>
@@ -87,9 +87,11 @@
     @foreach(string s in Model.relateds){@Html.Raw(s)}
 }
 @if(Model.relatedMore) {
-    <a class="domainAction" href="#">
-        <span class="icon fas fa-chevron-circle-right"></span>
-        <span class="ga">Tá tuilleadh torthaí gaolmhara le fáil sa chuardach casta</span>
-        <span class="en">You can find more related matches in advanced search</span>
-    </a>
+    <div class="gotoAdvSearch">
+        <a class="domainAction" href="@Model.advSearchUrl()">
+            <span class="icon fas fa-chevron-circle-right"></span>
+            <span class="ga">Tá tuilleadh torthaí gaolmhara le fáil sa chuardach casta</span>
+            <span class="en">You can find more related matches in advanced search</span>
+        </a>
+    </div>
 }

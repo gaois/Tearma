@@ -18,3 +18,11 @@ function submitAdvSearch(form) {
     }
     return false;
 }
+
+function hon(label, i) {
+    $(label).addClass("on").closest(".prettyWording").find(".h" + i).addClass("on");
+}
+
+function hoff(label, i) {
+    $(label).removeClass("on").closest(".prettyWording").find(".h" + i).removeClass("on");
+}

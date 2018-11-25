@@ -70,17 +70,16 @@ namespace TearmaWeb.Controllers {
 
 			//read related matches:
 			reader.NextResult();
+			int relatedCount=0;
 			while(reader.Read()) {
-				int id=(int)reader["id"];
-				string json=(string)reader["json"];
-				model.relateds.Add(Prettify.Entry(id, json, lookups));
+				relatedCount++;
+				if(relatedCount <= 100) {
+					int id=(int)reader["id"];
+					string json=(string)reader["json"];
+					model.relateds.Add(Prettify.Entry(id, json, lookups));
+				}
 			}
-
-			//read whether there are any more related matches:
-			reader.NextResult();
-			if(reader.Read()) {
-				model.relatedMore=(bool)reader["relatedMore"];
-			}
+			if(relatedCount>100) model.relatedMore=true;
 
 			//read languages in which matches have been found:
 			reader.NextResult();

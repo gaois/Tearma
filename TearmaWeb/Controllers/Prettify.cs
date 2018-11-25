@@ -40,6 +40,10 @@ namespace TearmaWeb.Controllers {
 
 		public static string Desig(Models.Data.Desig desig, bool withLangLabel) {
 			string ret="<div class='prettyDesig'>";
+			if(desig.accept!=null && desig.accept > 0) {
+				Models.Home.Metadatum md=Lookups.acceptLabelsById[(int)desig.accept];
+				if(md.level<0) ret="<div class='prettyDesig grey'>";
+			}
 			if(withLangLabel) ret+=Prettify.Lang(desig.term.lang);
 			ret+=Prettify.Wording(desig.term.wording, desig.term.annots);
 			if(desig.accept!=null && desig.accept>0) ret+=" "+Prettify.Accept(desig.accept ?? 0);
@@ -60,7 +64,61 @@ namespace TearmaWeb.Controllers {
 		}
 
 		public static string Wording(string wording, List<Models.Data.Annot> annots) {
-			return "<span class='prettyWording'>"+wording+"</span>";
+			List<Char> chars=new List<Char>(); for(var i=0; i<wording.Length; i++) chars.Add(new Char{character=wording[i].ToString()});
+			int index=0;
+			foreach(Models.Data.Annot annot in annots) {
+				int start=annot.start-1; if(start<0) start=0;
+				int stop=annot.stop; if(stop>chars.Count) stop=chars.Count; if(stop==0) stop=chars.Count;
+				for(int i=start; i<stop; i++) {
+					if(annot.label.type == "posLabel") {
+				        chars[i].markupBefore="<span class='char h"+index+"'>"+chars[i].markupBefore;
+						chars[i].markupAfter=chars[i].markupAfter+"</span>";
+						Models.Home.Metadatum label=Lookups.posLabelsById[int.Parse(annot.label.value)];
+						string symbol=label.abbr;
+						if(i==stop-1) chars[i].labelsAfter=chars[i].labelsAfter+"<span class='label "+annot.label.type+" hintable' onmouseover='hon(this, "+index+")' onmouseout='hoff(this, "+index+")' title='"+label.name["ga"]+"/"+label.name["en"]+"'>"+symbol+"</span>";
+					}
+					else if(annot.label.type == "inflectLabel") {
+				        chars[i].markupBefore="<span class='char h"+index+"'>"+chars[i].markupBefore;
+						chars[i].markupAfter=chars[i].markupAfter+"</span>";
+						Models.Home.Metadatum label=Lookups.inflectLabelsById[int.Parse(annot.label.value)];
+						string symbol=label.abbr;
+						if(i==stop-1) chars[i].labelsAfter=chars[i].labelsAfter+"<span class='label "+annot.label.type+" hintable' onmouseover='hon(this, "+index+")' onmouseout='hoff(this, "+index+")' title='"+label.name["ga"]+"/"+label.name["en"]+"'>"+symbol+"</span>";
+					}
+					else if(annot.label.type == "langLabel") {
+				        chars[i].markupBefore="<span class='char h"+index+"'>"+chars[i].markupBefore;
+						chars[i].markupAfter=chars[i].markupAfter+"</span>";
+						Models.Home.Language label=Lookups.languagesByAbbr[annot.label.value];
+						string symbol=label.abbr.ToUpper();
+						if(i==stop-1) chars[i].labelsAfter=chars[i].labelsAfter+"<span class='label "+annot.label.type+" hintable' onmouseover='hon(this, "+index+")' onmouseout='hoff(this, "+index+")' title='"+label.name["ga"]+"/"+label.name["en"]+"'>"+symbol+"</span>";
+					}
+					else if(annot.label.type == "symbol") {
+				        chars[i].markupBefore="<span class='char h"+index+"'>"+chars[i].markupBefore;
+						chars[i].markupAfter=chars[i].markupAfter+"</span>";
+						string symbol="";
+						if(annot.label.value=="tm") symbol="<span style='position: relative; top: -5px; font-size: 0.5em'>TM</span>";
+						if(annot.label.value=="regtm") symbol="®";
+						if(annot.label.value=="proper") symbol="¶";
+						string title="";
+						if(annot.label.value=="tm") title="trádmharc/trademark";
+						if(annot.label.value=="regtm") title="trádmharc cláraithe/registered trademark";
+						if(annot.label.value=="proper") title="ainm dílis/proper noun";
+						if(i==stop-1) chars[i].labelsAfter=chars[i].labelsAfter+"<span class='label "+annot.label.type+" hintable' onmouseover='hon(this, "+index+")' onmouseout='hoff(this, "+index+")' title='"+title+"'>"+symbol+"</span>";
+					}
+					else if(annot.label.type == "formatting") {
+						chars[i].markupBefore="<span style='font-style: italic'>"+chars[i].markupBefore;
+						chars[i].markupAfter=chars[i].markupAfter+"</span>";
+					}
+				}
+				index++;
+			}
+			string s=""; foreach(Char c in chars) s+=c.markupBefore+c.character+c.markupAfter+c.labelsAfter;
+			return "<span class='prettyWording'>"+s+"</span>";
+		}
+		private class Char {
+			public string character="";
+			public string markupBefore="";
+			public string markupAfter="";
+			public string labelsAfter="";
 		}
 
 		public static string Inflect(Models.Data.Inflect inflect) {
@@ -68,7 +126,7 @@ namespace TearmaWeb.Controllers {
 			if(Prettify.Lookups.inflectLabelsById.ContainsKey(inflect.label)) {
 				Models.Home.Metadatum md=Prettify.Lookups.inflectLabelsById[inflect.label];
 				ret+="<span class='inflect'>";
-				ret+="<span class='abbr'>"+md.abbr+"</span>";
+				ret+="<span class='abbr hintable' title='"+md.name["ga"]+"/"+md.name["en"]+"'>"+md.abbr+"</span>";
 				ret+="&nbsp;";
 				ret+="<span class='wording'>"+inflect.text+"</span>";
 				ret+="</span>";
@@ -98,7 +156,8 @@ namespace TearmaWeb.Controllers {
 		}
 
 		public static string Lang(string abbr) {
-			string ret="<span class='prettyLang'>";
+			Models.Home.Language language=Lookups.languagesByAbbr[abbr];
+			string ret="<span class='prettyLang hintable' title='"+language.name["ga"]+"/"+language.name["en"]+"'>";
 			ret+=abbr.ToUpper();
 			ret+="</span>";
 			return ret;

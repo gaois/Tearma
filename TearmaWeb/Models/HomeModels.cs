@@ -67,6 +67,9 @@ namespace TearmaWeb.Models.Home {
 		/// <summary>Human-readable names of the metadatum in Irish ["ga"] and English ["en"].</summary>
 		public Dictionary<string, string> name=new Dictionary<string, string>(); //eg. "en" => "masculine noun"
 
+		/// <summary>The acceptability level (acceptability levels only).</summary>
+		public int level=0;
+
 		/// <summary>The JSON object that encodes this metadatum in the database.</summary>
 		public JObject jo;
 
@@ -76,6 +79,7 @@ namespace TearmaWeb.Models.Home {
 			this.abbr=(string)jo.Property("abbr")?.Value ?? "";
 			this.name.Add("ga", (string)((JObject)jo.Property("title").Value).Property("ga").Value);
 			this.name.Add("en", (string)((JObject)jo.Property("title").Value).Property("en").Value);
+			this.level=(int?)jo.Property("level")?.Value ?? 0;
 		}
 	}
 
@@ -107,6 +111,12 @@ namespace TearmaWeb.Models.Home {
 
 		/// <summary>The languages in which (exact and/or related) matches have been found.</summary>
 		public List<Language> langs=new List<Language>();
+
+		public string advSearchUrl() {
+			string ret="/plus/"+HtmlEncoder.Default.Encode(this.word)+"/al/ft/";
+			if(this.lang!="") ret+=this.lang+"/";
+			return ret;
+		}
 	}
 
 	/// <summary>Represents the contents of a pager.</summary>
