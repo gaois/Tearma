@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using System.Text.Encodings.Web;
 
 namespace TearmaWeb.Controllers {
 	public class Prettify {
@@ -39,13 +40,15 @@ namespace TearmaWeb.Controllers {
 		}
 
 		public static string Desig(Models.Data.Desig desig, bool withLangLabel) {
-			string ret="<div class='prettyDesig'>";
+			string grey="";
 			if(desig.accept!=null && desig.accept > 0) {
 				Models.Home.Metadatum md=Lookups.acceptLabelsById[(int)desig.accept];
-				if(md.level<0) ret="<div class='prettyDesig grey'>";
+				if(md.level<0) grey=" grey";
 			}
+			string ret="<div class='prettyDesig"+grey+"' data-lang='"+desig.term.lang+"' data-wording='"+HtmlEncoder.Default.Encode(desig.term.wording)+"'>";
 			if(withLangLabel) ret+=Prettify.Lang(desig.term.lang);
-			ret+=Prettify.Wording(desig.term.wording, desig.term.annots);
+			ret+=Prettify.Wording(desig.term.lang, desig.term.wording, desig.term.annots);
+			ret+="<span class='clickme' onclick='termMenuClick(this)'>▼</span>";
 			if(desig.accept!=null && desig.accept>0) ret+=" "+Prettify.Accept(desig.accept ?? 0);
 			if(desig.clarif!=null && desig.clarif!="") ret+=" "+Prettify.Clarif(desig.clarif);
 			if(desig.term.inflects.Count>0){
@@ -63,7 +66,7 @@ namespace TearmaWeb.Controllers {
 			return ret;
 		}
 
-		public static string Wording(string wording, List<Models.Data.Annot> annots) {
+		public static string Wording(string lang, string wording, List<Models.Data.Annot> annots) {
 			List<Char> chars=new List<Char>(); for(var i=0; i<wording.Length; i++) chars.Add(new Char{character=wording[i].ToString()});
 			int index=0;
 			foreach(Models.Data.Annot annot in annots) {
@@ -112,7 +115,7 @@ namespace TearmaWeb.Controllers {
 				index++;
 			}
 			string s=""; foreach(Char c in chars) s+=c.markupBefore+c.character+c.markupAfter+c.labelsAfter;
-			return "<span class='prettyWording'>"+s+"</span>";
+			return "<a class='prettyWording' href='/q/"+HtmlEncoder.Default.Encode(wording)+"/"+lang+"/'>"+s+"</a>";
 		}
 		private class Char {
 			public string character="";
