@@ -60,12 +60,26 @@ namespace TearmaWeb.Controllers {
 				model.similars.Add((string)reader["similar"]);
 			}
 
+			//read languages in which matches have been found:
+			reader.NextResult();
+			while(reader.Read()) {
+				string abbr=(string)reader["lang"];
+				if(lookups.languagesByAbbr.ContainsKey(abbr)) model.langs.Add(lookups.languagesByAbbr[abbr]);
+			}
+
+			//determine the sorting language:
+			model.sortlang=model.lang;
+			if(model.sortlang=="" && model.langs.Count>0) {
+				model.sortlang=model.langs[0].abbr;
+				if(model.sortlang!="ga" && model.sortlang!="en") model.sortlang="ga";
+			}
+
 			//read exact matches:
 			reader.NextResult();
 			while(reader.Read()) {
 				int id=(int)reader["id"];
 				string json=(string)reader["json"];
-				model.exacts.Add(Prettify.Entry(id, json, lookups));
+				model.exacts.Add(Prettify.Entry(id, json, lookups, model.sortlang));
 			}
 
 			//read related matches:
@@ -76,17 +90,10 @@ namespace TearmaWeb.Controllers {
 				if(relatedCount <= 100) {
 					int id=(int)reader["id"];
 					string json=(string)reader["json"];
-					model.relateds.Add(Prettify.Entry(id, json, lookups));
+					model.relateds.Add(Prettify.Entry(id, json, lookups, model.sortlang));
 				}
 			}
 			if(relatedCount>100) model.relatedMore=true;
-
-			//read languages in which matches have been found:
-			reader.NextResult();
-			while(reader.Read()) {
-				string abbr=(string)reader["lang"];
-				if(lookups.languagesByAbbr.ContainsKey(abbr)) model.langs.Add(lookups.languagesByAbbr[abbr]);
-			}
 
 			reader.Close();
 			conn.Close();
@@ -126,12 +133,16 @@ namespace TearmaWeb.Controllers {
 			Models.Home.Lookups lookups=ReadLookups(reader);
 			foreach(Models.Home.Language language in lookups.languages) model.langs.Add(language);
 
+			//determine the sorting language:
+			model.sortlang=model.lang;
+			if(model.sortlang!="ga" && model.sortlang!="en") model.sortlang="ga";
+
 			//read matches:
 			reader.NextResult();
 			while(reader.Read()) {
 				int id=(int)reader["id"];
 				string json=(string)reader["json"];
-				model.matches.Add(Prettify.Entry(id, json, lookups));
+				model.matches.Add(Prettify.Entry(id, json, lookups, model.sortlang));
 			}
 
 			//read pager:
@@ -209,7 +220,7 @@ namespace TearmaWeb.Controllers {
 			while(reader.Read()) {
 				int id=(int)reader["id"];
 				string json=(string)reader["json"];
-				model.matches.Add(Prettify.Entry(id, json, lookups));
+				model.matches.Add(Prettify.Entry(id, json, lookups, model.lang));
 			}
 
 			//read pager:

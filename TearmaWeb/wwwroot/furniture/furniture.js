@@ -22,7 +22,6 @@ function submitAdvSearch(form) {
 function hon(label, i) {
     $(label).addClass("on").closest(".prettyWording").find(".h" + i).addClass("on");
 }
-
 function hoff(label, i) {
     $(label).removeClass("on").closest(".prettyWording").find(".h" + i).removeClass("on");
 }
@@ -77,4 +76,52 @@ function termMenuClick(clicker) {
 
     $menu.hide().insertAfter($clicker).slideDown("fast");
     $menu.find("input").focus().select();
+}
+
+$(document).ready(function () {
+    if ($(".nonessential").length > 0) {
+        $("#showAllDetails").show().css("display", "block");
+        $(".nonessential").each(function () {
+            var $entry = $(this).closest(".prettyEntry");
+            $entry.find(".hideDetails").hide();
+            $entry.find(".showDetails").show();
+        });
+    }
+});
+function showAllDetails() {
+    $(".nonessential").slideDown("fast").each(function () {
+        var $entry = $(this).closest(".prettyEntry");
+        $entry.find(".showDetails").hide();
+        $entry.find(".hideDetails").show();
+    });
+    $("#showAllDetails").hide();
+    $("#hideAllDetails").show().css("display", "block");
+}
+function hideAllDetails() {
+    $(".nonessential").slideUp("fast").each(function () {
+        var $entry = $(this).closest(".prettyEntry");
+        $entry.find(".hideDetails").hide();
+        $entry.find(".showDetails").show();
+    });
+    $("#hideAllDetails").hide();
+    $("#showAllDetails").show().css("display", "block");
+}
+function showDetails(a) {
+    var $entry = $(a).closest(".prettyEntry");
+    $entry.find(".nonessential").slideDown("fast");
+    $entry.find(".showDetails").hide();
+    $entry.find(".hideDetails").show();
+}
+function hideDetails(a) {
+    var $entry = $(a).closest(".prettyEntry");
+    $entry.find(".nonessential").slideUp("fast");
+    $entry.find(".hideDetails").hide();
+    $entry.find(".showDetails").show();
+}
+
+function printableOn() {
+    $("body").addClass("printable");
+}
+function printableOff() {
+    $("body").removeClass("printable");
 }

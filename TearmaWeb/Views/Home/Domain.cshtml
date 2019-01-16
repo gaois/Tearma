@@ -17,12 +17,17 @@
             <span class="en" lang="en">Sort by English</span>
         </a>
         <div class="sep"></div>
-		@*<a class="sitelink" href="#">
-	        <span class="icon fas fa-plus-square"></span>
-	        <span class="ga" lang="ga">Taispeáin breis mionsonraí</span>
-	        <span class="en" lang="en">Show more details</span>
-	    </a>*@
-        <a class="sitelink" href="#">
+	    <a class="sitelink" id="showAllDetails" href="javascript:showAllDetails()">
+            <span class="icon fas fa-plus-square"></span>
+            <span class="ga" lang="ga">Taispeáin breis mionsonraí</span>
+            <span class="en" lang="en">Show more details</span>
+        </a>
+	    <a class="sitelink" id="hideAllDetails" href="javascript:hideAllDetails()">
+            <span class="icon fas fa-minus-square"></span>
+            <span class="ga" lang="ga">Folaigh mionsonraí breise</span>
+            <span class="en" lang="en">Hide details</span>
+        </a>
+        <a class="sitelink" href="javascript:printableOn()">
 	        <span class="icon fas fa-print"></span>
 	        <span class="ga" lang="ga">Leagan furasta le priontáil</span>
 	        <span class="en" lang="en">Printer-friendly version</span>
@@ -36,10 +41,10 @@
 	<span class="en" lang="en">All domains</span>
 </a>
 
-<div class="domains formlike">
-    <a href="~/dom/@Model.domain.id/@Model.lang/" class="domain L0 current @(Model.subdomID==0 ? "selected" : "")"><span class="ga" lang="ga">@Model.domain.name["ga"]</span> <span class="en" lang="en">@Model.domain.name["en"]</span></a>
+<div class="domains formlike scrollable">
+    <a href="~/dom/@Model.domain.id/@Model.lang/" class="domain L0 current @(Model.subdomID==0 ? "selected" : "")"><span class="ga" lang="@Model.leftLang()">@Model.domain.name[Model.leftLang()]</span> <span class="en" lang="@Model.rightLang()">@Model.domain.name[Model.rightLang()]</span></a>
     @foreach(SubdomainListing subdom in Model.subdomains) {
-        <a href="~/dom/@Model.domID/@subdom.id/@Model.lang/" class="domain @("L"+subdom.level) @(subdom.visible ? "current" : "") @(subdom.id==Model.subdomID ? "selected" : "")"><span class="ga" lang="ga">»&nbsp; @subdom.name["ga"]</span> <span class="en" lang="en">»&nbsp; @subdom.name["en"]</span></a>
+        <a href="~/dom/@Model.domID/@subdom.id/@Model.lang/" class="domain @("L"+subdom.level) @(subdom.visible ? "current" : "") @(subdom.id==Model.subdomID ? "selected" : "")"><span class="ga" lang="@Model.leftLang()">»&nbsp; @subdom.name[Model.leftLang()]</span> <span class="en" lang="@Model.rightLang()">»&nbsp; @subdom.name[Model.rightLang()]</span></a>
     }
 </div>
 @if(Model.subdomains.Count>0){

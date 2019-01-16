@@ -19,6 +19,7 @@ namespace TearmaWeb.Models.Data {
 		public Term term;
 		public int? accept;
 		public string clarif;
+		public int nonessential;
 	}
 
 	public class Term {

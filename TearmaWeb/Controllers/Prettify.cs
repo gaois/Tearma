@@ -9,21 +9,26 @@ namespace TearmaWeb.Controllers {
 	public class Prettify {
 		private static Models.Home.Lookups Lookups;
 
-		public static string Entry(int id, string json, Models.Home.Lookups lookups) {
+		public static string Entry(int id, string json, Models.Home.Lookups lookups, string primLang) {
 			Models.Data.Entry entry=JsonConvert.DeserializeObject<Models.Data.Entry>(json);
 			Prettify.Lookups=lookups;
 
+			string leftLang=primLang;
+			string rightLang="en"; if(primLang=="en") rightLang="ga";
+
 			string ret="<div class='prettyEntry'>";
-			foreach(Models.Data.DomainAssig obj in entry.domains) ret+=Prettify.DomainAssig(obj);
+			ret+="<a class='showDetails icon fas fa-plus-square' href='javascript:void(null)' onclick='showDetails(this)'></a>";
+			ret+="<a class='hideDetails icon fas fa-minus-square' href='javascript:void(null)' onclick='hideDetails(this)'></a>";
+			foreach(Models.Data.DomainAssig obj in entry.domains) ret+=Prettify.DomainAssig(obj, leftLang, rightLang);
 
 			{
 				string html=""; bool withLangLabel=true;
-				foreach(Models.Data.Desig desig in entry.desigs) {if(desig.term.lang=="ga") {html+=Prettify.Desig(desig, withLangLabel); withLangLabel=false;}}
+				foreach(Models.Data.Desig desig in entry.desigs) {if(desig.term.lang==leftLang) {html+=Prettify.Desig(desig, withLangLabel); withLangLabel=false;}}
 				ret+="<div class='desigBlock left'>"+html+"</div>";
 			}
 			{
 				string html=""; bool withLangLabel=true;
-				foreach(Models.Data.Desig desig in entry.desigs) {if(desig.term.lang=="en") {html+=Prettify.Desig(desig, withLangLabel); withLangLabel=false;}}
+				foreach(Models.Data.Desig desig in entry.desigs) {if(desig.term.lang==rightLang) {html+=Prettify.Desig(desig, withLangLabel); withLangLabel=false;}}
 				ret+="<div class='desigBlock right'>"+html+"</div>";
 			}
 			foreach(Models.Home.Language language in Prettify.Lookups.languages) {
@@ -45,7 +50,8 @@ namespace TearmaWeb.Controllers {
 				Models.Home.Metadatum md=Lookups.acceptLabelsById[(int)desig.accept];
 				if(md.level<0) grey=" grey";
 			}
-			string ret="<div class='prettyDesig"+grey+"' data-lang='"+desig.term.lang+"' data-wording='"+HtmlEncoder.Default.Encode(desig.term.wording)+"'>";
+			string nonessential=(desig.nonessential==1 ? " nonessential" : "");
+			string ret="<div class='prettyDesig"+grey+nonessential+"' data-lang='"+desig.term.lang+"' data-wording='"+HtmlEncoder.Default.Encode(desig.term.wording)+"'>";
 			if(withLangLabel) ret+=Prettify.Lang(desig.term.lang);
 			ret+=Prettify.Wording(desig.term.lang, desig.term.wording, desig.term.annots);
 			ret+="<span class='clickme' onclick='termMenuClick(this)'>▼</span>";
@@ -166,28 +172,31 @@ namespace TearmaWeb.Controllers {
 			return ret;
 		}
 
-		public static string DomainAssig(Models.Data.DomainAssig da) {
+		public static string DomainAssig(Models.Data.DomainAssig da, string leftLang, string rightLang) {
 			int domID = da.superdomain;
 			Models.Home.Metadatum domain = Prettify.Lookups.domainsById[domID];
 			string ret = "";
 			if(domain != null) {
 
-				string substepsGA = "";
-				string substepsEN = "";
+				string substepsLeft = "";
+				string substepsRight = "";
 				int subdomID = da.subdomain ?? 0;
 				if(subdomID > 0) {
 					List<Models.Home.SubdomainListing> subs = Broker.FlattenSubdomains(1, domain.jo.Value<JArray>("subdomains"), null, subdomID);
 					foreach(Models.Home.SubdomainListing sub in subs) {
 						if(sub.visible) {
-							substepsGA += " » " + sub.name["ga"];
-							substepsEN += " » " + sub.name["en"];
+							substepsLeft += " » " + sub.name[leftLang];
+							substepsRight += " » " + sub.name[rightLang];
 						}
 					}
 				}
 
+				string urlFrag=da.superdomain.ToString();
+				if(da.subdomain!=null) urlFrag+="/"+da.subdomain;
+
 				ret += "<div class='prettyDomain'>";
-				ret += "<div class='left'>" + domain.name["ga"] + substepsGA + "</div>";
-				ret += "<div class='right'>" + domain.name["en"] + substepsEN + "</div>";
+				ret += "<div class='left'><a href='/dom/"+urlFrag+"/"+leftLang+"/'>" + domain.name[leftLang] + substepsLeft + "</a></div>";
+				ret += "<div class='right'><a href='/dom/"+urlFrag+"/"+rightLang+"/'>" + domain.name[rightLang] + substepsRight + "</a></div>";
 				ret += "<div class='clear'></div>";
 				ret += "</div>"; //.prettyDomain
 			}

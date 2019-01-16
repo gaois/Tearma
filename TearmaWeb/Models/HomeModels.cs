@@ -112,6 +112,9 @@ namespace TearmaWeb.Models.Home {
 		/// <summary>The languages in which (exact and/or related) matches have been found.</summary>
 		public List<Language> langs=new List<Language>();
 
+		/// <summary>The language code of the language in which results are sorted: "en" or "ga". Empty string if no results.</summary>
+		public string sortlang="";
+
 		public string advSearchUrl() {
 			string ret="/plus/"+HtmlEncoder.Default.Encode(this.word)+"/al/ft/";
 			if(this.lang!="") ret+=this.lang+"/";
@@ -185,6 +188,9 @@ namespace TearmaWeb.Models.Home {
 		/// <summary>The pager above and below the list of matches.</summary>
 		public Pager pager;
 
+		/// <summary>The language code of the language in which results are sorted: "en" or "ga". Empty string if no results.</summary>
+		public string sortlang="";
+
 		public string urlByPage(int page) {
 			string ret="/plus/"+HtmlEncoder.Default.Encode(this.word)+"/"+this.length+"/"+this.extent+"/";
 			if(this.lang!="") ret+=this.lang+"/";
@@ -212,6 +218,9 @@ namespace TearmaWeb.Models.Home {
 	public class Domains {
 		/// <summary>The sorting language: "ga" or "en".</summary>
 		public string lang="";
+
+		public string leftLang(){return this.lang;}
+		public string rightLang(){return (this.lang=="ga" ? "en" : "ga");}
 
 		/// <summary>The top-level domains.</summary>
 		public List<DomainListing> domains=new List<DomainListing>();
@@ -246,6 +255,9 @@ namespace TearmaWeb.Models.Home {
 	public class Domain {
 		/// <summary>The sorting language: "ga" or "en".</summary>
 		public string lang="";
+
+		public string leftLang(){return this.lang;}
+		public string rightLang(){return (this.lang=="ga" ? "en" : "ga");}
 
 		/// <summary>The domain ID the user has requested.</summary>
 		public int domID=0;
