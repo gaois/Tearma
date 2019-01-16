@@ -1,3 +1,5 @@
+SET ANSI_WARNINGS OFF
+
 truncate table entry_domain
 insert into entry_domain(entry_id, superdomain, subdomain)
 select e.id, pj.superdomain, pj.subdomain
@@ -21,11 +23,11 @@ cross apply openjson(e.json, '$.desigs') with(
 ) as pj
 
 truncate table terms
-insert into terms(id, json, lang, wording)
-select distinct id, json, lang, wording from(
+insert into terms(id, lang, wording)
+select distinct id, lang, wording from(
 	select
 	  convert(int, json_value(ext.value, '$.term.id')) as id
-	, json_query(ext.value, '$.term') as json
+	--, json_query(ext.value, '$.term') as json
 	, json_value(ext.value, '$.term.lang') as lang
 	, json_value(ext.value, '$.term.wording') as wording
 	from entries as e
@@ -74,3 +76,4 @@ insert into @temp(entry_id, sortkey, listingOrder)
 		inner join @temp as t on t.entry_id=e.id
 		where e.sortkeyEN is null
 
+SET ANSI_WARNINGS ON
