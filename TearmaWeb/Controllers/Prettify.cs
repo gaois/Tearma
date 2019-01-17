@@ -19,16 +19,21 @@ namespace TearmaWeb.Controllers {
 			string ret="<div class='prettyEntry'>";
 			ret+="<a class='showDetails icon fas fa-plus-square' href='javascript:void(null)' onclick='showDetails(this)'></a>";
 			ret+="<a class='hideDetails icon fas fa-minus-square' href='javascript:void(null)' onclick='hideDetails(this)'></a>";
+
+			//domains:
 			foreach(Models.Data.DomainAssig obj in entry.domains) ret+=Prettify.DomainAssig(obj, leftLang, rightLang);
 
+			//desigs and intros:
 			{
 				string html=""; bool withLangLabel=true;
 				foreach(Models.Data.Desig desig in entry.desigs) {if(desig.term.lang==leftLang) {html+=Prettify.Desig(desig, withLangLabel); withLangLabel=false;}}
+				if(entry.intros[leftLang]!="") html+="<div class='intro'><span>("+entry.intros[leftLang]+")</span></div>";
 				ret+="<div class='desigBlock left'>"+html+"</div>";
 			}
 			{
 				string html=""; bool withLangLabel=true;
 				foreach(Models.Data.Desig desig in entry.desigs) {if(desig.term.lang==rightLang) {html+=Prettify.Desig(desig, withLangLabel); withLangLabel=false;}}
+				if(entry.intros[rightLang]!="") html+="<div class='intro'><span>("+entry.intros[rightLang]+")</span></div>";
 				ret+="<div class='desigBlock right'>"+html+"</div>";
 			}
 			foreach(Models.Home.Language language in Prettify.Lookups.languages) {
@@ -39,7 +44,13 @@ namespace TearmaWeb.Controllers {
 				}
 			}
 
-			ret+="<div class='clear'></div>";
+			//definitions:
+			foreach(Models.Data.Definition obj in entry.definitions) ret+=Prettify.Definition(obj, leftLang, rightLang);
+
+			//examples:
+			foreach(Models.Data.Example obj in entry.examples) ret+=Prettify.Example(obj, leftLang, rightLang);
+
+			ret +="<div class='clear'></div>";
 			ret+="</div>"; //.prettyEntry
 			return ret;
 		}
@@ -203,6 +214,64 @@ namespace TearmaWeb.Controllers {
 			return ret;
 		}
 
+		public static string DomainAssig(Models.Data.DomainAssig da, string lang) {
+			int domID = da.superdomain;
+			Models.Home.Metadatum domain = Prettify.Lookups.domainsById[domID];
+			string ret = "";
+			if(domain != null) {
+
+				string substeps = "";
+				int subdomID = da.subdomain ?? 0;
+				if(subdomID > 0) {
+					List<Models.Home.SubdomainListing> subs = Broker.FlattenSubdomains(1, domain.jo.Value<JArray>("subdomains"), null, subdomID);
+					foreach(Models.Home.SubdomainListing sub in subs) {
+						if(sub.visible) {
+							substeps += " » " + sub.name[lang];
+						}
+					}
+				}
+
+				string urlFrag=da.superdomain.ToString();
+				if(da.subdomain!=null) urlFrag+="/"+da.subdomain;
+
+				ret += "<span class='prettyDomainInline'>";
+				ret += "<a href='/dom/"+urlFrag+"/"+lang+"/'>" + domain.name[lang] + substeps + "</a>";
+				ret += "</span>"; //.prettyDomainInline
+			}
+			return ret;
+		}
+
+		public static string Definition(Models.Data.Definition def, string leftLang, string rightLang) {
+			string ret = "";
+			string nonessential=(def.nonessential==1 ? " nonessential" : "");
+			ret += "<div class='prettyDefinition"+nonessential+"'>";
+			ret += "<div class='left'>";
+				foreach(Models.Data.DomainAssig da in def.domains) ret+=DomainAssig(da, leftLang)+" ";
+				ret += def.texts[leftLang];
+			ret += "</div>";
+			ret += "<div class='right'>";
+				foreach(Models.Data.DomainAssig da in def.domains) ret+=DomainAssig(da, rightLang)+" ";
+				ret += def.texts[rightLang];
+			ret += "</div>";
+			ret += "<div class='clear'></div>";
+			ret += "</div>"; //.prettyDefinition
+			return ret;
+		}
+
+		public static string Example(Models.Data.Example ex, string leftLang, string rightLang) {
+			string ret = "";
+			string nonessential=(ex.nonessential==1 ? " nonessential" : "");
+			ret += "<div class='prettyExample"+nonessential+"'>";
+			ret += "<div class='left'>";
+				foreach(string text in ex.texts[leftLang]) ret += "<div class='text'>"+text+"</div>";
+			ret += "</div>";
+			ret += "<div class='right'>";
+				foreach(string text in ex.texts[rightLang]) ret += "<div class='text'>"+text+"</div>";
+			ret += "</div>";
+			ret += "<div class='clear'></div>";
+			ret += "</div>"; //.prettyExample
+			return ret;
+		}
 
 	}
 }

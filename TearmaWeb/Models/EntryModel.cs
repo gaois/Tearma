@@ -8,6 +8,20 @@ namespace TearmaWeb.Models.Data {
 	public class Entry {
 		public List<DomainAssig> domains;
 		public List<Desig> desigs;
+		public Dictionary<string, string> intros;
+		public List<Definition> definitions;
+		public List<Example> examples;
+	}
+
+	public class Example {
+		public Dictionary<string, List<string>> texts;
+		public int nonessential;
+	}
+
+	public class Definition {
+		public Dictionary<string, string> texts;
+		public List<DomainAssig> domains;
+		public int nonessential;
 	}
 
 	public class DomainAssig {
