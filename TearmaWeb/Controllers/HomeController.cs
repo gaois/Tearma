@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using System.Text.RegularExpressions;
 
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -16,16 +17,24 @@ namespace TearmaWeb.Controllers {
 		}
 
 		public IActionResult Entry(int id) {
-			ViewData["id"]=id;
-			return View();
+			Models.Home.Entry model=new Models.Home.Entry();
+			model.id=id;
+			Broker.DoEntry(model);
+			return View("Entry", model);
 		}
 
 		public IActionResult QuickSearch(string word, string lang) {
-			Models.Home.QuickSearch model=new Models.Home.QuickSearch();
-			model.word=word;
-			model.lang=lang ?? "";
-			Broker.DoQuickSearch(model);
-			return View("QuickSearch", model);
+			IActionResult ret;
+			if(Regex.IsMatch(word, @"^\#[0-9]+$")){
+				ret=new RedirectResult("/id/"+word.Replace("#", ""));
+			} else {
+				Models.Home.QuickSearch model=new Models.Home.QuickSearch();
+				model.word=word;
+				model.lang=lang ?? "";
+				Broker.DoQuickSearch(model);
+				ret=View("QuickSearch", model);
+			}
+			return ret;
 		}
 
 		public IActionResult AdvSearch(string word, string length, string extent, string lang, int page) {

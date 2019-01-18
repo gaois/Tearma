@@ -50,26 +50,36 @@
     </div>
 </div>
 
-<div class="sectitle">
-	<span class="icon fas fa-bullhorn"></span>
-	<span class="ga" lang="ga">Fógra</span>
-	<span class="en" lang="en">Announcement</span>
-</div>
-<div class="tbd" style="height: 100px;"></div>
+@if(false){
+    <div class="sectitle">
+	    <span class="icon fas fa-bullhorn"></span>
+	    <span class="ga" lang="ga">Fógra</span>
+	    <span class="en" lang="en">Announcement</span>
+    </div>
+    <div class="tbd" style="height: 100px;"></div>
+}
 
-<div class="sectitle">
-	<span class="icon fas fa-calendar-alt"></span>
-	<span class="ga" lang="ga">Téarma an lae</span>
-	<span class="en" lang="en">Term of the day</span>
-</div>
-<div class="tbd" style="height: 300px;"></div>
+@if(Model.tod!=""){
+    <div class="sectitle">
+	    <span class="icon fas fa-calendar-alt"></span>
+	    <span class="ga" lang="ga">Téarma an lae</span>
+	    <span class="en" lang="en">Term of the day</span>
+    </div>
+    @Html.Raw(Model.tod)
+}
 
-<div class="sectitle">
-	<span class="icon fas fa-clock"></span>
-	<span class="ga" lang="ga">Athruithe le déanaí</span>
-	<span class="en" lang="en">Recent changes</span>
-</div>
-<div class="tbd" style="height: 300px;"></div>
+@if(Model.recent.Count>0){
+    <div class="sectitle">
+	    <span class="icon fas fa-clock"></span>
+	    <span class="ga" lang="ga">Athruithe le déanaí</span>
+	    <span class="en" lang="en">Recent changes</span>
+    </div>
+    <div class="recentlyChangedContainer">
+        @foreach(string s in Model.recent){
+            <div class="recentlyChanged">@Html.Raw(s)</div>
+        }
+    </div>
+}
 
 <div class="sectitle">
 	<span class="icon fas fa-sitemap"></span>

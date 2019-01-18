@@ -9,6 +9,31 @@ namespace TearmaWeb.Controllers {
 	public class Prettify {
 		private static Models.Home.Lookups Lookups;
 
+		public static string EntryLink(int id, string json, string primLang) {
+			Models.Data.Entry entry=JsonConvert.DeserializeObject<Models.Data.Entry>(json);
+
+			string leftLang=primLang;
+			string rightLang="en"; if(primLang=="en") rightLang="ga";
+
+			string ret="<a class='prettyEntryLink' href='/id/"+id+"/'>";
+			ret+="<span class='bullet'>#</span> ";
+
+			string html="";
+			foreach(Models.Data.Desig desig in entry.desigs) if(desig.term.lang==leftLang && desig.nonessential==0) {
+				if(html!="") html+=" &middot; ";
+				html+="<span class='term left'>"+desig.term.wording+"</span>";
+			}
+			foreach(Models.Data.Desig desig in entry.desigs) if(desig.term.lang==rightLang && desig.nonessential==0) {
+				if(html!="") html+=" &middot; ";
+				html+="<span class='term right'>"+desig.term.wording+"</span>";
+			}
+			ret+=html;
+			if(html=="") ret+=id;
+
+			ret+="</a>"; //.prettyEntryLink
+			return ret;
+		}
+
 		public static string Entry(int id, string json, Models.Home.Lookups lookups, string primLang) {
 			Models.Data.Entry entry=JsonConvert.DeserializeObject<Models.Data.Entry>(json);
 			Prettify.Lookups=lookups;
@@ -19,6 +44,9 @@ namespace TearmaWeb.Controllers {
 			string ret="<div class='prettyEntry'>";
 			ret+="<a class='showDetails icon fas fa-plus-square' href='javascript:void(null)' onclick='showDetails(this)'></a>";
 			ret+="<a class='hideDetails icon fas fa-minus-square' href='javascript:void(null)' onclick='hideDetails(this)'></a>";
+
+			//permalink:
+			ret +="<a class='permalink' href='/id/"+id+"/'>#</a>";
 
 			//domains:
 			foreach(Models.Data.DomainAssig obj in entry.domains) ret+=Prettify.DomainAssig(obj, leftLang, rightLang);

@@ -1,11 +1,31 @@
-﻿@{
+﻿@model TearmaWeb.Models.Home.Entry
+@{
     Layout="_HomeLayout";
-    ViewBag.swapper="";
+    ViewBag.swapper="q";
 }
 
 @section Rightie {
 
 }
 
-@*<div>Hello, this is Views\Home\Entry.cshtml</div>
-@foreach(string key in ViewData.Keys){ <div>@key = @ViewData[key] (@ViewData[key].GetType())</div> }*@
+<form class="textbox singleEntry" action="." onsubmit="return submitQuickSearch(this)">
+    <div class="text"><input name="word" value="#@Model.id"/></div>
+    <button class="submit">
+        <span class="icon fas fa-search"></span>
+    </button>
+</form>
+<div class="underform">
+    <div class="left">
+        <span class="ga" lang="ga">Cuardaigh téarma Béarla nó Gaeilge</span>
+        <span class="en" lang="en">Search for a term in English or Irish</span>
+    </div>
+</div>
+
+@if(Model.entry=="") {
+    <div class="nojoy">
+        <div class="ga">Níor aimsíodh téarma ar bith.</div>
+        <div class="en">No terms found.</div>
+    </div>
+} else {
+    @Html.Raw(Model.entry)
+}

@@ -87,6 +87,21 @@ namespace TearmaWeb.Models.Home {
 	public class Index {
 		/// <summary>The top-level domains.</summary>
 		public List<DomainListing> domains=new List<DomainListing>();
+
+		/// <summary>Term of the day.</summary>
+		public string tod="";
+
+		/// <summary>Recently changed entries.</summary>
+		public List<string> recent=new List<string>();
+	}
+
+	/// <summary>Represents the content of the single-entry page.</summary>
+	public class Entry {
+		/// <summary>The entry ID.</summary>
+		public int id=0;
+
+		/// <summary>The entry.</summary>
+		public string entry="";
 	}
 
 	/// <summary>Represents the contents of the quick search page.</summary>

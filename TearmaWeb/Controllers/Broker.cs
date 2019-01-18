@@ -187,6 +187,47 @@ namespace TearmaWeb.Controllers {
 			Models.Home.Lookups lookups=ReadLookups(reader);
 			foreach(Models.Home.Metadatum md in lookups.domains) model.domains.Add(new Models.Home.DomainListing(md.id, md.name["ga"], md.name["en"]));
 
+			//read entry of the day:
+			reader.NextResult();
+			if(reader.Read()) {
+				int id=(int)reader["id"];
+				string json=(string)reader["json"];
+				model.tod=Prettify.Entry(id, json, lookups, "ga");
+			}
+
+			//read recently changed entries:
+			reader.NextResult();
+			while(reader.Read()) {
+				int id=(int)reader["id"];
+				string json=(string)reader["json"];
+				model.recent.Add(Prettify.EntryLink(id, json, "ga"));
+			}
+
+			reader.Close();
+			conn.Close();
+		}
+
+		/// <summary>Populates the view model of the single-entry page.</summary>
+		public static void DoEntry(Models.Home.Entry model) {
+			SqlConnection conn=new SqlConnection(GetConnectionString());
+			conn.Open();
+			SqlCommand command=new SqlCommand("dbo.pub_entry", conn);
+			command.CommandType=CommandType.StoredProcedure;
+			SqlParameter param;
+			param=new SqlParameter(); param.ParameterName="@id"; param.SqlDbType=SqlDbType.Int; param.Value=model.id; command.Parameters.Add(param);
+			SqlDataReader reader=command.ExecuteReader();
+
+			//read lookups:
+			Models.Home.Lookups lookups=ReadLookups(reader);
+
+			//read the entry:
+			reader.NextResult();
+			if(reader.Read()) {
+				int id=(int)reader["id"];
+				string json=(string)reader["json"];
+				model.entry=Prettify.Entry(id, json, lookups, "ga");
+			}
+
 			reader.Close();
 			conn.Close();
 		}

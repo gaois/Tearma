@@ -1,5 +1,10 @@
 SET ANSI_WARNINGS OFF
 
+update entries set
+  cStatus=JSON_VALUE(json, '$.cStatus')
+, pStatus=JSON_VALUE(json, '$.pStatus')
+, dateStamp=JSON_VALUE(json, '$.dateStamp')
+
 truncate table entry_domain
 insert into entry_domain(entry_id, superdomain, subdomain)
 select e.id, pj.superdomain, pj.subdomain
