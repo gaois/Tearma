@@ -9,16 +9,24 @@ div.topbar a img {position: relative; top: 1px; width: 25px;}
 div.topbar a span {margin-left: 1em;}
 div.topbar a.focloir {background-color: #8b0000;}
 div.topbar a.teanglann {background-color: #ea5c0f;}
+div.topbar a.minor {padding: 11px 11px; margin-left: 8px; margin-right: 0px;}
+div.topbar a.minor img {width: 15px; top: 3px;}
 div.topbar a:hover {color: #ffffff;}
 div.topbar a.current {background-color: #ffffff; color: #006699; padding: 11px 25px 25px 25px; border-radius: 4px 4px 0px 0px;}
 div.topbar a.current:hover {color: #2288bb;}
 @media (max-width: 800px){
+  div.topbar a {padding: 11px 11px;}
+  div.topbar a.current {padding: 11px 15px 25px 15px;}
   div.topbar a span {display: none;}
+  div.topbar a.minor {margin-left: 4px; margin-right: -4px;}
 }
 body.printable div.topbar {display: none;}
 
 div.footer {padding: 30px 0px 75px 0px; background-color: #dddddd; border-top: 3px dotted #ffffff; text-shadow: 1px 1px 0px #eeeeee; color: #666666;}
 div.footer div.inside {padding: 0px 20px; max-width: 1400px; margin: 0px auto;}
+div.footer div.logos {}
+div.footer div.logos a {text-decoration: none; margin-right: 20px; display: inline-block; box-sizing: border-box;}
+div.footer div.logos a img {max-height: 80px; border-radius: 2px;}
 div.footer div.statement {margin-top: 1em; line-height: 1.5em;}
 div.footer div.statement div {}
 div.footer div.statement span.label {}
@@ -45,10 +53,15 @@ div.footer div.externalinks a.focloir {color: #8b0000;}
 div.footer div.externalinks a.focloir:hover {color: #c72323;}
 div.footer div.externalinks a.teanglann {color: #ea5c0f;}
 div.footer div.externalinks a.teanglann:hover {color: #ff823e;}
+div.footer div.externalinks a.minor {color: #2288bb;}
+div.footer div.externalinks a.minor:hover {color: #3399cc;}
+div.footer div.externalinks a.minor img {width: 16px; top: 5px; margin-right: 10px;}
 @media (max-width: 800px){
   div.footer div.statement div {margin: 0.5em 0;}
   div.footer div.statement span.label {display: block;}
   div.footer div.externalinks span.sep {width: 1px; overflow: hidden; display: block;}
+  div.footer div.externalinks a {display: inline-block; min-height: 20px;}
+  div.footer div.externalinks a.minor img {width: 15px; margin-left: 10px; margin-right: 20px;}
 }
 @media (max-width: 400px){
   div.footer div.sitelinks a {width: auto;}
