@@ -13,10 +13,44 @@ function submitAdvSearch(form) {
         var url = "/plus/" + encodeURIComponent(word) + "/";
         url += form["length"].value + "/";
         url += form["extent"].value + "/";
-        if (form["lang"].value != "") url += form["lang"].value + "/";
+        url += "lang" + form["lang"].value + "/";
+        url += "pos" + form["pos"].value + "/";
+        url += "dom" + form["dom"].value + "/";
+        url += "sub" + form["sub"].value + "/";
         window.location = url;
     }
     return false;
+}
+function advChangeLang(obj) {
+    var lang = obj.value;
+    var form = obj.form;
+    var select = form["pos"];
+    var $option = $(select).find("option[value='" + $(select).val() + "']");
+    if (!(lang == "0" || $option.attr("data-isfor").indexOf(";" + lang + ";") > -1)) select.selectedIndex = 0;
+    $(select).find("option").each(function () {
+        var $option = $(this);
+        if ($option.attr("data-isfor") == "" || $option.attr("data-isfor").indexOf(";" + lang + ";") > -1) {
+            $option.show();
+        } else {
+            $option.hide();
+        }
+    });
+}
+function advChangeDomain(obj, subdomID) {
+    var $option = $(obj).find("option[value='" + $(obj).val() + "']");
+    var subdoms = JSON.parse($option.attr("data-subs"));
+    $(".line.subdomain").hide();
+    var $select = $(".line.subdomain select")
+    var val = $select.val() || subdomID || 0;
+    $select.html("");
+    $select.append("<option value='0'>foréimse ar bith &middot; any subdomain</option>");
+    for (var i = 0; i < subdoms.length; i++) {
+        var subdom = subdoms[i];
+        var $option = $("<option/>").attr("value", subdom.id).html(subdom.name);
+        $option.appendTo($select);
+    }
+    $select.val(val);
+    if (subdoms.length>0) $(".line.subdomain").show();
 }
 
 function hon(label, i) {

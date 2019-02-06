@@ -54,18 +54,44 @@
         </div>
         <div class="line">
             <div class="label"><span class="text ga" lang="ga">Teanga</span><span class="text en" lang="en">Language</span></div>
-            <select name="lang">
-                <option value="" @(Model.lang=="" ? "selected" : "")>teanga ar bith &middot; any language</option>
+            <select name="lang" onchange="advChangeLang(this)">
+                <option value="0" @(Model.lang=="" ? "selected" : "")>teanga ar bith &middot; any language</option>
                 @foreach(Language lang in Model.langs) {
                     <option value="@lang.abbr" @(Model.lang==lang.abbr ? "selected" : "")>@lang.abbr.ToUpper() (@lang.name["ga"] &middot; @lang.name["en"])</option>
                 }
             </select>
+        </div>
+        <div class="line">
+            <div class="label"><span class="text ga" lang="ga">Roinn chainte</span><span class="text en" lang="en">Part of speech</span></div>
+            <select name="pos">
+                <option value="0" data-isfor="" @(Model.posLabel==0 ? "selected" : "")>roinn chainte ar bith &middot; any part of speech</option>
+                @foreach(Metadatum datum in Model.posLabels) {
+                    <option value="@datum.id" data-isfor="@datum.isfor" @(Model.posLabel==datum.id ? "selected" : "")>@datum.abbr (@datum.name["ga"] &middot; @datum.name["en"])</option>
+                }
+            </select>
+        </div>
+        <div class="line">
+            <div class="label"><span class="text ga" lang="ga">Réimse</span><span class="text en" lang="en">Domain</span></div>
+            <select name="dom" onchange="advChangeDomain(this)">
+                <option value="0" data-subs="[]" @(Model.domainID==0 ? "selected" : "")>réimse ar bith &middot; any domain</option>
+                @foreach(Metadatum datum in Model.domains) {
+                    <option value="@datum.id" @(Model.domainID==datum.id ? "selected" : "") data-subs="@datum.subdomainsJson">@datum.name["ga"] &middot; @datum.name["en"]</option>
+                }
+            </select>
+        </div>
+        <div class="line subdomain" style="display: none;">
+            <div class="label"><span class="text ga" lang="ga">Foréimse</span><span class="text en" lang="en">Subdomain</span></div>
+            <select name="sub"></select>
         </div>
     </div>
     <button class="submit">
         <span class="icon fas fa-search"></span>
         <span class="text ga" lang="ga">Cuardaigh</span><span class="text en" lang="en">Search</span>
     </button>
+    <script type="text/javascript">
+        advChangeLang(document.forms[0]["lang"]);
+        advChangeDomain(document.forms[0]["dom"], "@Model.subdomainID");
+    </script>
 </form>
 @if(Model.word==""){ <script type="text/javascript">document.forms[0]["word"].focus();</script> }
 <div class="underform">

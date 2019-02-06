@@ -33,7 +33,12 @@ namespace TearmaWeb.Controllers {
 				string type=(string)reader["type"];
 				string json=(string)reader["json"];
 				JObject jo=JObject.Parse(json);
-				Models.Home.Metadatum metadatum=new Models.Home.Metadatum(id, jo);
+				Models.Home.Metadatum metadatum;
+				if(type=="posLabel") {
+					metadatum=new Models.Home.Metadatum(id, jo, lookups.languages);
+				} else {
+					metadatum=new Models.Home.Metadatum(id, jo);
+				}
 				lookups.addMetadatatum(type, metadatum);
 			}
 
@@ -110,6 +115,11 @@ namespace TearmaWeb.Controllers {
 			//read lookups:
 			Models.Home.Lookups lookups=ReadLookups(reader);
 			foreach(Models.Home.Language language in lookups.languages) model.langs.Add(language);
+			foreach(Models.Home.Metadatum datum in lookups.posLabels) model.posLabels.Add(datum);
+			foreach(Models.Home.Metadatum datum in lookups.domains) {
+				datum.subdomainsJson=FlattenSubdomainsIntoJson(datum);
+				model.domains.Add(datum);
+			}
 
 			reader.Close();
 			conn.Close();
@@ -126,12 +136,20 @@ namespace TearmaWeb.Controllers {
 			param=new SqlParameter(); param.ParameterName="@length"; param.SqlDbType=SqlDbType.NVarChar; param.Value=model.length; command.Parameters.Add(param);
 			param=new SqlParameter(); param.ParameterName="@extent"; param.SqlDbType=SqlDbType.NVarChar; param.Value=model.extent; command.Parameters.Add(param);
 			param=new SqlParameter(); param.ParameterName="@lang"; param.SqlDbType=SqlDbType.NVarChar; param.Value=model.lang; command.Parameters.Add(param);
+			param=new SqlParameter(); param.ParameterName="@pos"; param.SqlDbType=SqlDbType.Int; param.Value=model.posLabel; command.Parameters.Add(param);
+			param=new SqlParameter(); param.ParameterName="@dom"; param.SqlDbType=SqlDbType.Int; param.Value=model.domainID; command.Parameters.Add(param);
+			param=new SqlParameter(); param.ParameterName="@sub"; param.SqlDbType=SqlDbType.Int; param.Value=model.subdomainID; command.Parameters.Add(param);
 			param=new SqlParameter(); param.ParameterName="@page"; param.SqlDbType=SqlDbType.Int; param.Value=model.page; command.Parameters.Add(param);
 			SqlDataReader reader=command.ExecuteReader();
 
 			//read lookups:
 			Models.Home.Lookups lookups=ReadLookups(reader);
 			foreach(Models.Home.Language language in lookups.languages) model.langs.Add(language);
+			foreach(Models.Home.Metadatum datum in lookups.posLabels) model.posLabels.Add(datum);
+			foreach(Models.Home.Metadatum datum in lookups.domains) {
+				datum.subdomainsJson=FlattenSubdomainsIntoJson(datum);
+				model.domains.Add(datum);
+			}
 
 			//determine the sorting language:
 			model.sortlang=model.lang;
@@ -295,6 +313,32 @@ namespace TearmaWeb.Controllers {
 				JArray mySubdoms=(JArray)jSubdom.Property("subdomains").Value;
 				ret.AddRange(FlattenSubdomains(level+1, mySubdoms, sd, currentID));
 			}
+			return ret;
+		}
+
+		public static string FlattenSubdomainsIntoJson(Models.Home.Metadatum domain) {
+			JArray jSubdoms=(JArray)domain.jo.Property("subdomains").Value;
+			List<Models.Home.SubdomainListing> subdomains=FlattenSubdomains(1, jSubdoms, null, 0);
+			string ret="";
+			foreach(Models.Home.SubdomainListing subdom in subdomains) {
+				string title=subdom.name["ga"].Replace("\"", "\\\"")+" &middot; "+subdom.name["en"].Replace("\"", "\\\"");
+				Models.Home.SubdomainListing parent=subdom.parent;
+				while(parent != null) {
+					if(parent.name["ga"] != parent.name["en"]) {
+						title=parent.name["ga"].Replace("\"", "\\\"")+" &middot; "+parent.name["en"].Replace("\"", "\\\"")+" » "+title;
+					} else {
+						title=parent.name["ga"].Replace("\"", "\\\"")+" » "+title;
+					}
+					parent=parent.parent;
+				}
+				var s="{";
+				s+="\"id\": "+subdom.id+",";
+				s+="\"name\": \""+title+"\"";
+				s+="}";
+				if(ret!="") ret+=",";
+				ret+=s;
+			}
+			ret="["+ret+"]";
 			return ret;
 		}
 	}

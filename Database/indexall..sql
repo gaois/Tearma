@@ -49,6 +49,18 @@ cross apply (
 	where special_term in ('Noise Word', 'Exact Match')
 ) as w
 
+truncate table term_pos
+insert into term_pos(term_id, pos_id)
+select distinct term_id, pos_id from(
+	select
+	  convert(int, json_value(ext.value, '$.term.id')) as term_id
+	, json_value(annot.value, '$.label.value') as pos_id
+	from entries as e
+	cross apply openjson(e.json, '$.desigs') as ext
+	cross apply openjson(ext.value, '$.term.annots') as annot
+	where json_value(annot.value, '$.label.type')='posLabel'
+) as t
+
 truncate table spelling
 insert into spelling(term_id, word, [A],[B],[C],[D],[E],[F],[G],[H],[I],[J],[K],[L],[M],[N],[O],[P],[Q],[R],[S],[T],[U],[V],[W],[X],[Y],[Z], [length])
 select t.id, t.wording, [A],[B],[C],[D],[E],[F],[G],[H],[I],[J],[K],[L],[M],[N],[O],[P],[Q],[R],[S],[T],[U],[V],[W],[X],[Y],[Z], LEN(t.wording)

@@ -37,14 +37,17 @@ namespace TearmaWeb.Controllers {
 			return ret;
 		}
 
-		public IActionResult AdvSearch(string word, string length, string extent, string lang, int page) {
+		public IActionResult AdvSearch(string word, string length, string extent, string lang, int posLabel, int domainID, int subdomainID, int page) {
 			if(lang is null) lang="";
 			if(page<1) page=1;
 			Models.Home.AdvSearch model=new Models.Home.AdvSearch(); 
 			model.word=word ?? "";
 			model.length=length;
 			model.extent=extent;
-			model.lang=lang;
+			if(lang!="0") model.lang=lang;
+			model.posLabel=posLabel;
+			model.domainID=domainID;
+			model.subdomainID=subdomainID;
 			model.page=page;
 			if(model.word=="") Broker.PrepareAdvSearch(model); else Broker.DoAdvSearch(model);
 			return View("AdvSearch", model);

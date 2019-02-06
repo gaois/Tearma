@@ -49,10 +49,13 @@ namespace TearmaWeb.Models.Home {
 		/// <summary>Human-readable names of the language in Irish ["ga"] and English ["en"].</summary>
 		public Dictionary<string, string> name=new Dictionary<string, string>(); //eg. "en" => "Czech"
 
+		public string role;
+
 		public Language(JObject jo) {
 			this.abbr=(string)jo.Property("abbr").Value;
 			this.name.Add("ga", (string)((JObject)jo.Property("title").Value).Property("ga").Value);
 			this.name.Add("en", (string)((JObject)jo.Property("title").Value).Property("en").Value);
+			this.role=(string)jo.Property("role").Value;
 		}
 	}
 
@@ -70,8 +73,12 @@ namespace TearmaWeb.Models.Home {
 		/// <summary>The acceptability level (acceptability levels only).</summary>
 		public int level=0;
 
+		public string isfor="";
+
 		/// <summary>The JSON object that encodes this metadatum in the database.</summary>
 		public JObject jo;
+
+		public string subdomainsJson="[]";
 
 		public Metadatum(int id, JObject jo) {
 			this.jo=jo;
@@ -80,6 +87,30 @@ namespace TearmaWeb.Models.Home {
 			this.name.Add("ga", (string)((JObject)jo.Property("title").Value).Property("ga").Value);
 			this.name.Add("en", (string)((JObject)jo.Property("title").Value).Property("en").Value);
 			this.level=(int?)jo.Property("level")?.Value ?? 0;
+		}
+
+		public Metadatum(int id, JObject jo, List<Language> langs) {
+			this.jo=jo;
+			this.id=id;
+			this.abbr=(string)jo.Property("abbr")?.Value ?? "";
+			this.name.Add("ga", (string)((JObject)jo.Property("title").Value).Property("ga").Value);
+			this.name.Add("en", (string)((JObject)jo.Property("title").Value).Property("en").Value);
+			this.level=(int?)jo.Property("level")?.Value ?? 0;
+
+			JArray jarr=(JArray)jo.Property("isfor").Value;
+			IEnumerable<string> enu=jarr.Values<string>();
+			foreach(string s in enu) {
+				if(s == "_all") {
+					this.isfor+=";0;";
+					foreach(Language lang in langs) this.isfor+=";"+lang.abbr+";";
+				} else if(s == "_allmajor") {
+					foreach(Language lang in langs) if(lang.role=="major") this.isfor+=";"+lang.abbr+";";
+				} else if(s == "_allminor") {
+					foreach(Language lang in langs) if(lang.role=="minor") this.isfor+=";"+lang.abbr+";";
+				} else {
+					this.isfor+=";"+s+";";
+				}
+			}
 		}
 	}
 
@@ -182,6 +213,12 @@ namespace TearmaWeb.Models.Home {
 		/// <summary>The list of languages in the 'languages' listbox.</summary>
 		public List<Language> langs=new List<Language>();
 
+		/// <summary></summary>
+		public List<Metadatum> posLabels=new List<Metadatum>();
+
+		/// <summary></summary>
+		public List<Metadatum> domains=new List<Metadatum>();
+
 		/// <summary>The string the user has typed into the search box.</summary>
 		public string word="";
 
@@ -193,6 +230,13 @@ namespace TearmaWeb.Models.Home {
 
 		/// <summary>The language code of the language in which the user has requested to see results. Empty string if all languages.</summary>
 		public string lang="";
+
+		/// <summary></summary>
+		public int posLabel=0;
+
+		/// <summary></summary>
+		public int domainID=0;
+		public int subdomainID=0;
 
 		/// <summary>The page the user has selected.</summary>
 		public int page=0;
