@@ -163,7 +163,8 @@ namespace TearmaWeb.Models.Home {
 
 		public string advSearchUrl() {
 			string ret="/plus/"+HtmlEncoder.Default.Encode(this.word)+"/al/ft/";
-			if(this.lang!="") ret+=this.lang+"/";
+			if(this.lang!="") ret+="lang"+this.lang+"/"; else ret+="lang0/";
+			ret+="pos0/dom0/sub0/";
 			return ret;
 		}
 	}
