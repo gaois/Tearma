@@ -99,6 +99,14 @@ function termMenuClick(clicker) {
         $item.append("<span class='url'>teanglann.ie</span>")
         $item.appendTo($menu);
     }
+    if (lang == "ga" || lang == "en") {
+        var $item = $("<a class='icon gaois' target='_blank' href='https://www.gaois.ie/ga/?txt=" + encodeURIComponent(wording) + "'></a>");
+        $item.append("<span class='arrow'>»</span>")
+        $item.append("<span class='title ga' lang='ga'>Gaois</span>");
+        //$item.append("<span class='title en' lang='en'>Dictionary and Language Library</span>");
+        $item.append("<span class='url'>gaois.ie</span>")
+        $item.appendTo($menu);
+    }
     if (lang == "ga") {
         var $item = $("<a class='icon nci' target='_blank' href='http://corpas.focloir.ie/" + encodeURIComponent(wording) + "'></a>");
         $item.append("<span class='arrow'>»</span>")
