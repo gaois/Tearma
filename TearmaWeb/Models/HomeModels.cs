@@ -124,6 +124,10 @@ namespace TearmaWeb.Models.Home {
 
 		/// <summary>Recently changed entries.</summary>
 		public List<string> recent=new List<string>();
+
+		/// <summary>Home page news item. Empty string if none.</summary>
+		public string newsGA="";
+		public string newsEN="";
 	}
 
 	/// <summary>Represents the content of the single-entry page.</summary>

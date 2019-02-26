@@ -4,6 +4,7 @@ update entries set
   cStatus=JSON_VALUE(json, '$.cStatus')
 , pStatus=JSON_VALUE(json, '$.pStatus')
 , dateStamp=JSON_VALUE(json, '$.dateStamp')
+, tod=JSON_VALUE(json, '$.tod')
 
 truncate table entry_domain
 insert into entry_domain(entry_id, superdomain, subdomain)

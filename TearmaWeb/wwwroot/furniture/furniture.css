@@ -473,9 +473,22 @@ a.prettyEntryLink:hover span.term {color: #2288bb;}
 a.prettyEntryLink span.term.left {font-weight: bold;}
 a.prettyEntryLink span.term.right {}
 
-div.recentlyChangedContainer {columns: 2; margin-top: 10px;}
+div.recentlyChangedContainer {columns: 2; margin-top: 15px; margin-bottom: 60px;}
 div.recentlyChanged {padding-top: 5px; padding-left: 1.5em; position: relative;}
 div.recentlyChanged span.bullet {position: absolute; left: 0px;}
 @media (max-width: 700px) {
 	div.recentlyChangedContainer {columns: 1;}
+}
+
+div.news {margin-top: 20px; padding: 0px 10px; margin-bottom: 60px; line-height: 1.5em;}
+div.news > div.ga {float: left; width: 49%; color: #333333;}
+div.news > div.en {margin-left: 51%; color: #666666;}
+div.news > div.clear {clear: left;}
+div.news p {margin-bottom: 20px; margin-top: 0px;}
+div.news a {text-decoration: none; color: #336699;}
+div.news a:hover {color: #6699cc;}
+@media (max-width: 700px) {
+	div.news {padding: 0px 5px;}
+	div.news > div.ga {float: none; width: auto;}
+	div.news > div.en {margin-left: 0; margin-top: 10px;}
 }

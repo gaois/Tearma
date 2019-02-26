@@ -50,17 +50,21 @@
     </div>
 </div>
 
-@if(false){
-    <div class="sectitle">
+@if(Model.newsGA!="" && Model.newsEN!=""){
+    <div class="sectitle strong">
 	    <span class="icon fas fa-bullhorn"></span>
 	    <span class="ga" lang="ga">Fógra</span>
 	    <span class="en" lang="en">Announcement</span>
     </div>
-    <div class="tbd" style="height: 100px;"></div>
+    <div class="news">
+        <div class="ga">@Html.Raw(Markdig.Markdown.ToHtml(Model.newsGA).Replace("<a", "<a target='_blank'"))</div>
+        <div class="en">@Html.Raw(Markdig.Markdown.ToHtml(Model.newsEN).Replace("<a", "<a target='_blank'"))</div>
+        <div class="clear"></div>
+    </div>
 }
 
 @if(Model.tod!=""){
-    <div class="sectitle">
+    <div class="sectitle strong">
 	    <span class="icon fas fa-calendar-alt"></span>
 	    <span class="ga" lang="ga">Téarma an lae</span>
 	    <span class="en" lang="en">Term of the day</span>
@@ -69,7 +73,7 @@
 }
 
 @if(Model.recent.Count>0){
-    <div class="sectitle">
+    <div class="sectitle strong">
 	    <span class="icon fas fa-clock"></span>
 	    <span class="ga" lang="ga">Athruithe le déanaí</span>
 	    <span class="en" lang="en">Recent changes</span>
@@ -81,7 +85,7 @@
     </div>
 }
 
-<div class="sectitle">
+<div class="sectitle strong">
 	<span class="icon fas fa-sitemap"></span>
 	<span class="ga" lang="ga">Brabhsáil</span>
 	<span class="en" lang="en">Browse</span>

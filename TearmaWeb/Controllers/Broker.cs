@@ -221,6 +221,13 @@ namespace TearmaWeb.Controllers {
 				model.recent.Add(Prettify.EntryLink(id, json, "ga"));
 			}
 
+			//read news item:
+			reader.NextResult();
+			if(reader.Read()) {
+				model.newsGA=(string)reader["TextGA"];
+				model.newsEN=(string)reader["TextEN"];
+			}
+
 			reader.Close();
 			conn.Close();
 		}
