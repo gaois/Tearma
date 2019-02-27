@@ -13,12 +13,12 @@
     </a>
 
     <div class="kickbox">
-		<a class="sitelink" href="#">
+		<a class="sitelink" href="~/info/">
             <span class="icon fas fa-info-circle"></span>
             <span class="ga" lang="ga">Eolas faoin suíomh seo</span>
             <span class="en" lang="en">About this website</span>
         </a>
-        <a class="sitelink" href="#">
+        <a class="sitelink" href="~/help/">
             <span class="icon fas fa-question-circle"></span>
             <span class="ga" lang="ga">Conas an suíomh seo a úsáid</span>
             <span class="en" lang="en">How to use this website</span>
@@ -57,8 +57,8 @@
 	    <span class="en" lang="en">Announcement</span>
     </div>
     <div class="news">
-        <div class="ga">@Html.Raw(Markdig.Markdown.ToHtml(Model.newsGA).Replace("<a", "<a target='_blank'"))</div>
-        <div class="en">@Html.Raw(Markdig.Markdown.ToHtml(Model.newsEN).Replace("<a", "<a target='_blank'"))</div>
+        <div class="ga">@Html.Raw(Markdig.Markdown.ToHtml(Model.newsGA).Replace("<a href=\"http", "<a target=\"_blank\" href=\"http"))</div>
+        <div class="en">@Html.Raw(Markdig.Markdown.ToHtml(Model.newsEN).Replace("<a href=\"http", "<a target=\"_blank\" href=\"http"))</div>
         <div class="clear"></div>
     </div>
 }
