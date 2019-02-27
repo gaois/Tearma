@@ -1,0 +1,11 @@
+﻿@model TearmaWeb.Models.Widgets.Tod
+@using TearmaWeb.Models.Widgets
+@{
+    Layout="_WidgetLayout";
+}
+
+<div class="todmessage">
+    <a href="~/id/@Model.todID/" target="_blank" class="date">2019-02-27</a>
+</div>
+
+@Html.Raw(Model.tod.Replace("<a", "<a target=\"_blank\""))

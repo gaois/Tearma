@@ -11,6 +11,10 @@ namespace TearmaWeb.Models.Info {
 	public class Download {
 	}
 
+	/// <summary>Represents the contents of the widgets page.</summary>
+	public class Widgets {
+	}
+
 	/// <summary>Represents the contents of one info page.</summary>
 	public class Topic {
 		public string section=""; //info|help

@@ -32,5 +32,11 @@ namespace TearmaWeb.Controllers {
 			return ret;
 		}
 
+		public IActionResult Widgets() {
+			Models.Info.Widgets model=new Models.Info.Widgets();
+			IActionResult ret=View("Widgets", model);
+			return ret;
+		}
+
 	}
 }

@@ -39,7 +39,7 @@ div.footer div.icons a.twitter {color: rgb(29, 161, 242);}
 div.footer div.icons a.instagram {color: #666666; margin-left: -0.25em;}
 div.footer div.icons a:hover {position: relative; top: -1px;}
 div.footer div.sitelinks {margin-top: 1em; box-sizing: border-box; overflow: auto;}
-div.footer div.sitelinks a {display: block; text-decoration: none; color: #666666; position: relative; padding-left: 50px; margin: 15px 15px 15px 0px; float: left; width: 335px; box-sizing: border-box;}
+div.footer div.sitelinks a {display: block; text-decoration: none; color: #666666; position: relative; padding-left: 50px; margin: 15px 45px 15px 0px; float: left; box-sizing: border-box;}
 div.footer div.sitelinks a:hover {color: #006699;}
 div.footer div.sitelinks a span.icon {font-size: 25px; position: absolute; left: 0px; top: 5px;}
 div.footer div.sitelinks a span {display: block;}
@@ -535,3 +535,9 @@ a.download {display: block;	background-image: url(download-icon.gif); background
 a.download > span {display: block;}
 a.download span.title {font-size: 1.5em; color: #336699; margin-bottom: 5px;}
 a.download:hover {background-color: #f9f9f9; color: #333333;}
+
+div.demobox {margin: 20px 0px 20px 0px; background: #eeeeee; padding: 10px; border-radius: 4px;}
+div.demobox iframe {float: left; width: 210px;}
+div.demobox pre {margin-left: 240px; white-space: normal; text-shadow: 1px 1px 0px #ffffff;}
+div.demobox > div.clear {clear: left;}
+

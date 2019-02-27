@@ -348,5 +348,29 @@ namespace TearmaWeb.Controllers {
 			ret="["+ret+"]";
 			return ret;
 		}
+
+		/// <summary>Populates the view model of the term-of-the-day widget.</summary>
+		public static void DoTod(Models.Widgets.Tod model) {
+			SqlConnection conn=new SqlConnection(GetConnectionString());
+			conn.Open();
+			SqlCommand command=new SqlCommand("dbo.pub_tod", conn);
+			command.CommandType=CommandType.StoredProcedure;
+			SqlDataReader reader=command.ExecuteReader();
+
+			//read lookups:
+			Models.Home.Lookups lookups=ReadLookups(reader);
+
+			//read entry of the day:
+			reader.NextResult();
+			if(reader.Read()) {
+				int id=(int)reader["id"];
+				string json=(string)reader["json"];
+				model.todID=id;
+				model.tod=Prettify.Entry(id, json, lookups, "ga");
+			}
+
+			reader.Close();
+			conn.Close();
+		}
 	}
 }

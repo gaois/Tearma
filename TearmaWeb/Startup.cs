@@ -47,6 +47,11 @@ namespace TearmaWeb {
 
 				//Download:
 				routes.MapRoute(name: "", template: "/download/", defaults: new {controller="Info", action="Download"});
+
+				//Widgets:
+				routes.MapRoute(name: "", template: "/widgets/", defaults: new {controller="Info", action="Widgets"});
+				routes.MapRoute(name: "", template: "/widgets/box/", defaults: new {controller="Widgets", action="Box"});
+				routes.MapRoute(name: "", template: "/widgets/tod/", defaults: new {controller="Widgets", action="Tod"});
 			});
 		}
 	}
