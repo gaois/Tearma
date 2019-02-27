@@ -1,0 +1,152 @@
+﻿@model TearmaWeb.Models.Ask.Ask
+@using TearmaWeb.Models.Ask
+@{
+    Layout="_HomeLayout";
+    ViewBag.swapper="";
+}
+
+@section Rightie {
+}
+
+
+<div class="parallel">
+    <div class="ga" lang="ga">
+        <h1>Fiosruithe Téarmaíochta</h1>
+        <p>Murar éirigh leat leagan Gaeilge den téarma Béarla a bhí uait a aimsiú in tearma.ie is féidir leagan a iarraidh ar an gCoiste Téarmaíochta, Foras na Gaeilge, ach an fhoirm seo a líonadh.</p>
+        <p>Ní mór gach bosca a bhfuil réiltín dearg leis a líonadh isteach. Cliceáil ar an gcnaipe "Seol • Send" ag bun na foirme nuair a bheidh tú réidh.</p>
+    </div>
+    <div class="en" lang="en">
+        <h1>Terminology Queries</h1>
+        <p>If you have not found an Irish version of the English term you were looking for in tearma.ie, you can fill in this form to request an Irish version from An Coiste Téarmaíochta, Foras na Gaeilge.</p>
+        <p>All fields with a red asterisk next to them must be filled in. When you are finished, click the button "Seol • Send" at the bottom of the form.</p>
+    </div>
+    <div class="clear"></div>
+</div>
+
+@if(Model.mode=="thanks") {
+    <div class="parallel thanks">
+        <div class="ga" lang="ga">
+            <p>Go raibh maith agat, tá taifead déanta de d'iarratas.</p>
+        </div>
+        <div class="en" lang="en">
+            <p>Thank you, your request has been recorded.</p>
+        </div>
+        <div class="clear"></div>
+    </div>
+}
+
+@if(Model.mode=="error") {
+    <div class="parallel error">
+        <div class="ga" lang="ga">
+            <p>Is cosúil go ndearna tú dearmad ceann de na boscaí éigeantacha (téarma Béarla, comhthéacs, sainmhíniú, ainm, agus seoladh ríomhphoist nó uimhir ghutháin) a líonadh. Ceartaigh an fhadhb, le do thoil, agus cliceáil ar an gcnaipe arís.</p>
+        </div>
+        <div class="en" lang="en">
+            <p>It appears that you have forgotten to fill some of the compusory fields (English term, context, definition, name, and e-mail address or phone number). Please correct the problem and click the button again.</p>
+        </div>
+        <div class="clear"></div>
+    </div>
+}
+
+@if(Model.mode=="empty" || Model.mode == "error") {
+    <form method="post" class="ask">
+				<p class="navod">
+					<strong>Leagan Béarla den téarma atá uait.</strong>
+					&#149; The English version of the term you are looking for.
+				</p>
+				<p class="sbx">
+					<span class="sc"><span class="scga">An téarma Béarla:</span><br /><span class="scen" lang="en">The term in English:</span></span>
+					<span class="star">*</span>
+					<span class="sf"><input class="txbx" id="termEN" name="termEN" size="30" value="@Model.termEN" /></span>
+				</p>
+				
+				<p class="navod">
+					<strong>Má tá leagan(acha) den téarma agat i dteanga(cha) eile, luaigh anseo é/iad, le do thoil, mar aon leis an teanga. </strong>
+					&#149; If you know the term in other languages, please mention them here, as well as the language(s). 
+					</p>
+				<p class="sbx">
+					<span class="sc"><span class="scga">An téarma i dteanga(cha) eile:</span><br /><span class="scen" lang="en">The term in other language(s):</span></span>
+					<span class="sf"><input class="txbx" id="termXX" name="termXX" size="30" value="@Model.termXX" /></span>
+				</p>
+			
+				<p class="navod">
+					<strong>Luaigh an comhthéacs ina n-úsáidtear an téarma nó an réimse saoil lena mbaineann sé.</strong>
+					&#149; Mention the context or domain of activity in which the term is used.
+				</p>
+				<p class="sbx">
+					<span class="sc"><span class="scga">Comhthéacs:</span><br /><span class="scen" lang="en">Context:</span></span>
+					<span class="star">*</span>
+					<span class="sf"><textarea class="txbx" id="context" name="context" size="30">@Model.context</textarea></span>
+				</p>
+			
+				<p class="navod">
+					<strong>Mínigh brí an téarma anseo, le do thoil.</strong>
+					&#149; Please explain here what the term means.
+				</p>
+				<p class="sbx">
+					<span class="sc"><span class="scga">Sainmhíniú:</span><br /><span class="scen" lang="en">Definition:</span></span>
+                    <span class="star">*</span>
+					<span class="sf"><textarea class="txbx" id="def" name="def" size="30">@Model.def</textarea></span>
+				</p>
+			
+				<p class="navod">
+					<strong>Luaigh abairt(í) ina n-úsáidtear an téarma i gcomhthéacs.</strong>
+					&#149; Mention one or more sentences where the term is used in context.
+				</p>
+				<p class="sbx">
+					<span class="sc"><span class="scga">Sampla úsáide:</span><br /><span class="scen" lang="en">Usage example:</span></span>
+					<!--<span class="star">*</span>-->
+					<span class="sf"><textarea class="txbx" id="example" name="example" size="30">@Model.example</textarea></span>
+				</p>
+			
+				<p class="navod">
+					<strong>Luaigh aon eolas breise a chuideodh leis an gCoiste Téarmaíochta.</strong>
+					&#149; Mention any additional information that could help An Coiste Téarmaíochta.
+				</p>
+				<p class="sbx">
+					<span class="sc"><span class="scga">Aon eolas eile:</span><br /><span class="scen" lang="en">Any additional information:</span></span>
+					<span class="sf"><textarea class="txbx" id="other" name="other" size="30">@Model.other</textarea></span>
+				</p>
+			
+				<p class="navod">
+					<strong>Má tá moladh Gaeilge agat don téarma, luaigh anseo é.</strong>
+					&#149; If you'd like to recommend an Irish version for the term, mention it here.
+				</p>
+				<p class="sbx">
+					<span class="sc"><span class="scga">Moladh don téarma Gaeilge:</span><br /><span class="scen" lang="en">Suggested Irish term:</span></span>
+					<span class="sf"><input class="txbx" id="termGA" name="termGA" size="30" value="@Model.termGA" /></span>
+				</p>
+			
+				<p class="navod">
+					<strong>Cuir do chuid sonraí teagmhála anseo, le do thoil. Ní mór d'ainm, agus do sheoladh ríomphoist a thabhairt ionas gur féidir freagra ar d’fhiosrú a sheoladh ar ais chugat.</strong>
+					&#149; Fill in your contact details here. You must provide your name, and your e-mail address so that we can send you a response.
+				</p>
+				<p class="sbx">
+					<span class="sc"><span class="scga">D'ainm:</span><br /><span class="scen" lang="en">Your name:</span></span>
+					<span class="star">*</span>
+					<span class="sf"><input class="txbx" id="name" name="name" size="30" value="@Model.name" /></span>
+				</p>
+				<p class="sbx">
+					<span class="sc"><span class="scga">Do sheoladh ríomhphoist:</span><br /><span class="scen" lang="en">Your e-mail address:</span></span>
+					<span class="star">*</span>
+					<span class="sf"><input class="txbx" id="email" name="email" size="30" value="@Model.email" /></span>
+				</p>
+				<p class="sbx" style="margin-top: 10px">
+					<span class="sc"><span class="scga">D'uimhir ghutháin:</span><br /><span class="scen" lang="en">Your telephone number:</span></span>
+					<span class="sf"><input class="txbx" id="phone" name="phone" size="30" value="@Model.phone" /></span>
+				</p>
+				
+				<p class="sbmt">
+					<input class="sbmt" type="submit" value="Seol &#149; Send">
+				</p>
+    </form>
+}
+
+<div class="parallel">
+    <div class="ga" lang="ga">
+        <p>Déanfaidh foireann an Choiste Téarmaíochta a ndícheall d’fhiosrú a fhreagairt go pras, agus moladh eatramhach a sheoladh chuig do sheoladh ríomhpoist. Beidh do chuid taighde féin ina chuidiú linn sa mhéid sin. Tarlóidh sé in amanna, áfach, go mbeidh orainn sainchomhairle a lorg, rud a d'fhéadfadh moill a chur ar chúrsaí. Má fhaomhann an Coiste Téarmaíochta téarma nua de thoradh d’fhiosraithe, foilseofar sa bhunachar téarmaíochta www.tearma.ie é.</p>
+    </div>
+    <div class="en" lang="en">
+        <p>The staff of An Coiste Téarmaíochta will strive to provide an interim solution as quickly as possible. Some queries may necessitate specialist advice which could delay the response time. Your own research will help us to accelerate the process. In the event that An Coiste Téarmaíochta validates a new term based on your query, it will be published to the database site www.tearma.ie.</p>
+    </div>
+    <div class="clear"></div>
+</div>

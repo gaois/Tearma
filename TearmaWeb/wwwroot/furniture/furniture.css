@@ -520,6 +520,9 @@ div.parallel h2 {margin-top: 1.5em; color: #555555; position: relative; padding:
 	div.parallel > div.ga {float: none; width: auto; padding: 0px;}
 	div.parallel > div.en {float: none; width: auto; padding: 0px;}
 }
+div.parallel.error {background-color: #ffeeee; padding: 0px 10px; border-radius: 4px; margin: 30px 0px;}
+div.parallel.thanks {background-color: #eeffee; padding: 0px 10px; border-radius: 4px; margin: 30px 0px;}
+div.parallel.thanks > div {font-weight: bold !important;}
 
 div.downloads {margin: 20px 0px 20px 0px; background: #eeeeee; padding: 10px 0px; border-radius: 4px;}
 div.downloads > div.cell {float: left; width: 50%; box-sizing: border-box; padding: 0px 10px;}
@@ -541,3 +544,20 @@ div.demobox iframe {float: left; width: 210px;}
 div.demobox pre {margin-left: 240px; white-space: normal; text-shadow: 1px 1px 0px #ffffff;}
 div.demobox > div.clear {clear: left;}
 
+form.ask {background-color: #eeeeee; border-radius: 4px; padding: 1px 20px 10px 20px; text-shadow: 1px 1px 0px #ffffff; margin: 30px 0px;}
+form.ask SELECT, form.ask INPUT, form.ask TEXTAREA {font-family: inherit; font-size: 1.15em;; padding: 5px; box-sizing: border-box; border-radius: 4px; border-width: 1px; }
+form.ask INPUT.txbx {width: 97%;}
+form.ask TEXTAREA.txbx {width: 97%; height: 4em; resize: vertical;}
+form.ask  INPUT.sbmt {border-radius: 4px; padding: 5px 10px; cursor: pointer;}
+form.ask P.sbx {clear: both; margin-top: 0px; margin-bottom: 10px;}
+form.ask P.sbmt {text-align: right; margin-bottom: 20px; margin-top: 30px;}
+form.ask SPAN.sc {float: left; color: #333333;}
+form.ask SPAN.sf {display: block; margin-left: 250px; padding-top: 5px;}
+form.ask SPAN.scga {font-weight: bold;}
+form.ask SPAN.star {float: right; font-size: 1.2em; color: #FF0000; font-weight: bold; padding-left: 0.5em;}
+form.ask P.navod {clear: both; margin-left: 253px; margin-top: 40px; margin-bottom: 5px; color: #666666;}
+@media (max-width: 700px) {
+	form.ask SPAN.sc {float: none;}
+	form.ask SPAN.sf {margin-left: 0px;}
+	form.ask P.navod {margin-left: 0px; margin-bottom: 10px;}
+}

@@ -16,6 +16,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Content Update="Views\Ask\Ask.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
     <Content Update="Views\Home\Domain.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
