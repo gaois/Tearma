@@ -19,12 +19,16 @@ namespace TearmaWeb.Controllers {
 				model.section=section;
 				model.nickname=nickname;
 				model.lang=lang;
-
 				string path=@"./wwwroot/"+section+"/"+nickname+"."+lang+".md";
 				if(System.IO.File.Exists(path)) model.body=System.IO.File.ReadAllText(path);
-
 				ret=View("Topic", model);
 			}
+			return ret;
+		}
+
+		public IActionResult Download() {
+			Models.Info.Download model=new Models.Info.Download();
+			IActionResult ret=View("Download", model);
 			return ret;
 		}
 

@@ -1,0 +1,54 @@
+﻿@model TearmaWeb.Models.Info.Download
+@using TearmaWeb.Models.Info
+@{
+    Layout="_HomeLayout";
+    ViewBag.swapper="";
+}
+
+@section Rightie {
+}
+
+<div class="parallel">
+    <div class="ga" lang="ga">
+        <h1>Liostaí le híoslódáil</h1>
+        <p>Tá inneachar iomlán an bhunachair téarmaíochta ag tearma.ie ar fáil anseo le híoslódáil i bhfoirm liosta. Is féidir le haistritheoirí a úsáideann bogearraí aistriúcháin ríomhchuidithe ar nós Trados agus Wordfast an liosta seo a iompórtáil sna bogearraí sin chun a gcuid oibre a éascú. Is féidir an liosta seo a úsáid le haghaidh cuspóirí eile chomh maith, mar shampla chun taighde teangeolaíoch a dhéanamh, a fhad is nach sárófar cóipcheart an fhoilsitheora. </p>
+    </div>
+    <div class="en" lang="en">
+        <h1>Downloadable Lists</h1>
+        <p>The entire contents of the tearma.ie terminology database is available here for download in the form of a list. Translators who use computer-aided translation (CAT) tools such as Trados and Wordfast can import this list into their software to facilitate their work. The list can be used for other purposes as well, such as for linguistic research, as long as the publisher's copyright is not violated. </p>
+    </div>
+    <div class="clear"></div>
+</div>
+
+<div class="downloads">
+    <div class="cell">
+        <a href="somefile.zip" class="download">
+            <span class="title">TBX (9.9 MB)</span>
+            <span class="ga">Easpórtáilte an 1 Deireadh Fómhair 2018</span>
+            <span class="en">Exported 1 October 2018</span>
+        </a>
+    </div>
+    <div class="cell">
+        <a href="somefile.zip" class="download">
+            <span class="title">TXT (3.1 MB)</span>
+            <span class="ga">Easpórtáilte an 1 Deireadh Fómhair 2018</span>
+            <span class="en">Exported 1 October 2018</span>
+        </a>
+    </div>
+    <div class="clear"></div>
+</div>
+
+<div class="parallel">
+    <div class="ga" lang="ga">
+        <p>Tá an liosta seo faoi chóipcheart Fhoras na Gaeilge. Tá cead á thabhairt leis seo chun é a úsáid le haghaidh cuspóirí pearsanta amháin. Ní cheadaítear an liosta a athfhoilsiú i bhfoirm ar bith. </p>
+        <p>Tá an liosta le fáil in dhá fhormáid: TBX (TermBase eXchange) agus TXT (téacs tábmharcáilte). Tá formáid TBX oiriúnach le hiompórtáil i mbogearraí aistriúcháin ríomhchuidithe. Tiomsaíonn an liosta TBX nach mór gach saghas eolais atá sa bhunachar téarmaíochta féin: téarmaí, noda gramadaí, foirmeacha infhillte, lipéid réimsí, sainmhínithe agus eile. Murab ionann agus sin, tá an liosta i bhformáid TXT simplithe go radacach - níl ann ach péirí de théarmaí Gaeilge agus Béarla. Mar sin, moltar an leagan TBX a úsáid más féidir, ach tá an leagan TXT ar fáil chomh maith dóibh siúd nach féidir leo an fhormáid TBX a úsáid. </p>
+        <p>Déantar athnuachan ar na liostaí seo go ráithiúil. Mar sin, is fiú leagan nua a íoslódáil anseo go rialta le bheith cinnte go bhfuil an leagan is deireanaí agat i gcónaí. </p>
+    </div>
+    <div class="en" lang="en">
+        <p>The list is copyright Foras na Gaeilge. Permission is hereby given to use it for personal purposes only. It is not permitted to republish the list in any form. </p>
+        <p>The list is available in two formats: TBX (TermBase eXchange) and TXT (tab-delimited text). The TBX version is suitable for importing into computer-aided translation tools. The TBX version contains almost all data elements found in the terminology database itself: terms, grammatical labels, inflected forms, domain labels, definitions and so on. The TXT version, on the other hand, is radically simplified: it only contains pairs of terms in English and Irish. Therefore, it is recommended to always use the TBX version if possible. The TXT version is only available here for those who cannot use the TBX format. </p>
+        <p>These lists are updated quarterly. It is recommended to download them regularly to make sure you always have the latest version. </p>
+    </div>
+    <div class="clear"></div>
+</div>
+

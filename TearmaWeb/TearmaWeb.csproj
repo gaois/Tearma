@@ -27,6 +27,9 @@
     <Content Update="Views\Home\QuickSearch.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
+    <Content Update="Views\Info\Download.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
     <Content Update="Views\Info\Topic.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>

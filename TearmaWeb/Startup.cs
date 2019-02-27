@@ -37,12 +37,16 @@ namespace TearmaWeb {
 				routes.MapRoute(name: "", template: "/dom/{domID:int}/{lang:regex(^(ga|en)$)}/{page:int?}/", defaults: new {controller="Home", action="Domain", page=1});
 				routes.MapRoute(name: "", template: "/dom/{domID:int}/{subdomID:int}/{lang:regex(^(ga|en)$)}/{page:int?}/", defaults: new {controller="Home", action="Domain", page=1});
 
-				//Info and Help:
+				//Info:
 				routes.MapRoute(name: "", template: "/info/{nickname}.{lang}", defaults: new {controller="Info", action="Topic", section="info"});
-				routes.MapRoute(name: "", template: "/help/{nickname}.{lang}", defaults: new {controller="Info", action="Topic", section="help"});
-				routes.MapRoute(name: "", template: "/info/{lang}/", defaults: new {controller="Info", action="Topic", section="info"});
-				routes.MapRoute(name: "", template: "/help/{lang?}/", defaults: new {controller="Info", action="Topic", section="help", lang="ga"});
 				routes.MapRoute(name: "", template: "/info/{lang?}/", defaults: new {controller="Info", action="Topic", section="info", lang="ga"});
+
+				//Help:
+				routes.MapRoute(name: "", template: "/help/{nickname}.{lang}", defaults: new {controller="Info", action="Topic", section="help"});
+				routes.MapRoute(name: "", template: "/help/{lang?}/", defaults: new {controller="Info", action="Topic", section="help", lang="ga"});
+
+				//Download:
+				routes.MapRoute(name: "", template: "/download/", defaults: new {controller="Info", action="Download"});
 			});
 		}
 	}

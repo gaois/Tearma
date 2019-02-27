@@ -7,6 +7,10 @@ using Newtonsoft.Json.Linq;
 
 namespace TearmaWeb.Models.Info {
 
+	/// <summary>Represents the contents of the download page.</summary>
+	public class Download {
+	}
+
 	/// <summary>Represents the contents of one info page.</summary>
 	public class Topic {
 		public string section=""; //info|help
