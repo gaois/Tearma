@@ -12,7 +12,7 @@ The National Terminology Database for Irish project has been financed solely by 
 
 Under Phase III (2008-11), more material was added to the database, including names of public bodies, countries, languages, plants agus animals. Usage examples were added to the database and system of hierarchy domains was developed. Work on a collection of sport terms also began as well as a new CD-ROM version of the database.
 
-![focal.ie V2](focalV1.png)
+![focal.ie V2](focalV2.png)
 
 During Phase IV (2011-14), the database was linked with the New-Corpus for Ireland and a new hierarchy domain system was implemented throughout. As well as this, research was carried out on a major collection of art terms agus research was completed on the sport dictionary. A CD-ROM version of the database was published and a version for mobile devices was also developed, m.tearma.ie.
 

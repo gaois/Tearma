@@ -12,7 +12,7 @@ Tá tionscadal an Bhunachair Náisiúnta Téarmaíochta don Ghaeilge á mhaoini�
 
 Faoi Chéim III (2008-11) cuireadh tuilleadh ábhair leis an mbunachar, ainmneacha comhlachtaí poiblí, tíortha, teangacha, plandaí agus ainmhithe ina measc. Cuireadh samplaí úsáide leis an mbunachar chomh maith agus cuireadh tús le córas ordlathas réimsí a fhorbairt. Cuireadh tús le cnuasach nua téarmaí spóirt agus le leagan CD-ROM den bhunachar.
 
-![focal.ie V2](focalV1.png)
+![focal.ie V2](focalV2.png)
 
 I rith Chéim IV (2011-14), ceanglaíodh an bunachar le Nua-Chorpas na hÉireann agus cuireadh ordlathas nua réimsí eolais i bhfeidhm tríd síos. Chomh maith leis sin, rinneadh taighde ar mhórbhailiúchán téarmaí ealaíon agus críochnaíodh an taighde ar an bhfoclóir spóirt. Foilsíodh leagan den bhunachar ar CD-ROM agus forbraíodh leagan do ghléasanna móibíleacha, m.tearma.ie.
 
