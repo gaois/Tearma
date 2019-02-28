@@ -4,7 +4,7 @@
 
 Bunaíodh www.focal.ie i 2004 mar thionscadal de chuid Fiontar (mar a bhí), Ollscoil Chathair Bhaile Átha Cliath (DCU) i gcomhar le hOllscoil na Breataine Bige, Lampeter agus le Foras na Gaeilge. ‘FIONTAR Téarmaí Unedig’ an teideal iomlán a bhí ar an tionscadal seo, a mhair go 2007. Ba é príomhsprioc ghné na hÉireann den tionscadal ná méadú ar rochtain an ghnáthphobail ar acmhainní theicneolaíocht na faisnéise, sa chás seo acmhainní ardleibhéil téarmaíochta i nGaeilge. An príomhthoradh a bhí ar an tionscadal in Éirinn ná www.focal.ie (www.tearma.ie ón 1 Márta 2015), an bunachar cuimsitheach poiblí seo de nuathéarmaíocht na Gaeilge. 
 
-![focal.ie V1](focalV1.png)
+![focal.ie V1](focalV1.jpg)
 
 Maoiníodh FIONTAR Téarmaí Unedig as an gciste *Cumarsáid Teicneolaíochta agus Iompair* (Tosaíocht 1, Beart 4) ag INTERREG IIIA Éire/An Bhreatain Bheag. Bhí an tionscadal á chómhaoiniú ag Foras na Gaeilge agus ag Fiontar (trí Chiste na dTionscnamh Straitéiseach ag an Údarás um Ard-Oideachas).
 
@@ -12,12 +12,12 @@ Tá tionscadal an Bhunachair Náisiúnta Téarmaíochta don Ghaeilge á mhaoini�
 
 Faoi Chéim III (2008-11) cuireadh tuilleadh ábhair leis an mbunachar, ainmneacha comhlachtaí poiblí, tíortha, teangacha, plandaí agus ainmhithe ina measc. Cuireadh samplaí úsáide leis an mbunachar chomh maith agus cuireadh tús le córas ordlathas réimsí a fhorbairt. Cuireadh tús le cnuasach nua téarmaí spóirt agus le leagan CD-ROM den bhunachar.
 
-![focal.ie V2](focalV2.png)
+![focal.ie V2](focalV2.jpg)
 
 I rith Chéim IV (2011-14), ceanglaíodh an bunachar le Nua-Chorpas na hÉireann agus cuireadh ordlathas nua réimsí eolais i bhfeidhm tríd síos. Chomh maith leis sin, rinneadh taighde ar mhórbhailiúchán téarmaí ealaíon agus críochnaíodh an taighde ar an bhfoclóir spóirt. Foilsíodh leagan den bhunachar ar CD-ROM agus forbraíodh leagan do ghléasanna móibíleacha, m.tearma.ie.
 
 I rith Chéim V (2014-17), forbraíodh cnuasach nua téarmaí teicneolaíochta faisnéise. Athraíodh seoladh idirlín an Bhunachair Náisiúnta Téarmaíochta don Ghaeilge ó *focal.ie* go *tearma.ie* ar an 1 Márta 2015.
 
-![téarma.ie V3](tearmaV3.png)
+![téarma.ie V3](tearmaV3.jpg)
 
 Táthar anois i mbun chéim VI den tionscadal agus mar chuid den obair, seoladh **suíomh nua agus córas úrnua eagarthóireachta** ar an 13 Márta 2019. Tá an córas seo bunaithe ar **Terminologue**, ardán foinse oscailte a d’fhorbair Fiontar & Scoil na Gaeilge don Bhunachar Náisiúnta Téarmaíochta. Is féidir tuilleadh a fháil amach faoi Terminologue [anseo](http://www.terminologue.org/). 
