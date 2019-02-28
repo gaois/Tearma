@@ -1,12 +1,9 @@
 # Tionscadal téarma.ie
 
-Seo é an bunachar náisiúnta téarmaíochta don Ghaeilge a d’fhorbair [Fiontar & Scoil na Gaeilge](https://www.gaois.ie/) i gcomhpháirt leis an gCoiste Téarmaíochta, Foras na Gaeilge.
+Seo é an bunachar náisiúnta téarmaíochta don Ghaeilge, á bhainistiú ag grúpa taighde [Gaois](https://www.gaois.ie/), [Fiontar & Scoil na Gaeilge](https://www.dcu.ie/fiontar_scoilnagaeilge/gaeilge/index.shtml) (DCU) i gcomhar leis an g[Coiste Téarmaíochta](https://www.forasnagaeilge.ie/fuinn/focloireacht/), [Foras na Gaeilge](https://www.gaeilge.ie/).
 
-Tá os cionn 373,000 téarma ar fáil sa bhunachar agus iad inchuardaithe faoi na leaganacha Gaeilge agus Béarla. Bhain os cionn 5.1 milliún cuairteoir uathúla leas as an suíomh idir 2006 agus tús 2018. Thug na daoine sin 17.9 milliún cuairt ar an suíomh agus rinne siad breis is 87.6 milliún cuardach lena linn sin. De réir suirbhéanna úsáideoirí bliantúla a rinne Fiontar & Scoil na Gaeilge ó 2010 i leith, is aistritheoirí agus ateangairí mar aon le mic léinn ollscoile is mó a bhaineann úsáid as an suíomh.
+Tá c.185,000 iontráil dhátheangach ar fáil sa bhunachar. Is féidir dul i ngleic leis na téarmaí ar bhealaí éagsúla, agus is féidir chomh maith [an t-ábhar a íoslódáil](http://www-tearma-ie.gaois.ie/download/) i bhformáid TBX no TXT. Tá nasc idir an bunachar agus [Nua-Chorpas na hÉireann](/info/corpus.ga). Tá eolas faoi conas an suíomh a úsáid ar fáil [anseo](/help/intro.ga). Má tá téarma nach bhfuil ar fáil anseo á lorg agat, is féidir leagan a iarraidh ar an gCoiste Téarmaíochta, Foras na Gaeilge, ach [an fhoirm fiosraithe](/ask/) a líonadh.
 
-## Céim reatha: Céim VI 2017-2020
+Táthar anois i mbun chéim VI den tionscadal seo (atá ar bun ó 2005 i leith) agus mar chuid den obair, seoladh **suíomh nua agus córas úrnua eagarthóireachta** ar an 13 Márta 2019. Tá an córas seo bunaithe ar **Terminologue**, ardán foinse oscailte a d’fhorbair Fiontar & Scoil na Gaeilge don Bhunachar Náisiúnta Téarmaíochta agus mar áis do thionscadail eile. Is féidir tuilleadh a fháil amach faoi Terminologue [anseo](http://www.terminologue.org/).
 
-Cuireadh tús le céim VI den tionscadal ar an 1 Meitheamh 2017 agus, i measc nithe eile, tá sé i gceist córais nua eagarthóireachta agus suíomh nua a fhorbairt.
-
-![Daoine](image.jpg)
-
+Is féidir teacht ar fhoilseacháin de chuid Fiontar & Scoil na Gaeilge a bhaineann leis an téarmeolaíocht [anseo](https://www.gaois.ie/info/ga/foilseachain/). Más maith leat coinneáil suas leis an téarmaíocht, an téarmeolaíocht agus forbairtí nua, is féidir clárú do [nuachtlitir](https://www.gaois.ie/email/ga/) Gaois, [blag](https://www.gaois.ie/blg/ga/) Gaois a léamh, nó coinneáil suas le Téarma an Lae ar [Twitter](https://twitter.com/tearma_ie), [Instagram](https://www.instagram.com/tearma_ie/) agus [Facebook](https://www.facebook.com/tearma.ie/). Tá scéal an tionscadail [anseo](/info/history.ga).
