@@ -85,7 +85,7 @@ div.logobox {box-sizing: border-box; padding: 0px 20px;}
 div.logobox a.logo {display: block; width: 300px; margin: 0px -10px}
 div.logobox a.logo img {width: 100%;}
 div.logobox a.logo:hover {position: relative; top: -1px;}
-div.logobox div.title {margin: 10px 0px 0px 0px; color: #666666; line-height: 1.5em;}
+div.logobox div.title {margin: 10px 0px 0px 0px; color: #666666; line-height: 1.5em; white-space: nowrap;}
 div.logobox div.icons {margin: 20px 0px 0px 0px;}
 div.logobox div.icons a {font-size: 30px; text-decoration: none; margin-right: 0.5em; }
 div.logobox div.icons a.facebook {color: rgb(66, 103, 178);}

@@ -139,7 +139,7 @@ namespace TearmaWeb.Controllers {
 						string symbol=label.abbr.ToUpper();
 						if(i==stop-1) chars[i].labelsAfter=chars[i].labelsAfter+"<span class='label "+annot.label.type+" hintable' onmouseover='hon(this, "+index+")' onmouseout='hoff(this, "+index+")' title='"+label.name["ga"]+"/"+label.name["en"]+"'>"+symbol+"</span>";
 					}
-					else if(annot.label.type == "symbol") {
+					else if(annot.label.type == "symbol" && annot.label.value!="proper") {
 				        chars[i].markupBefore="<span class='char h"+index+"'>"+chars[i].markupBefore;
 						chars[i].markupAfter=chars[i].markupAfter+"</span>";
 						string symbol="";

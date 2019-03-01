@@ -27,8 +27,11 @@
 	            <span class="en" lang="en">Back to screen version</span>
 	        </a>
             <div class="logobox">
-                <a href="~/" class="logo"><img src="~/furniture/tearma.png" alt="téarma.ie"/></a>
-                <div class="title"><span class="ga" lang="ga">Bunachar Náisiúnta Téarmaíochta don Ghaeilge</span> &middot; <span class="en" lang="en">National Terminology Database for Irish</span></div>
+                <a href="~/" class="logo"><img src="~/furniture/tearma.png" alt="téarma.ie" title="Bunachar Náisiúnta Téarmaíochta don Ghaeilge · National Terminology Database for Irish"/></a>
+                <div class="title">
+                    <div class="ga" lang="ga">Bunachar Náisiúnta Téarmaíochta don Ghaeilge</div>
+                    <div class="en" lang="en">National Terminology Database for Irish</div>
+                </div>
                 <div class="icons">
                     <a target="_blank" href="https://www.facebook.com/tearma.ie/" class="facebook fab fa-facebook"></a>
                     <a target="_blank" href="https://twitter.com/tearma_ie" class="twitter fab fa-twitter"></a>
@@ -41,17 +44,17 @@
         <div class="leftie">
             <div class="swapper">
                 <a href="~/" class="@(ViewBag.swapper=="q" ? "current" : "")">
-                    <span class="icon fas fa-search"></span>
+                    <span class="icon fas fa-search" title="Cuardach tapa · Quick search"></span>
                     <span class="ga" lang="ga">Cuardach tapa</span>
                     <span class="en" lang="en">Quick search</span>
                 </a>
                 <a  href="~/plus/" class="@(ViewBag.swapper=="plus" ? "current" : "")">
-                    <span class="icon fas fa-search-plus"></span>
+                    <span class="icon fas fa-search-plus" title="Cuardach casta · Advanced search"></span>
                     <span class="ga" lang="ga">Cuardach casta</span>
                     <span class="en" lang="en">Advanced search</span>
                 </a>
                 <a  href="~/dom/ga/" class="@(ViewBag.swapper=="dom" ? "current" : "")">
-                    <span class="icon fas fa-sitemap"></span>
+                    <span class="icon fas fa-sitemap" title="Brabhsáil · Browse"></span>
                     <span class="ga" lang="ga">Brabhsáil</span>
                     <span class="en" lang="en">Browse</span>
                 </a>
@@ -69,8 +72,8 @@
                 <a target="_blank" href="https://www.dcu.ie/" class="dcu"><img src="~/furniture/dcu.png" alt="DCU"/></a>
             </div>
             <div class="statement">
-                <div><span class="label">Sonraí téarmaíochta © 2006–2018</span> <a target="_blank" href="https://www.forasnagaeilge.ie/">Foras na Gaeilge</a></div>
-                <div><span class="label">Réiteach teicniúil © 2006–2018</span> <a target="_blank" href="https://www.gaois.ie/">Fiontar &amp; Scoil na Gaeilge, DCU</a></div>
+                <div><span class="label">Sonraí téarmaíochta © 2006–@(DateTime.Now.Year)</span> <a target="_blank" href="https://www.forasnagaeilge.ie/">Foras na Gaeilge</a></div>
+                <div><span class="label">Réiteach teicniúil © 2006–@(DateTime.Now.Year)</span> <a target="_blank" href="https://www.gaois.ie/">Fiontar &amp; Scoil na Gaeilge, DCU</a></div>
             </div>
             <div class="icons">
                 <a target="_blank" href="https://www.facebook.com/tearma.ie/" class="facebook fab fa-facebook"></a>

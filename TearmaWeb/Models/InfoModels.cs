@@ -41,10 +41,6 @@ namespace TearmaWeb.Models.Info {
 			toc.Add(new TocItem("history", "Stair téarma.ie", "History of téarma.ie"));
 			toc.Add(new TocItem("content", "Eolas faoin ábhar", "About the content"));
 			toc.Add(new TocItem("committee", "An Coiste Téarmaíochta", "Terminology Committee"));
-			toc.Add(new TocItem("admh", "Admhálacha", "Acknowledgements"));
-			toc.Add(new TocItem("pub", "Foilseacháin", "Publications"));
-			toc.Add(new TocItem("archive", "Ócáidí agus gradaim", "Events and awards"));
-			toc.Add(new TocItem("team", "Foireann", "Team"));
 			toc.Add(new TocItem("data", "Eolas cosanta sonraí", "Data protection information"));
 			return toc;
 		}
