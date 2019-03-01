@@ -474,6 +474,10 @@ div.prettyExample > .clear {clear: left;}
 div.prettyExample div.text {color: #25305F;}
 div.prettyExample > .left div.text {font-weight: bold;}
 
+div.prettyXrefs {box-sizing: border-box; margin: 0px 0px 5px 0px; clear: left; line-height: 1.65em; padding: 0px 0px 0px 5px;}
+div.prettyXrefs span.title {color: #666666; font-size: 0.9em;}
+div.prettyXrefs span.xref {margin-right: 0.5em;}
+
 a.prettyEntryLink {text-decoration: none; color: inherit;}
 a.prettyEntryLink span.bullet {color: #cccccc;}
 a.prettyEntryLink:hover span.bullet {color: #999999;}

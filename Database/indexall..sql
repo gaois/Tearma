@@ -6,6 +6,14 @@ update entries set
 , dateStamp=JSON_VALUE(json, '$.dateStamp')
 , tod=JSON_VALUE(json, '$.tod')
 
+truncate table entry_xref
+insert into entry_xref(source_entry_id, target_entry_id)
+select e.id as source_id, target_id
+from entries as e
+cross apply openjson(e.json, '$.xrefs') with(
+  target_id int '$'
+  ) as pj
+
 truncate table entry_domain
 insert into entry_domain(entry_id, superdomain, subdomain)
 select e.id, pj.superdomain, pj.subdomain

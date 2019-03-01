@@ -85,7 +85,7 @@
     </div>
     <div class="recentlyChangedContainer">
         @foreach(string s in Model.recent){
-            <div class="recentlyChanged">@Html.Raw(s)</div>
+            <div class="recentlyChanged">@Html.Raw(s.Replace("&nbsp;", " "))</div>
         }
     </div>
 }

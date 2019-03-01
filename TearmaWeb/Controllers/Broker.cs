@@ -45,6 +45,18 @@ namespace TearmaWeb.Controllers {
 			return lookups;
 		}
 
+		private static Dictionary<int, string> ReadXrefTargets(SqlDataReader reader) {
+			Dictionary<int, string> xrefTargets=new Dictionary<int, string>();
+			while(reader.Read()) {
+				int id=(int)reader["id"];
+				if(!xrefTargets.ContainsKey(id)) {
+					string json=(string)reader["json"];
+					xrefTargets.Add(id, json);
+				}
+			}
+			return xrefTargets;
+		}
+
 		/// <summary>Takes the view model of the quick search page (with 'word' and 'lang' filled in) and populates all other properties from the database.</summary>
 		public static void DoQuickSearch(Models.Home.QuickSearch model) {
 			SqlConnection conn=new SqlConnection(GetConnectionString());
@@ -79,12 +91,16 @@ namespace TearmaWeb.Controllers {
 				if(model.sortlang!="ga" && model.sortlang!="en") model.sortlang="ga";
 			}
 
+			//read xref targets:
+			reader.NextResult();
+			Dictionary<int, string> xrefTargets=ReadXrefTargets(reader);
+
 			//read exact matches:
 			reader.NextResult();
 			while(reader.Read()) {
 				int id=(int)reader["id"];
 				string json=(string)reader["json"];
-				model.exacts.Add(Prettify.Entry(id, json, lookups, model.sortlang));
+				model.exacts.Add(Prettify.Entry(id, json, lookups, model.sortlang, xrefTargets));
 			}
 
 			//read related matches:
@@ -155,12 +171,16 @@ namespace TearmaWeb.Controllers {
 			model.sortlang=model.lang;
 			if(model.sortlang!="ga" && model.sortlang!="en") model.sortlang="ga";
 
+			//read xref targets:
+			reader.NextResult();
+			Dictionary<int, string> xrefTargets=ReadXrefTargets(reader);
+
 			//read matches:
 			reader.NextResult();
 			while(reader.Read()) {
 				int id=(int)reader["id"];
 				string json=(string)reader["json"];
-				model.matches.Add(Prettify.Entry(id, json, lookups, model.sortlang));
+				model.matches.Add(Prettify.Entry(id, json, lookups, model.sortlang, xrefTargets));
 			}
 
 			//read pager:
@@ -245,12 +265,16 @@ namespace TearmaWeb.Controllers {
 			//read lookups:
 			Models.Home.Lookups lookups=ReadLookups(reader);
 
+			//read xref targets:
+			reader.NextResult();
+			Dictionary<int, string> xrefTargets=ReadXrefTargets(reader);
+
 			//read the entry:
 			reader.NextResult();
 			if(reader.Read()) {
 				int id=(int)reader["id"];
 				string json=(string)reader["json"];
-				model.entry=Prettify.Entry(id, json, lookups, "ga");
+				model.entry=Prettify.Entry(id, json, lookups, "ga", xrefTargets);
 			}
 
 			reader.Close();
@@ -281,12 +305,16 @@ namespace TearmaWeb.Controllers {
 				model.subdomains=FlattenSubdomains(1, jSubdoms, null, model.subdomID);
 			}
 
+			//read xref targets:
+			reader.NextResult();
+			Dictionary<int, string> xrefTargets=ReadXrefTargets(reader);
+
 			//read matches:
 			reader.NextResult();
 			while(reader.Read()) {
 				int id=(int)reader["id"];
 				string json=(string)reader["json"];
-				model.matches.Add(Prettify.Entry(id, json, lookups, model.lang));
+				model.matches.Add(Prettify.Entry(id, json, lookups, model.lang, xrefTargets));
 			}
 
 			//read pager:

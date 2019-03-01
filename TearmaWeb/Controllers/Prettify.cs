@@ -16,7 +16,7 @@ namespace TearmaWeb.Controllers {
 			string rightLang="en"; if(primLang=="en") rightLang="ga";
 
 			string ret="<a class='prettyEntryLink' href='/id/"+id+"/'>";
-			ret+="<span class='bullet'>#</span> ";
+			ret+="<span class='bullet'>#</span>&nbsp;";
 
 			string html="";
 			foreach(Models.Data.Desig desig in entry.desigs) if(desig.term.lang==leftLang && desig.nonessential==0) {
@@ -35,6 +35,10 @@ namespace TearmaWeb.Controllers {
 		}
 
 		public static string Entry(int id, string json, Models.Home.Lookups lookups, string primLang) {
+			return Entry(id, json, lookups, primLang, new Dictionary<int, string>());
+		}
+
+		public static string Entry(int id, string json, Models.Home.Lookups lookups, string primLang, Dictionary<int, string> xrefTargets) {
 			Models.Data.Entry entry=JsonConvert.DeserializeObject<Models.Data.Entry>(json);
 			Prettify.Lookups=lookups;
 
@@ -77,6 +81,23 @@ namespace TearmaWeb.Controllers {
 
 			//examples:
 			foreach(Models.Data.Example obj in entry.examples) ret+=Prettify.Example(obj, leftLang, rightLang);
+
+			//xrefs:
+			if(entry.xrefs!=null && entry.xrefs.Count > 0) {
+				string subret="";
+				int count=0;
+				subret+="<div class='prettyXrefs'>";
+				subret+="<div class='title'><span class='title'><span class='ga' lang='ga'>FÉACH FREISIN</span> &middot; <span class='en' lang='en'>SEE ALSO</span></span></div>";
+				foreach(int xrefID in entry.xrefs) {
+					if(xrefTargets.ContainsKey(xrefID)) {
+						string html=EntryLink(xrefID, xrefTargets[xrefID], primLang);
+						subret+=" <span class='xref'>"+html+"</span>";
+						count++;
+					}
+				}
+				subret+="</div>";
+				if(count>0) ret+=subret;
+			}
 
 			ret +="<div class='clear'></div>";
 			ret+="</div>"; //.prettyEntry

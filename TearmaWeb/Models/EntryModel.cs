@@ -11,6 +11,7 @@ namespace TearmaWeb.Models.Data {
 		public Dictionary<string, string> intros;
 		public List<Definition> definitions;
 		public List<Example> examples;
+		public List<int> xrefs;
 	}
 
 	public class Example {
