@@ -1,5 +1,7 @@
 # The History of focal.ie/téarma.ie
 
+![Seoladh focal.ie](seoladh.jpg)
+
 ## History of téarma.ie
 
 www.focal.ie was founded in 2004 as a project within Fiontar (as it was called at the time), Dublin City University (DCU), in partnership with the University of Wales, Lampeter agus Foras na Gaeilge. ‘FIONTAR Téarmaí Unedig’ was the full title given to the project that lasted until 2007. The main objective of the project from Ireland’s point of view was to increase the general public’s access to information technology resources with a particular focus on high-level Irish language terminology resources. The main outcome of this project in Ireland was www.focal.ie (www.tearma.ie from March 1st 2015 onward), which was a comprehensive public database of new Irish language terminology.
@@ -21,3 +23,5 @@ During Phase V (2014-17), a new collection of information technology terms was d
 ![téarma.ie V3](tearmaV3.jpg)
 
 Phase VI is now underway and as part of this work, **a new site along with a brand new editing system** were launched on March 13 2019. This system is based on **Terminologue** which is an open-source platform developed by Fiontar & Scoil na Gaeilge for the National Terminology Database for Irish. You can find out more about Terminologue [here](http://www.terminologue.org/).
+
+![téarma.ie V4](tearmaV4.jpg)
