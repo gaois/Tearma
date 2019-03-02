@@ -106,14 +106,14 @@ a.kickboxToggler {display: none; margin-top: 30px; text-decoration: none; color:
 a.kickboxToggler.mergeUp {margin-top: 20px;}
 a.kickboxToggler.mergeWayUp {margin-top: 0px;}
 a.kickboxToggler:hover {color: #006699;}
-a.kickboxToggler span.icon {font-size: 25px; position: absolute; left: 10px; top: 0px; background-color: #d5d997; box-sizing: border-box; padding: 10px 15px; border-radius: 4px; text-shadow: 1px 1px 0px #eeeeee;}
+a.kickboxToggler span.icon {font-size: 25px; position: absolute; left: 10px; top: 0px; background-color: #eaedc8; box-sizing: border-box; padding: 10px 15px; border-radius: 4px; text-shadow: 1px 1px 0px #eeeeee;}
 a.kickboxToggler span {display: block;}
 @media (max-width: 1200px){
   a.kickboxToggler {display: inline-block;}
 }
 body.printable a.kickboxToggler {display: none;}
 
-div.kickbox {margin-top: 30px; background-color: #d5d997; box-sizing: border-box; padding: 10px 20px; border-radius: 4px; text-shadow: 1px 1px 0px #eeeeee;}
+div.kickbox {margin-top: 30px; background-color: #eaedc8; box-sizing: border-box; padding: 10px 20px; border-radius: 4px; text-shadow: 1px 1px 0px #eeeeee;}
 div.kickbox div.sep {border-top: 2px solid #ffffff; margin: 0px -20px; height: 0px;}
 div.kickbox a.sitelink {display: block; text-decoration: none; color: #666666; position: relative; padding-left: 55px; margin: 20px 0px;}
 div.kickbox a.sitelink:hover {color: #006699;}
@@ -121,7 +121,7 @@ div.kickbox a.sitelink span.icon {font-size: 25px; position: absolute; left: 5px
 div.kickbox a.sitelink span {display: block;}
 div.kickbox a.langlink {display: block; text-decoration: none; color: #666666; position: relative; padding: 5px 0px 5px 55px; margin: 5px 0px 10px 0px;}
 div.kickbox a.langlink:hover {color: #006699;}
-div.kickbox a.langlink span.icon {position: absolute; left: 0px; top: 10px; background-color: #666666; color: #d5d997; border-radius: 4px; padding: 3px 0px; width: 40px; box-sizing: border-box; text-align: center; font-size: 0.9em; text-shadow: 0px 0px 0px transparent; font-weight: bold; box-shadow: 1px 1px 0px #eeeeee;}
+div.kickbox a.langlink span.icon {position: absolute; left: 0px; top: 10px; background-color: #666666; color: #eaedc8; border-radius: 4px; padding: 3px 0px; width: 40px; box-sizing: border-box; text-align: center; font-size: 0.9em; text-shadow: 0px 0px 0px transparent; font-weight: bold; box-shadow: 1px 1px 0px #eeeeee;}
 div.kickbox a.langlink span {display: block;}
 div.kickbox a.langlink.selected {background-color: #ffffff; margin: 0px -10px 10px -10px; padding: 10px 10px 10px 65px; border-radius: 4px}
 div.kickbox a.langlink.selected span.icon {left: 10px; top: 15px;}
@@ -131,7 +131,7 @@ div.kickbox a.infolink:hover {color: #006699;}
 div.kickbox a.infolink.selected {background-color: #ffffff; margin: 0px -10px 10px -10px; padding: 10px 10px 10px 10px; border-radius: 4px}
 div.kickbox a.infolanglink {display: block; text-decoration: none; color: #666666; position: relative; padding: 5px 0px 5px 55px; margin: 10px 0px 10px 0px;}
 div.kickbox a.infolanglink:hover {color: #006699;}
-div.kickbox a.infolanglink span.icon {position: absolute; left: 0px; top: 10px; background-color: #666666; color: #d5d997; border-radius: 4px; padding: 3px 0px; width: 40px; box-sizing: border-box; text-align: center; font-size: 0.9em; text-shadow: 0px 0px 0px transparent; font-weight: bold; box-shadow: 1px 1px 0px #eeeeee;}
+div.kickbox a.infolanglink span.icon {position: absolute; left: 0px; top: 10px; background-color: #666666; color: #eaedc8; border-radius: 4px; padding: 3px 0px; width: 40px; box-sizing: border-box; text-align: center; font-size: 0.9em; text-shadow: 0px 0px 0px transparent; font-weight: bold; box-shadow: 1px 1px 0px #eeeeee;}
 div.kickbox a.infolanglink span.text {display: block; padding-top: 7px;}
 
 @media (max-width: 1200px){
