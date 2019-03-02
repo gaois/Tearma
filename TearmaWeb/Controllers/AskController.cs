@@ -43,12 +43,23 @@ namespace TearmaWeb.Controllers {
 				if(name!="") html+="AINM:<br/>"+name+"<br/><br/>";
 				if(email!="") html+="SEOLADH RÍOMHPHOIST:<br/>"+email+"<br/><br/>";
 				if(phone!="") html+="UIMHIR GHUTHÁIN:<br/>"+phone+"<br/><br/>";
-                //Tools.SendEmail("tearmai@forasnagaeilge.ie", subject, html);
+                //SendEmail("tearmai@forasnagaeilge.ie", subject, html);
+				SendEmail("valselob@gmail.com", subject, html);
 			} else {
 				model.mode="error";
 			}
 			IActionResult ret=View("Ask", model);
 			return ret;
+		}
+
+		public static void SendEmail(string to, string subject, string body)
+		{
+			System.Net.Mail.MailMessage msg=new System.Net.Mail.MailMessage("noreply@tearma.ie", to, subject, body);
+			msg.IsBodyHtml=true;
+			//msg.Bcc="eolas@tearma.ie";
+			msg.BodyEncoding=System.Text.Encoding.UTF8;
+			System.Net.Mail.SmtpClient client=new System.Net.Mail.SmtpClient("localhost");
+			client.Send(msg);
 		}
 
 	}

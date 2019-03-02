@@ -5,14 +5,20 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.App" />
-    <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
-    <PackageReference Include="Westwind.AspNetCore.Markdown" Version="3.2.2" />
+    <Compile Remove="wwwroot\download\**" />
+    <Compile Remove="wwwroot\info\**" />
+    <Content Remove="wwwroot\download\**" />
+    <Content Remove="wwwroot\info\**" />
+    <EmbeddedResource Remove="wwwroot\download\**" />
+    <EmbeddedResource Remove="wwwroot\info\**" />
+    <None Remove="wwwroot\download\**" />
+    <None Remove="wwwroot\info\**" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="wwwroot\info\" />
-    <Folder Include="wwwroot\download\" />
+    <PackageReference Include="Microsoft.AspNetCore.App" />
+    <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
+    <PackageReference Include="Westwind.AspNetCore.Markdown" Version="3.2.2" />
   </ItemGroup>
 
   <ItemGroup>
