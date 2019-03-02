@@ -38,23 +38,23 @@ namespace TearmaWeb {
 				routes.MapRoute(name: "", template: "/dom/{domID:int}/{subdomID:int}/{lang:regex(^(ga|en)$)}/{page:int?}/", defaults: new {controller="Home", action="Domain", page=1});
 
 				//Info:
-				routes.MapRoute(name: "", template: "/info/{nickname}.{lang}", defaults: new {controller="Info", action="Topic", section="info"});
-				routes.MapRoute(name: "", template: "/info/{lang?}/", defaults: new {controller="Info", action="Topic", section="info", lang="ga"});
+				routes.MapRoute(name: "", template: "/eolas/{nickname}.{lang}", defaults: new {controller="Info", action="Topic", section="eolas"});
+				routes.MapRoute(name: "", template: "/eolas/{lang?}/", defaults: new {controller="Info", action="Topic", section="eolas", lang="ga"});
 
-				//Help:
-				routes.MapRoute(name: "", template: "/help/{nickname}.{lang}", defaults: new {controller="Info", action="Topic", section="help"});
-				routes.MapRoute(name: "", template: "/help/{lang?}/", defaults: new {controller="Info", action="Topic", section="help", lang="ga"});
+				//cabhair:
+				routes.MapRoute(name: "", template: "/cabhair/{nickname}.{lang}", defaults: new {controller="Info", action="Topic", section="cabhair"});
+				routes.MapRoute(name: "", template: "/cabhair/{lang?}/", defaults: new {controller="Info", action="Topic", section="cabhair", lang="ga"});
 
 				//Download:
-				routes.MapRoute(name: "", template: "/download/", defaults: new {controller="Info", action="Download"});
+				routes.MapRoute(name: "", template: "/ioslodail/", defaults: new {controller="Info", action="Download"});
 
 				//Widgets:
-				routes.MapRoute(name: "", template: "/widgets/", defaults: new {controller="Info", action="Widgets"});
-				routes.MapRoute(name: "", template: "/widgets/box/", defaults: new {controller="Widgets", action="Box"});
-				routes.MapRoute(name: "", template: "/widgets/tod/", defaults: new {controller="Widgets", action="Tod"});
+				routes.MapRoute(name: "", template: "/breiseain/", defaults: new {controller="Info", action="Widgets"});
+				routes.MapRoute(name: "", template: "/breiseain/bosca/", defaults: new {controller="Widgets", action="Box"});
+				routes.MapRoute(name: "", template: "/breiseain/tearma-an-lae/", defaults: new {controller="Widgets", action="Tod"});
 
 				//Ask:
-				routes.MapRoute(name: "", template: "/ask/", defaults: new {controller="Ask", action="Ask"});
+				routes.MapRoute(name: "", template: "/ceist/", defaults: new {controller="Ask", action="Ask"});
 			});
 		}
 	}

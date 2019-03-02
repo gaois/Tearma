@@ -11,8 +11,8 @@ namespace TearmaWeb.Controllers {
 		public IActionResult Topic(string section, string nickname, string lang) {
 			IActionResult ret;
 			Models.Info.Topic model=new Models.Info.Topic();
-			if(section=="info") model.toc=Models.Info.Toc.InfoToc();
-			if(section=="help") model.toc=Models.Info.Toc.HelpToc();
+			if(section=="eolas") model.toc=Models.Info.Toc.InfoToc();
+			if(section=="cabhair") model.toc=Models.Info.Toc.HelpToc();
 			if(nickname==null){
 				ret=new RedirectResult("/"+section+"/"+model.toc[0].nickname+"."+lang);
 			} else {
