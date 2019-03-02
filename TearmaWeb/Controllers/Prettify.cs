@@ -46,8 +46,8 @@ namespace TearmaWeb.Controllers {
 			string rightLang="en"; if(primLang=="en") rightLang="ga";
 
 			string ret="<div class='prettyEntry'>";
-			ret+="<a class='showDetails icon fas fa-plus-square' href='javascript:void(null)' onclick='showDetails(this)'></a>";
-			ret+="<a class='hideDetails icon fas fa-minus-square' href='javascript:void(null)' onclick='hideDetails(this)'></a>";
+			ret+="<a class='showDetails icon fas fa-plus-square' style='display: none' href='javascript:void(null)' onclick='showDetails(this)' title='Taispeáin breis mionsonraí &middot; Show more details'></a>";
+			ret+="<a class='hideDetails icon fas fa-minus-square' style='display: none' href='javascript:void(null)' onclick='hideDetails(this)' title='Folaigh mionsonraí breise &middot; Hide details'></a>";
 
 			//permalink:
 			ret +="<a class='permalink' href='/id/"+id+"/'>#</a>";
