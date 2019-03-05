@@ -1,19 +1,34 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Rewrite;
-using System.Text.RegularExpressions;
+using Gaois.QueryLogger;
 
-namespace TearmaWeb {
-	public class Startup {
-		public void ConfigureServices(IServiceCollection services) {
+namespace TearmaWeb
+{
+    public class Startup
+    {
+        private readonly IConfiguration _configuration;
+        private readonly IHostingEnvironment _environment;
+
+        public Startup(IConfiguration configuration, IHostingEnvironment environment) {
+            _configuration = configuration;
+            _environment = environment;
+        }
+
+        public void ConfigureServices(IServiceCollection services) {
 			services.AddMvc();
-		}
+
+            services.AddQueryLogger(settings =>
+            {
+                settings.ApplicationName = "Téarma";
+                settings.IsEnabled = _environment.IsProduction();
+                settings.Store.ConnectionString = _configuration.GetConnectionString("query_logger");
+            });
+        }
 
 		public class RedirectToWwwRule : IRule {
 			public virtual void ApplyRule(RewriteContext context) {
