@@ -26,7 +26,7 @@ namespace TearmaWeb
             {
                 settings.ApplicationName = "Téarma";
                 settings.IsEnabled = _environment.IsProduction();
-                settings.Store.ConnectionString = _configuration.GetConnectionString("query_logger");
+                settings.Store.ConnectionString = _configuration.GetConnectionString("Users");
             });
         }
 
@@ -76,11 +76,12 @@ namespace TearmaWeb
 			if(env.IsDevelopment()) {
 				app.UseDeveloperExceptionPage();
 				app.UseStatusCodePages();
-			}
+            }
+            app.UseDeveloperExceptionPage();
 
-			RewriteOptions options=new RewriteOptions();
+            RewriteOptions options=new RewriteOptions();
 			options.Rules.Add(new RedirectToWwwRule());
-			app.UseRewriter(options);
+			//app.UseRewriter(options);
 
 			app.UseStaticFiles();
 
