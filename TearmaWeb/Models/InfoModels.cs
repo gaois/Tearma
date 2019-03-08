@@ -46,14 +46,14 @@ namespace TearmaWeb.Models.Info {
 		}
 		public static List<TocItem> HelpToc() {
 			List<TocItem> toc=new List<TocItem>();
-			toc.Add(new TocItem("conas-usaid", "Conas an suíomh a úsáid", "How to use the website"));
-			toc.Add(new TocItem("cad-is-tearma", "Cad is téarma ann?", "What is a term?"));
-			toc.Add(new TocItem("cuardach-tapa", "Conas cuardach tapa a úsáid", "How to use quick search"));
-			toc.Add(new TocItem("cuardach-casta", "Conas an cuardach casta a úsáid", "How to use advanced search"));
-			toc.Add(new TocItem("saoroga", "Saoróga sa chuardach casta", "Wildcards in advanced search"));
-			toc.Add(new TocItem("reimsi", "Conas brabhsáil de réir réimse", "How to browse by domain"));
-			toc.Add(new TocItem("torthai-a-leamh", "Conas torthaí an chuardaigh a léamh", "How to read search results"));
-			return toc;
+            toc.Add(new TocItem("conas-usaid", "Conas an suíomh a úsáid", "How to use the site"));
+            toc.Add(new TocItem("cad-is-tearma", "Cad is téarma ann?", "What is a term?"));
+            toc.Add(new TocItem("cuardach-tapa", "Cuardach tapa", "Quick search"));
+            toc.Add(new TocItem("cuardach-casta", "Cuardach casta", "Advanced search"));
+            toc.Add(new TocItem("brabhsail", "Brabhsáil", "Browse"));
+            toc.Add(new TocItem("torthai-a-thuiscint", "Conas na torthaí cuardaigh a thuiscint", "Understanding search results"));
+            toc.Add(new TocItem("gan-toradh", "Níor aimsigh mé a raibh uaim", "I didn’t find what I was looking for"));
+            return toc;
 		}
 	}
 
