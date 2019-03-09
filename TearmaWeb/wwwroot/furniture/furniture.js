@@ -1,7 +1,15 @@
+function myEncodeURIComponent(word) {
+    var ret = word;
+    ret = ret.replace(/\\/g, "$backslash;");
+    ret = ret.replace(/\//g, "$forwardslash;");
+    ret = encodeURIComponent(ret);
+    return ret;
+}
+
 function submitQuickSearch(form) {
     var word = form["word"].value;
     if (word) {
-        var url = "/q/" + encodeURIComponent(word) + "/";
+        var url = "/q/" + myEncodeURIComponent(word) + "/";
         window.location = url;
     }
     return false;
@@ -10,7 +18,7 @@ function submitQuickSearch(form) {
 function submitAdvSearch(form) {
     var word = form["word"].value;
     if (word) {
-        var url = "/plus/" + encodeURIComponent(word) + "/";
+        var url = "/plus/" + myEncodeURIComponent(word) + "/";
         url += form["length"].value + "/";
         url += form["extent"].value + "/";
         url += "lang" + form["lang"].value + "/";

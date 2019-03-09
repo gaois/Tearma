@@ -12,6 +12,12 @@ namespace TearmaWeb.Controllers
             _queryLogger = queryLogger;
         }
 
+		private string myDecodeShashes(string text){
+			text=text.Replace("$backslash;", @"\");
+			text=text.Replace("$forwardslash;", @"/");
+			return text;
+		}
+
         public IActionResult Index() {
 			Models.Home.Index model=new Models.Home.Index();
 			Broker.DoIndex(model);
@@ -33,7 +39,7 @@ namespace TearmaWeb.Controllers
                 using (var stopwatch = new SimpleTimer())
                 {
                     Models.Home.QuickSearch model = new Models.Home.QuickSearch();
-                    model.word = word;
+                    model.word = this.myDecodeShashes(word);
                     model.lang = lang ?? "";
                     Broker.DoQuickSearch(model);
                     ret = View("QuickSearch", model);
@@ -58,7 +64,7 @@ namespace TearmaWeb.Controllers
                 if (lang is null) lang = "";
                 if (page < 1) page = 1;
                 Models.Home.AdvSearch model = new Models.Home.AdvSearch();
-                model.word = word ?? "";
+                model.word = this.myDecodeShashes(word ?? "");
                 model.length = length;
                 model.extent = extent;
                 if (lang != "0") model.lang = lang;
