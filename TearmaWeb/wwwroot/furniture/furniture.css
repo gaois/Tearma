@@ -38,8 +38,10 @@ div.footer div.icons a.facebook {color: rgb(66, 103, 178);}
 div.footer div.icons a.twitter {color: rgb(29, 161, 242);}
 div.footer div.icons a.instagram {color: #666666; margin-left: -0.25em;}
 div.footer div.icons a:hover {position: relative; top: -1px;}
+div.footer div.icons a.email {font-size: 1rem; text-decoration: none; color: #006699; position: relative; top: -5px !important;}
+div.footer div.icons a.email:hover {color: #2288bb;}
 div.footer div.sitelinks {margin-top: 1em; box-sizing: border-box; overflow: auto;}
-div.footer div.sitelinks a {display: block; text-decoration: none; color: #666666; position: relative; padding-left: 50px; margin: 15px 45px 15px 0px; float: left; box-sizing: border-box;}
+div.footer div.sitelinks a {display: block; text-decoration: none; color: #666666; position: relative; padding-left: 50px; margin: 15px 35px 15px 0px; float: left; box-sizing: border-box;}
 div.footer div.sitelinks a:hover {color: #006699;}
 div.footer div.sitelinks a span.icon {font-size: 25px; position: absolute; left: 0px; top: 5px;}
 div.footer div.sitelinks a span {display: block;}
