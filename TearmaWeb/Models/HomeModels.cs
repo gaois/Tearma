@@ -171,6 +171,16 @@ namespace TearmaWeb.Models.Home {
 			ret+="pos0/dom0/sub0/";
 			return ret;
 		}
+
+        public object searchData() => new {
+            word,
+            lang,
+            similarsCount = similars.Count,
+            relatedsCount = relateds.Count,
+            relatedMore,
+            langsCount = langs.Count,
+            sortlang
+        };
 	}
 
 	/// <summary>Represents the contents of a pager.</summary>
@@ -261,6 +271,18 @@ namespace TearmaWeb.Models.Home {
 			ret+=page+"/";
 			return ret;
 		}
+
+        public object searchData() => new {
+            word,
+            length,
+            extent,
+            lang,
+            posLabel,
+            domainID,
+            subdomainID,
+            page,
+            sortlang
+        };
 	}
 
 	/// <summary>Represents the names (in Irish and English) and numeric ID of a (top-level) domain.</summary>
