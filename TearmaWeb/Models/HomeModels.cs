@@ -7,6 +7,14 @@ using Newtonsoft.Json.Linq;
 
 namespace TearmaWeb.Models.Home {
 
+	public class Tools {
+		public static string SlashEncode(string text) {
+			text=text.Replace(@"\", "$backslash;");
+			text=text.Replace(@"/", "$forwardslash;");
+			return text;
+		}
+	}
+
 	/// <summary>Represents languages and metadata.</summary>
 	public class Lookups {
 		public List<Language> languages=new List<Language>();
@@ -166,7 +174,7 @@ namespace TearmaWeb.Models.Home {
 		public string sortlang="";
 
 		public string advSearchUrl() {
-			string ret="/plus/"+HtmlEncoder.Default.Encode(this.word)+"/al/ft/";
+			string ret="/plus/"+HtmlEncoder.Default.Encode(Tools.SlashEncode(this.word))+"/al/ft/";
 			if(this.lang!="") ret+="lang"+this.lang+"/"; else ret+="lang0/";
 			ret+="pos0/dom0/sub0/";
 			return ret;
@@ -266,8 +274,14 @@ namespace TearmaWeb.Models.Home {
 		public string sortlang="";
 
 		public string urlByPage(int page) {
-			string ret="/plus/"+HtmlEncoder.Default.Encode(this.word)+"/"+this.length+"/"+this.extent+"/";
-			if(this.lang!="") ret+=this.lang+"/";
+			string ret="/plus/";
+			ret+=HtmlEncoder.Default.Encode(Tools.SlashEncode(this.word))+"/";
+			ret+=this.length+"/";
+			ret+=this.extent+"/";
+			ret+="lang"+(this.lang!="" ? this.lang : "0")+"/";
+			ret+="pos"+this.posLabel+"/";
+			ret+="dom"+this.domainID+"/";
+			ret+="sub"+this.subdomainID+"/";
 			ret+=page+"/";
 			return ret;
 		}
