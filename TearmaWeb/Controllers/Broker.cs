@@ -2,13 +2,18 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
+using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json.Linq;
 
 namespace TearmaWeb.Controllers {
 	public class Broker {
 
 		private static string GetConnectionString() {
-			return @"Server=localhost\sqlexpress;Database=tearma;Trusted_Connection=True;";
+			var builder = new ConfigurationBuilder().SetBasePath(System.IO.Directory.GetCurrentDirectory()).AddJsonFile("appsettings.json");
+			IConfigurationRoot Configuration = builder.Build();
+			var connectionString = Configuration["ConnectionStrings:DefaultConnection"];
+			return connectionString;
+			//return @"Server=localhost\sqlexpress;Database=tearma;Trusted_Connection=True;";
 		}
 
 		private static Models.Home.Lookups ReadLookups(SqlDataReader reader) {

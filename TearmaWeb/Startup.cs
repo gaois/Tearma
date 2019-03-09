@@ -81,7 +81,7 @@ namespace TearmaWeb
 
             RewriteOptions options=new RewriteOptions();
 			options.Rules.Add(new RedirectToWwwRule());
-			//app.UseRewriter(options);
+			app.UseRewriter(options);
 
 			app.UseStaticFiles();
 
