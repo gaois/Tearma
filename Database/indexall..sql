@@ -70,15 +70,15 @@ select distinct term_id, pos_id from(
 	where json_value(annot.value, '$.label.type')='posLabel'
 ) as t
 
-truncate table spelling
-insert into spelling(term_id, word, [A],[B],[C],[D],[E],[F],[G],[H],[I],[J],[K],[L],[M],[N],[O],[P],[Q],[R],[S],[T],[U],[V],[W],[X],[Y],[Z], [length])
-select t.id, t.wording, [A],[B],[C],[D],[E],[F],[G],[H],[I],[J],[K],[L],[M],[N],[O],[P],[Q],[R],[S],[T],[U],[V],[W],[X],[Y],[Z], LEN(t.wording)
-from terms as t
-cross apply (
-	select [A],[B],[C],[D],[E],[F],[G],[H],[I],[J],[K],[L],[M],[N],[O],[P],[Q],[R],[S],[T],[U],[V],[W],[X],[Y],[Z]
-	from dbo.characterize(t.wording)
-) as c
-where len(t.wording)<=10
+--truncate table spelling
+--insert into spelling(term_id, word, [A],[B],[C],[D],[E],[F],[G],[H],[I],[J],[K],[L],[M],[N],[O],[P],[Q],[R],[S],[T],[U],[V],[W],[X],[Y],[Z], [length])
+--select t.id, t.wording, [A],[B],[C],[D],[E],[F],[G],[H],[I],[J],[K],[L],[M],[N],[O],[P],[Q],[R],[S],[T],[U],[V],[W],[X],[Y],[Z], LEN(t.wording)
+--from terms as t
+--cross apply (
+--	select [A],[B],[C],[D],[E],[F],[G],[H],[I],[J],[K],[L],[M],[N],[O],[P],[Q],[R],[S],[T],[U],[V],[W],[X],[Y],[Z]
+--	from dbo.characterize(t.wording)
+--) as c
+----where len(t.wording)<=10
 
 update entries set sortkeyGA=null, sortkeyEN=null
 declare @temp table(entry_id int, sortkey nvarchar(max), listingOrder int)

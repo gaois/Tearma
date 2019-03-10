@@ -26,7 +26,11 @@ namespace TearmaWeb
             {
                 settings.ApplicationName = "Téarma";
                 settings.IsEnabled = _environment.IsProduction();
-                settings.Store.ConnectionString = _configuration.GetConnectionString("Users");
+				//settings.Store.ConnectionString = _configuration.GetConnectionString("Users");
+
+				var builder = new ConfigurationBuilder().SetBasePath(System.IO.Directory.GetCurrentDirectory()).AddJsonFile("appsettings.json");
+				IConfigurationRoot Configuration = builder.Build();
+				settings.Store.ConnectionString = Configuration["ConnectionStrings:Users"];
             });
         }
 
@@ -37,7 +41,7 @@ namespace TearmaWeb
 
 				//Redirect to www:
 				string domain=req.Host.Host;
-				if(domain!="localhost" && domain!="eag-tearma-ie.gaois.ie" && domain!="www.tearma.ie") {
+				if(domain!="localhost" && domain!="www-tearma-ie.gaois.ie" && domain!="www.tearma.ie") {
 					HttpResponse response=context.HttpContext.Response;
 					response.StatusCode=301;
 					response.Headers[Microsoft.Net.Http.Headers.HeaderNames.Location]="http://www.tearma.ie"+req.Path.Value;
