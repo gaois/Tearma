@@ -1,13 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using System.Text.Encodings.Web;
 using Newtonsoft.Json.Linq;
+using Newtonsoft.Json;
 
-namespace TearmaWeb.Models.Home {
-
-	public class Tools {
+namespace TearmaWeb.Models.Home
+{
+    public class Tools {
 		public static string SlashEncode(string text) {
 			text=text.Replace(@"\", "$backslash;");
 			text=text.Replace(@"/", "$forwardslash;");
@@ -180,7 +178,7 @@ namespace TearmaWeb.Models.Home {
 			return ret;
 		}
 
-        public object searchData() => new {
+        public object searchData() => JsonConvert.SerializeObject(new {
             word,
             lang,
             similarsCount = similars.Count,
@@ -188,7 +186,7 @@ namespace TearmaWeb.Models.Home {
             relatedMore,
             langsCount = langs.Count,
             sortlang
-        };
+        });
 	}
 
 	/// <summary>Represents the contents of a pager.</summary>
@@ -286,7 +284,7 @@ namespace TearmaWeb.Models.Home {
 			return ret;
 		}
 
-        public object searchData() => new {
+        public object searchData() => JsonConvert.SerializeObject(new {
             word,
             length,
             extent,
@@ -296,7 +294,7 @@ namespace TearmaWeb.Models.Home {
             subdomainID,
             page,
             sortlang
-        };
+        });
 	}
 
 	/// <summary>Represents the names (in Irish and English) and numeric ID of a (top-level) domain.</summary>
