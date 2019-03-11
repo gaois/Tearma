@@ -48,7 +48,7 @@ namespace TearmaWeb.Controllers
                         QueryText = Request.Path,
                         ExecutionTime = (int)stopwatch.ElapsedMilliseconds,
                         ResultCount = model.exacts.Count,
-                        JsonData = model.searchData().ToString()
+                        JsonData = model.searchData()
                     };
                     _queryLogger.Log(query);
                 }
@@ -79,7 +79,7 @@ namespace TearmaWeb.Controllers
                         QueryText = Request.Path,
                         ExecutionTime = (int)stopwatch.ElapsedMilliseconds,
                         ResultCount = model.matches.Count,
-                        JsonData = model.searchData().ToString()
+                        JsonData = model.searchData()
                     };
                     _queryLogger.Log(query);
                 }

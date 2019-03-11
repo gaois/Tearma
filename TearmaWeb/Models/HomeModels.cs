@@ -178,7 +178,7 @@ namespace TearmaWeb.Models.Home
 			return ret;
 		}
 
-        public object searchData() => JsonConvert.SerializeObject(new {
+        public string searchData() => JsonConvert.SerializeObject(new {
             word,
             lang,
             similarsCount = similars.Count,
@@ -284,7 +284,7 @@ namespace TearmaWeb.Models.Home
 			return ret;
 		}
 
-        public object searchData() => JsonConvert.SerializeObject(new {
+        public string searchData() => JsonConvert.SerializeObject(new {
             word,
             length,
             extent,
