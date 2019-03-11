@@ -1,23 +1,37 @@
 ﻿<!DOCTYPE HTML>
 <html>
-	<head>
-		<meta charset="UTF-8"/>
-		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-		<link rel="icon" type="image/x-icon" href="~/favicon.ico"/>
-		<title>An Bunachar Náisiúnta Téarmaíochta don Ghaeilge · The National Terminology Database for Irish</title>
-        <!--<script type="text/javascript" src="https://code.jquery.com/jquery-3.3.1.min.js"></script>-->
-        <script type="text/javascript" src="~/furniture/jquery.js"></script>
-		<script type="text/javascript" src="~/furniture/furniture.js"></script>
-		<link type="text/css" rel="stylesheet" href="~/furniture/furniture.css"/>
-        <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous"/>
-	</head>
-	<body>
-
+<head>
+	<meta charset="UTF-8"/>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<link rel="icon" type="image/x-icon" href="~/favicon.ico"/>
+	<title>An Bunachar Náisiúnta Téarmaíochta don Ghaeilge · The National Terminology Database for Irish</title>
+    <!--<script type="text/javascript" src="https://code.jquery.com/jquery-3.3.1.min.js"></script>-->
+    <script type="text/javascript" src="~/furniture/jquery.js"></script>
+	<script type="text/javascript" src="~/furniture/furniture.js"></script>
+	<link type="text/css" rel="stylesheet" href="~/furniture/furniture.css"/>
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous"/>
+</head>
+<body>
     <div class="topbar">
         <div class="inside">
-            <a class="current" href="~/"><img src="~/furniture/minilogo-tearma.png"/><span>téarma.ie</span></a><a class="focloir" href="https://www.focloir.ie/" target="_blank"><img src="~/furniture/minilogo-white.png"/><span>foclóir.ie</span></a><a class="teanglann" href="https://www.teanglann.ie/" target="_blank"><img src="~/furniture/minilogo-white.png"/><span>teanglann.ie</span></a><a class="minor gaois" href="https://www.gaois.ie/" target="_blank"><img src="~/furniture/gaois-white.png"/><span>gaois.ie</span></a><a class="minor logainm" href="https://www.logainm.ie/" target="_blank"><img src="~/furniture/logainm-white.png"/><span>logainm.ie</span></a></div>
+            <a class="current" href="~/">
+                <img src="~/furniture/minilogo-tearma.png"/><span>téarma.ie</span>
+            </a>
+            <a class="focloir" href="https://www.focloir.ie/" rel="noopener" target="_blank">
+                <img src="~/furniture/minilogo-white.png"/><span>foclóir.ie</span>
+            </a>
+            <a class="teanglann" href="https://www.teanglann.ie/" rel="noopener" target="_blank">
+                <img src="~/furniture/minilogo-white.png"/><span>teanglann.ie</span>
+            </a>
+            <a class="minor gaois" href="https://www.gaois.ie/" rel="noopener" target="_blank">
+                <img src="~/furniture/gaois-white.png"/><span>gaois.ie</span>
+            </a>
+            <a class="minor logainm" href="https://www.logainm.ie/" rel="noopener" target="_blank">
+                <img src="~/furniture/logainm-white.png"/><span>logainm.ie</span>
+            </a>
         </div>
+    </div>
 
     <div class="envelope">
         <div class="rightie">
@@ -27,15 +41,17 @@
 	            <span class="en" lang="en">Back to screen version</span>
 	        </a>
             <div class="logobox">
-                <a href="~/" class="logo"><img src="~/furniture/tearma.png" alt="téarma.ie" title="Bunachar Náisiúnta Téarmaíochta don Ghaeilge · National Terminology Database for Irish"/></a>
+                <a href="~/" class="logo">
+                    <img src="~/furniture/tearma.png" alt="téarma.ie" title="Bunachar Náisiúnta Téarmaíochta don Ghaeilge · National Terminology Database for Irish"/>
+                </a>
                 <div class="title">
                     <div class="ga" lang="ga">An Bunachar Náisiúnta Téarmaíochta don&nbsp;Ghaeilge</div>
                     <div class="en" lang="en">The National Terminology Database for&nbsp;Irish</div>
                 </div>
                 <div class="icons">
-                    <a target="_blank" href="https://www.facebook.com/tearma.ie/" class="facebook fab fa-facebook"></a>
-                    <a target="_blank" href="https://twitter.com/tearma_ie" class="twitter fab fa-twitter"></a>
-                    <a target="_blank" href="https://www.instagram.com/tearma_ie/" class="instagram fab fa-instagram"></a>
+                    <a rel="noopener" target="_blank" href="https://www.facebook.com/tearma.ie/" class="facebook fab fa-facebook"></a>
+                    <a rel="noopener" target="_blank" href="https://twitter.com/tearma_ie" class="twitter fab fa-twitter"></a>
+                    <a rel="noopener" target="_blank" href="https://www.instagram.com/tearma_ie/" class="instagram fab fa-instagram"></a>
                 </div>
             </div>
             @RenderSection("Rightie")
@@ -68,12 +84,12 @@
     <div class="footer">
         <div class="inside">
             <div class="logos">
-                <a target="_blank" href="https://www.forasnagaeilge.ie/" class="fnag"><img src="~/furniture/fnag.png" alt="Foras na Gaeilge"/></a>
-                <a target="_blank" href="https://www.dcu.ie/" class="dcu"><img src="~/furniture/dcu.png" alt="DCU"/></a>
+                <a rel="noopener" target="_blank" href="https://www.forasnagaeilge.ie/" class="fnag"><img src="~/furniture/fnag.png" alt="Foras na Gaeilge"/></a>
+                <a rel="noopener" target="_blank" href="https://www.dcu.ie/" class="dcu"><img src="~/furniture/dcu.png" alt="DCU"/></a>
             </div>
             <div class="statement">
-                <div><span class="label">Sonraí téarmaíochta © 2006–@(DateTime.Now.Year)</span> <a target="_blank" href="https://www.forasnagaeilge.ie/">Foras na Gaeilge</a></div>
-                <div><span class="label">Réiteach teicniúil © 2006–@(DateTime.Now.Year)</span> <a target="_blank" href="https://www.gaois.ie/">Fiontar &amp; Scoil na Gaeilge, DCU</a></div>
+                <div><span class="label">Sonraí téarmaíochta © 2006–@(DateTime.Now.Year)</span> <a rel="noopener" target="_blank" href="https://www.forasnagaeilge.ie/">Foras na Gaeilge</a></div>
+                <div><span class="label">Réiteach teicniúil © 2006–@(DateTime.Now.Year)</span> <a rel="noopener" target="_blank" href="https://www.gaois.ie/">Fiontar &amp; Scoil na Gaeilge, DCU</a></div>
             </div>
             <div class="icons">
                 <a target="_blank" href="https://www.facebook.com/tearma.ie/" class="facebook fab fa-facebook"></a>
@@ -109,10 +125,25 @@
                 </a>
             </div>
             <div class="externalinks">
-                <a class="tearma" href="~/"><img src="~/furniture/minilogo-tearma.png"/>&nbsp;téarma.ie</a> <span class="sep">|</span> <a class="focloir" href="https://www.focloir.ie/" target="_blank"><img src="~/furniture/minilogo-focloir.png"/>&nbsp;foclóir.ie</a> <span class="sep">|</span> <a class="teanglann" href="https://www.teanglann.ie/" target="_blank"><img src="~/furniture/minilogo-teanglann.png"/>&nbsp;teanglann.ie</a> <span class="sep">|</span> <a class="minor gaois" href="https://www.gaois.ie/"  target="_blank"><img src="~/furniture/gaois-blue.png"/>&nbsp;gaois.ie</a> <span class="sep">|</span> <a class="minor logainm" href="https://www.logainm.ie/" target="_blank"><img src="~/furniture/logainm-blue.png"/>&nbsp;logainm.ie</a>
+                <a class="tearma" href="~/"><img src="~/furniture/minilogo-tearma.png"/>&nbsp;téarma.ie</a>
+                <span class="sep">|</span>
+                <a class="focloir" href="https://www.focloir.ie/" rel="noopener" target="_blank">
+                    <img src="~/furniture/minilogo-focloir.png"/>&nbsp;foclóir.ie
+                </a>
+                <span class="sep">|</span>
+                <a class="teanglann" href="https://www.teanglann.ie/" rel="noopener" target="_blank">
+                    <img src="~/furniture/minilogo-teanglann.png"/>&nbsp;teanglann.ie
+                </a>
+                <span class="sep">|</span>
+                <a class="minor gaois" href="https://www.gaois.ie/" rel="noopener" target="_blank">
+                    <img src="~/furniture/gaois-blue.png"/>&nbsp;gaois.ie
+                </a>
+                <span class="sep">|</span>
+                <a class="minor logainm" href="https://www.logainm.ie/" rel="noopener" target="_blank">
+                    <img src="~/furniture/logainm-blue.png"/>&nbsp;logainm.ie
+                </a>
             </div>
         </div>
     </div>
-
-	</body>
+</body>
 </html>

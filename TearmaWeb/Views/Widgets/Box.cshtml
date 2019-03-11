@@ -1,17 +1,18 @@
 ﻿@model TearmaWeb.Models.Widgets.Box
 @using TearmaWeb.Models.Widgets
+
 @{
     Layout="_WidgetLayout";
 }
 
-	<form id="sform" action="http://www.tearma.ie/Search.aspx" target="_blank" >
-		<div class="textbox inset">
-			<input class="text" id="txtbx" name="term" />
-			<input class="submit" type="submit" value="" />
-		</div>
-	</form>
-
-	<div class="message">
-        <span class="ga" lang="ga">Cuardaigh téarma Gaeilge nó Béarla.</span>
-        <span class="en" lang="en">Search for a term in Irish or English.</span>
+<form id="sform" action="http://www.tearma.ie/Search.aspx" target="_blank" >
+	<div class="textbox inset">
+		<input class="text" id="txtbx" name="term" />
+		<input class="submit" type="submit" value="" />
 	</div>
+</form>
+
+<div class="message">
+    <span class="ga" lang="ga">Cuardaigh téarma Gaeilge nó Béarla.</span>
+    <span class="en" lang="en">Search for a term in Irish or English.</span>
+</div>

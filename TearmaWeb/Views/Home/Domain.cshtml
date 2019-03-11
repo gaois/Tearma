@@ -1,9 +1,11 @@
 ﻿@model TearmaWeb.Models.Home.Domain
 @using TearmaWeb.Models.Home
+
 @{
     Layout="_HomeLayout";
     ViewBag.swapper="dom";
 }
+
 @section Rightie {
     <div class="kickbox">
 	    <a class="langlink @(Model.lang=="ga" ? "selected": "")" href="@Model.urlByLang("ga")">
@@ -110,4 +112,3 @@
 
 @*<div>Hello, this is Views\Home\Domain.cshtml</div>
 @foreach(string key in ViewData.Keys){ <div>@key = @ViewData[key] @ViewData[key]?.GetType()</div> }*@
-
