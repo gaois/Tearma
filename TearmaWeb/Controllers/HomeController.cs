@@ -21,7 +21,9 @@ namespace TearmaWeb.Controllers
         public IActionResult Index() {
 			Models.Home.Index model=new Models.Home.Index();
 			Broker.DoIndex(model);
-			return View("Index", model);
+            ViewData["PageTitle"] = "téarma.ie";
+            ViewData["TagLine"] = "An Bunachar Náisiúnta Téarmaíochta don Ghaeilge · The National Terminology Database for Irish";
+            return View("Index", model);
 		}
 
 		public IActionResult Entry(int id) {

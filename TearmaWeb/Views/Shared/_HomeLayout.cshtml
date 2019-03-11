@@ -1,16 +1,38 @@
 ﻿<!DOCTYPE HTML>
 <html>
 <head>
-	<meta charset="UTF-8"/>
-	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-	<link rel="icon" type="image/x-icon" href="~/favicon.ico"/>
-	<title>An Bunachar Náisiúnta Téarmaíochta don Ghaeilge · The National Terminology Database for Irish</title>
-    <!--<script type="text/javascript" src="https://code.jquery.com/jquery-3.3.1.min.js"></script>-->
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+    <title>@ViewData["PageTitle"] | @ViewData["TagLine"]</title>
+    <meta property="og:title" content="@ViewData["PageTitle"]" />
+    <meta property="og:site_name" content="téarma.ie" />
+    <meta name="twitter:title" content="@ViewData["PageTitle"]" />
+
+    <link rel="icon" type="image/x-icon" href="~/favicon.ico" />
+
+    <meta name="keywords" content="@ViewData["MetaKeywords"]" />
+    <meta name="description" content="@ViewData["MetaDescription"]" />
+    <meta property="og:description" content="@ViewData["MetaDescription"]" />
+    <meta name="twitter:description" content="@ViewData["MetaDescription"]" />
+
+    <meta property="fb:admins" content="fiontar.dcu">
+    <meta property="og:type" content="website" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:site" content="@@tearma_ie" />
+    <meta property="og:url" content="@Context.Request.GetEncodedUrl()" />
+    <meta name="twitter:url" content="@Context.Request.GetEncodedUrl()" />
+    <meta property="og:image" content="/furniture/og.png" />
+    <meta name="twitter:image" content="/furniture/og.png" />
+
+    <link type="text/css" rel="stylesheet" href="~/furniture/furniture.css" />
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css"
+          integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU"
+          crossorigin="anonymous" />
+
     <script type="text/javascript" src="~/furniture/jquery.js"></script>
-	<script type="text/javascript" src="~/furniture/furniture.js"></script>
-	<link type="text/css" rel="stylesheet" href="~/furniture/furniture.css"/>
-    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous"/>
+    <script type="text/javascript" src="~/furniture/furniture.js"></script>
 </head>
 <body>
     <div class="topbar">
@@ -54,8 +76,7 @@
                     <a rel="noopener" target="_blank" href="https://www.instagram.com/tearma_ie/" class="instagram fab fa-instagram"></a>
                 </div>
             </div>
-            @RenderSection("Rightie")
-
+            @RenderSection("Rightie", required: false)
         </div>
         <div class="leftie">
             <div class="swapper">
@@ -75,9 +96,7 @@
                     <span class="en" lang="en">Browse</span>
                 </a>
             </div>
-
             @RenderBody()
-
         </div>
     </div>
 
