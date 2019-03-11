@@ -102,6 +102,7 @@ div.logobox div.icons a:hover {position: relative; top: -1px;}
 @media (max-width: 600px){
   div.logobox {padding: 0px 10px;}
   div.logobox a.logo img {width: 85%;}
+  div.logobox div.title {white-space: initial;}
 }
 body.printable div.icons {display: none;}
 
