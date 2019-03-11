@@ -1,25 +1,24 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using System.Text.RegularExpressions;
+﻿using Microsoft.AspNetCore.Mvc;
+using TearmaWeb.Models.Widgets;
 
-namespace TearmaWeb.Controllers {
-	public class WidgetsController : Controller {
+namespace TearmaWeb.Controllers
+{
+    public class WidgetsController : Controller {
+        private readonly Broker _broker;
+
+        public WidgetsController(Broker broker) {
+            _broker = broker;
+        }
 
 		public IActionResult Box() {
-			Models.Widgets.Box model=new Models.Widgets.Box();
-			IActionResult ret=View("Box", model);
-			return ret;
-		}
+			Box model=new Box();
+			return View("Box", model);
+        }
 
 		public IActionResult Tod() {
-			Models.Widgets.Tod model=new Models.Widgets.Tod();
-			Broker.DoTod(model);
-			IActionResult ret=View("Tod", model);
-			return ret;
-		}
-
+			Tod model=new Tod();
+            _broker.DoTod(model);
+			return View("Tod", model);
+        }
 	}
 }

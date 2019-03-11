@@ -1,23 +1,21 @@
-﻿using System;
+﻿using Microsoft.Extensions.Configuration;
+using Newtonsoft.Json.Linq;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
-using Microsoft.Extensions.Configuration;
-using Newtonsoft.Json.Linq;
+using TearmaWeb.Models.Home;
 
-namespace TearmaWeb.Controllers {
-	public class Broker {
+namespace TearmaWeb.Controllers
+{
+    public class Broker {
+        private readonly string _connectionString;
 
-		private static string GetConnectionString() {
-			var builder = new ConfigurationBuilder().SetBasePath(System.IO.Directory.GetCurrentDirectory()).AddJsonFile("appsettings.json");
-			IConfigurationRoot Configuration = builder.Build();
-			var connectionString = Configuration["ConnectionStrings:DefaultConnection"];
-			return connectionString;
-			//return @"Server=localhost\sqlexpress;Database=tearma;Trusted_Connection=True;";
-		}
+        public Broker(IConfiguration configuration) {
+            _connectionString = configuration.GetConnectionString("DefaultConnection");
+        }
 
-		private static Models.Home.Lookups ReadLookups(SqlDataReader reader) {
-			Models.Home.Lookups lookups=new Models.Home.Lookups();
+        private static Lookups ReadLookups(SqlDataReader reader) {
+            Lookups lookups=new Lookups();
 
 			//read lingo config:
 			if(reader.Read()) {
@@ -26,7 +24,7 @@ namespace TearmaWeb.Controllers {
 				JArray ja=(JArray)jo.Property("languages")?.Value ?? new JArray();
 				for(int i=0; i<ja.Count; i++) {
 					JObject jlang=(JObject)ja[i];
-					Models.Home.Language language=new Models.Home.Language(jlang);
+                    Language language=new Language(jlang);
 					lookups.addLanguage(language);
 				}
 			}
@@ -38,11 +36,11 @@ namespace TearmaWeb.Controllers {
 				string type=(string)reader["type"];
 				string json=(string)reader["json"];
 				JObject jo=JObject.Parse(json);
-				Models.Home.Metadatum metadatum;
+                Metadatum metadatum;
 				if(type=="posLabel") {
-					metadatum=new Models.Home.Metadatum(id, jo, lookups.languages);
+					metadatum=new Metadatum(id, jo, lookups.languages);
 				} else {
-					metadatum=new Models.Home.Metadatum(id, jo);
+					metadatum=new Metadatum(id, jo);
 				}
 				lookups.addMetadatatum(type, metadatum);
 			}
@@ -63,8 +61,8 @@ namespace TearmaWeb.Controllers {
 		}
 
 		/// <summary>Takes the view model of the quick search page (with 'word' and 'lang' filled in) and populates all other properties from the database.</summary>
-		public static void DoQuickSearch(Models.Home.QuickSearch model) {
-			SqlConnection conn=new SqlConnection(GetConnectionString());
+		public void DoQuickSearch(QuickSearch model) {
+			SqlConnection conn=new SqlConnection(_connectionString);
 			conn.Open();
 			SqlCommand command=new SqlCommand("dbo.pub_quicksearch", conn);
 			command.CommandType=CommandType.StoredProcedure;
@@ -73,8 +71,8 @@ namespace TearmaWeb.Controllers {
 			param=new SqlParameter(); param.ParameterName="@lang"; param.SqlDbType=SqlDbType.NVarChar; param.Value=model.lang; command.Parameters.Add(param);
 			SqlDataReader reader=command.ExecuteReader();
 
-			//read lookups:
-			Models.Home.Lookups lookups=ReadLookups(reader);
+            //read lookups:
+            Lookups lookups =ReadLookups(reader);
 
 			//read similars:
 			reader.NextResult();
@@ -126,18 +124,18 @@ namespace TearmaWeb.Controllers {
 		}
 
 		/// <summary>Takes the view model of the advanced search page and populates the 'langs' property from the database.</summary>
-		public static void PrepareAdvSearch(Models.Home.AdvSearch model) {
-			SqlConnection conn=new SqlConnection(GetConnectionString());
+		public void PrepareAdvSearch(AdvSearch model) {
+			SqlConnection conn=new SqlConnection(_connectionString);
 			conn.Open();
 			SqlCommand command=new SqlCommand("dbo.pub_advsearch_prepare", conn);
 			command.CommandType=CommandType.StoredProcedure;
 			SqlDataReader reader=command.ExecuteReader();
 
-			//read lookups:
-			Models.Home.Lookups lookups=ReadLookups(reader);
-			foreach(Models.Home.Language language in lookups.languages) model.langs.Add(language);
-			foreach(Models.Home.Metadatum datum in lookups.posLabels) model.posLabels.Add(datum);
-			foreach(Models.Home.Metadatum datum in lookups.domains) {
+            //read lookups:
+            Lookups lookups =ReadLookups(reader);
+			foreach(Language language in lookups.languages) model.langs.Add(language);
+			foreach(Metadatum datum in lookups.posLabels) model.posLabels.Add(datum);
+			foreach(Metadatum datum in lookups.domains) {
 				datum.subdomainsJson=FlattenSubdomainsIntoJson(datum);
 				model.domains.Add(datum);
 			}
@@ -147,8 +145,8 @@ namespace TearmaWeb.Controllers {
 		}
 
 		/// <summary>Takes the view model of the advanced search page (with 'word', 'length', 'extent', 'lang' and 'page' filled in) and populates all other properties from the database.</summary>
-		public static void DoAdvSearch(Models.Home.AdvSearch model) {
-			SqlConnection conn=new SqlConnection(GetConnectionString());
+		public void DoAdvSearch(AdvSearch model) {
+			SqlConnection conn=new SqlConnection(_connectionString);
 			conn.Open();
 			SqlCommand command=new SqlCommand("dbo.pub_advsearch", conn);
 			command.CommandType=CommandType.StoredProcedure;
@@ -163,11 +161,11 @@ namespace TearmaWeb.Controllers {
 			param=new SqlParameter(); param.ParameterName="@page"; param.SqlDbType=SqlDbType.Int; param.Value=model.page; command.Parameters.Add(param);
 			SqlDataReader reader=command.ExecuteReader();
 
-			//read lookups:
-			Models.Home.Lookups lookups=ReadLookups(reader);
-			foreach(Models.Home.Language language in lookups.languages) model.langs.Add(language);
-			foreach(Models.Home.Metadatum datum in lookups.posLabels) model.posLabels.Add(datum);
-			foreach(Models.Home.Metadatum datum in lookups.domains) {
+            //read lookups:
+            Lookups lookups =ReadLookups(reader);
+			foreach(Language language in lookups.languages) model.langs.Add(language);
+			foreach(Metadatum datum in lookups.posLabels) model.posLabels.Add(datum);
+			foreach(Metadatum datum in lookups.domains) {
 				datum.subdomainsJson=FlattenSubdomainsIntoJson(datum);
 				model.domains.Add(datum);
 			}
@@ -193,7 +191,7 @@ namespace TearmaWeb.Controllers {
 			if(reader.Read()) {
 				int currentPage=(int)reader["currentPage"];
 				int maxPage=(int)reader["maxPage"];
-				model.pager=new Models.Home.Pager(currentPage, maxPage);
+				model.pager=new Pager(currentPage, maxPage);
 			}
 
 			reader.Close();
@@ -201,8 +199,8 @@ namespace TearmaWeb.Controllers {
 		}
 
 		/// <summary>Populates the view model of the page that lists all top-level domains.</summary>
-		public static void DoDomains(Models.Home.Domains model) {
-			SqlConnection conn=new SqlConnection(GetConnectionString());
+		public void DoDomains(Domains model) {
+			SqlConnection conn=new SqlConnection(_connectionString);
 			conn.Open();
 			SqlCommand command=new SqlCommand("dbo.pub_domains", conn);
 			command.CommandType=CommandType.StoredProcedure;
@@ -210,25 +208,25 @@ namespace TearmaWeb.Controllers {
 			param=new SqlParameter(); param.ParameterName="@lang"; param.SqlDbType=SqlDbType.NVarChar; param.Value=model.lang; command.Parameters.Add(param);
 			SqlDataReader reader=command.ExecuteReader();
 
-			//read lookups:
-			Models.Home.Lookups lookups=ReadLookups(reader);
-			foreach(Models.Home.Metadatum md in lookups.domains) model.domains.Add(new Models.Home.DomainListing(md.id, md.name["ga"], md.name["en"]));
+            //read lookups:
+            Lookups lookups =ReadLookups(reader);
+			foreach(Metadatum md in lookups.domains) model.domains.Add(new Models.Home.DomainListing(md.id, md.name["ga"], md.name["en"]));
 
 			reader.Close();
 			conn.Close();
 		}
 
 		/// <summary>Populates the view model of the home page.</summary>
-		public static void DoIndex(Models.Home.Index model) {
-			SqlConnection conn=new SqlConnection(GetConnectionString());
+		public void DoIndex(Index model) {
+			SqlConnection conn=new SqlConnection(_connectionString);
 			conn.Open();
 			SqlCommand command=new SqlCommand("dbo.pub_index", conn);
 			command.CommandType=CommandType.StoredProcedure;
 			SqlDataReader reader=command.ExecuteReader();
 
-			//read lookups:
-			Models.Home.Lookups lookups=ReadLookups(reader);
-			foreach(Models.Home.Metadatum md in lookups.domains) model.domains.Add(new Models.Home.DomainListing(md.id, md.name["ga"], md.name["en"]));
+            //read lookups:
+            Lookups lookups =ReadLookups(reader);
+			foreach(Metadatum md in lookups.domains) model.domains.Add(new DomainListing(md.id, md.name["ga"], md.name["en"]));
 
 			//read entry of the day:
 			reader.NextResult();
@@ -258,8 +256,8 @@ namespace TearmaWeb.Controllers {
 		}
 
 		/// <summary>Populates the view model of the single-entry page.</summary>
-		public static void DoEntry(Models.Home.Entry model) {
-			SqlConnection conn=new SqlConnection(GetConnectionString());
+		public void DoEntry(Entry model) {
+			SqlConnection conn=new SqlConnection(_connectionString);
 			conn.Open();
 			SqlCommand command=new SqlCommand("dbo.pub_entry", conn);
 			command.CommandType=CommandType.StoredProcedure;
@@ -267,8 +265,8 @@ namespace TearmaWeb.Controllers {
 			param=new SqlParameter(); param.ParameterName="@id"; param.SqlDbType=SqlDbType.Int; param.Value=model.id; command.Parameters.Add(param);
 			SqlDataReader reader=command.ExecuteReader();
 
-			//read lookups:
-			Models.Home.Lookups lookups=ReadLookups(reader);
+            //read lookups:
+            Lookups lookups =ReadLookups(reader);
 
 			//read xref targets:
 			reader.NextResult();
@@ -287,8 +285,8 @@ namespace TearmaWeb.Controllers {
 		}
 
 		/// <summary>Populates the view model of the page that lists entries by domain.</summary>
-		public static void DoDomain(Models.Home.Domain model) {
-			SqlConnection conn=new SqlConnection(GetConnectionString());
+		public void DoDomain(Domain model) {
+			SqlConnection conn=new SqlConnection(_connectionString);
 			conn.Open();
 			SqlCommand command=new SqlCommand("dbo.pub_domain", conn);
 			command.CommandType=CommandType.StoredProcedure;
@@ -299,11 +297,11 @@ namespace TearmaWeb.Controllers {
 			param=new SqlParameter(); param.ParameterName="@page"; param.SqlDbType=SqlDbType.Int; param.Value=model.page; command.Parameters.Add(param);
 			SqlDataReader reader=command.ExecuteReader();
 
-			//read lookups:
-			Models.Home.Lookups lookups=ReadLookups(reader);
+            //read lookups:
+            Lookups lookups =ReadLookups(reader);
 			if(lookups.domainsById.ContainsKey(model.domID)){
-				Models.Home.Metadatum md=lookups.domainsById[model.domID];
-				model.domain=new Models.Home.DomainListing(md.id, md.name["ga"], md.name["en"]);
+                Metadatum md =lookups.domainsById[model.domID];
+				model.domain=new DomainListing(md.id, md.name["ga"], md.name["en"]);
 
 				//flatten the list of subdomains:
 				JArray jSubdoms=(JArray)md.jo.Property("subdomains").Value;
@@ -327,26 +325,26 @@ namespace TearmaWeb.Controllers {
 			if(reader.Read()) {
 				int currentPage=(int)reader["currentPage"];
 				int maxPage=(int)reader["maxPage"];
-				model.pager=new Models.Home.Pager(currentPage, maxPage);
+				model.pager=new Pager(currentPage, maxPage);
 			}
 
 			reader.Close();
 			conn.Close();
 		}
 
-		public static List<Models.Home.SubdomainListing> FlattenSubdomains(int level, JArray jSubdoms, Models.Home.SubdomainListing parent, int currentID) {
-			List<Models.Home.SubdomainListing> ret=new List<Models.Home.SubdomainListing>();
+		public static List<SubdomainListing> FlattenSubdomains(int level, JArray jSubdoms, SubdomainListing parent, int currentID) {
+			List<SubdomainListing> ret=new List<SubdomainListing>();
 			for(int i=0; i<jSubdoms.Count; i++) {
 				JObject jSubdom=(JObject)jSubdoms[i];
 				int id=(int)jSubdom.Property("lid").Value;
 				string titleGA=(string)((JObject)jSubdom.Property("title").Value).Property("ga").Value;
 				string titleEN=(string)((JObject)jSubdom.Property("title").Value).Property("en").Value;
-				Models.Home.SubdomainListing sd=new Models.Home.SubdomainListing(id, titleGA, titleEN, level, false);
+                SubdomainListing sd=new SubdomainListing(id, titleGA, titleEN, level, false);
 				sd.parent=parent;
 				ret.Add(sd);
 
 				if(sd.id == currentID) {
-					Models.Home.SubdomainListing obj=sd;
+                    SubdomainListing obj=sd;
 					do {obj.visible=true; obj=obj.parent;} while(obj!=null);
 				}
 
@@ -356,13 +354,13 @@ namespace TearmaWeb.Controllers {
 			return ret;
 		}
 
-		public static string FlattenSubdomainsIntoJson(Models.Home.Metadatum domain) {
+		public static string FlattenSubdomainsIntoJson(Metadatum domain) {
 			JArray jSubdoms=(JArray)domain.jo.Property("subdomains").Value;
-			List<Models.Home.SubdomainListing> subdomains=FlattenSubdomains(1, jSubdoms, null, 0);
+			List<SubdomainListing> subdomains=FlattenSubdomains(1, jSubdoms, null, 0);
 			string ret="";
-			foreach(Models.Home.SubdomainListing subdom in subdomains) {
+			foreach(SubdomainListing subdom in subdomains) {
 				string title=subdom.name["ga"].Replace("\"", "\\\"")+" &middot; "+subdom.name["en"].Replace("\"", "\\\"");
-				Models.Home.SubdomainListing parent=subdom.parent;
+                SubdomainListing parent =subdom.parent;
 				while(parent != null) {
 					if(parent.name["ga"] != parent.name["en"]) {
 						title=parent.name["ga"].Replace("\"", "\\\"")+" &middot; "+parent.name["en"].Replace("\"", "\\\"")+" » "+title;
@@ -383,15 +381,15 @@ namespace TearmaWeb.Controllers {
 		}
 
 		/// <summary>Populates the view model of the term-of-the-day widget.</summary>
-		public static void DoTod(Models.Widgets.Tod model) {
-			SqlConnection conn=new SqlConnection(GetConnectionString());
+		public void DoTod(Models.Widgets.Tod model) {
+			SqlConnection conn=new SqlConnection(_connectionString);
 			conn.Open();
 			SqlCommand command=new SqlCommand("dbo.pub_tod", conn);
 			command.CommandType=CommandType.StoredProcedure;
 			SqlDataReader reader=command.ExecuteReader();
 
-			//read lookups:
-			Models.Home.Lookups lookups=ReadLookups(reader);
+            //read lookups:
+            Lookups lookups=ReadLookups(reader);
 
 			//read entry of the day:
 			reader.NextResult();

@@ -1,12 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using System.Collections.Generic;
 using System.Text.Encodings.Web;
 
-namespace TearmaWeb.Controllers {
-	public class Prettify {
+namespace TearmaWeb.Controllers
+{
+    public class Prettify {
 		private static Models.Home.Lookups Lookups;
 
 		public static string EntryLink(int id, string json, string primLang) {

@@ -1,11 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using Gaois.QueryLogger;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Rewrite;
-using Gaois.QueryLogger;
+using System.Collections.Generic;
+using TearmaWeb.Controllers;
 
 namespace TearmaWeb
 {
@@ -26,12 +27,10 @@ namespace TearmaWeb
             {
                 settings.ApplicationName = "Téarma";
                 settings.IsEnabled = _environment.IsProduction();
-				//settings.Store.ConnectionString = _configuration.GetConnectionString("Users");
-
-				var builder = new ConfigurationBuilder().SetBasePath(System.IO.Directory.GetCurrentDirectory()).AddJsonFile("appsettings.json");
-				IConfigurationRoot Configuration = builder.Build();
-				settings.Store.ConnectionString = Configuration["ConnectionStrings:Users"];
+				settings.Store.ConnectionString = _configuration.GetConnectionString("Users");
             });
+
+            services.AddScoped<Broker>();
         }
 
 		public class RedirectToWwwRule : IRule {
