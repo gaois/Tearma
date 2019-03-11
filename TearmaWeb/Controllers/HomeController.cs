@@ -1,7 +1,7 @@
-﻿using Gaois.QueryLogger;
+﻿using Ansa.Extensions;
+using Gaois.QueryLogger;
 using Microsoft.AspNetCore.Mvc;
 using System.Text.RegularExpressions;
-using TearmaWeb.Utilities;
 
 namespace TearmaWeb.Controllers
 {
@@ -36,8 +36,7 @@ namespace TearmaWeb.Controllers
 			if(Regex.IsMatch(word, @"^\#[0-9]+$")){
 				ret=new RedirectResult("/id/"+word.Replace("#", ""));
 			} else {
-                using (var stopwatch = new SimpleTimer())
-                {
+                using (var stopwatch = new SimpleTimer()) {
                     Models.Home.QuickSearch model = new Models.Home.QuickSearch();
                     model.word = this.myDecodeShashes(word);
                     model.lang = lang ?? "";
@@ -58,9 +57,7 @@ namespace TearmaWeb.Controllers
 		}
 
 		public IActionResult AdvSearch(string word, string length, string extent, string lang, int posLabel, int domainID, int subdomainID, int page) {
-
-            using (var stopwatch = new SimpleTimer())
-            {
+            using (var stopwatch = new SimpleTimer()) {
                 if (lang is null) lang = "";
                 if (page < 1) page = 1;
                 Models.Home.AdvSearch model = new Models.Home.AdvSearch();
@@ -72,16 +69,20 @@ namespace TearmaWeb.Controllers
                 model.domainID = domainID;
                 model.subdomainID = subdomainID;
                 model.page = page;
-                if (model.word == "") Broker.PrepareAdvSearch(model); else Broker.DoAdvSearch(model);
-                var query = new Query {
-                    QueryCategory = "AdvSearch",
-                    QueryTerms = word,
-                    QueryText = Request.Path,
-                    ExecutionTime = (int)stopwatch.ElapsedMilliseconds,
-                    ResultCount = model.matches.Count,
-                    JsonData = model.searchData().ToString()
-                };
-                _queryLogger.Log(query);
+                if (model.word == "") {
+                    Broker.PrepareAdvSearch(model);
+                } else {
+                    Broker.DoAdvSearch(model);
+                    var query = new Query {
+                        QueryCategory = "AdvSearch",
+                        QueryTerms = word,
+                        QueryText = Request.Path,
+                        ExecutionTime = (int)stopwatch.ElapsedMilliseconds,
+                        ResultCount = model.matches.Count,
+                        JsonData = model.searchData().ToString()
+                    };
+                    _queryLogger.Log(query);
+                }
 
                 return View("AdvSearch", model);
             }
