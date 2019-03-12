@@ -5,7 +5,7 @@ body {font-family: sans-serif; background-color: #ffffff; margin: 0; padding: 0;
 div.topbar {padding: 15px 0px; background-color: #006699;}
 div.topbar div.inside {padding: 0px 20px; max-width: 1400px; margin: 0px auto;}
 div.topbar a {color: #dddddd; text-decoration: none; padding: 11px 25px; margin-right: 8px; font-weight: bold; border-radius: 4px; white-space: nowrap;}
-div.topbar a img {position: relative; top: 1px; width: 25px;}
+div.topbar a img {position: relative; top: 2px; width: 25px;}
 div.topbar a span {margin-left: 1em;}
 div.topbar a.focloir {background-color: #8b0000;}
 div.topbar a.teanglann {background-color: #ea5c0f;}
@@ -48,7 +48,7 @@ div.footer div.sitelinks a span {display: block;}
 div.footer div.externalinks {margin-top: 1.75em; font-size: 1.1em; margin-left: -2px;}
 div.footer div.externalinks span.sep {color: #aaaaaa; margin: 0 0.75em;}
 div.footer div.externalinks a {text-decoration: none; font-weight: bold; white-space: nowrap;}
-div.footer div.externalinks a img {width: 30px; position: relative; top: 1px; margin-right: 15px;}
+div.footer div.externalinks a img {width: 30px; position: relative; top: 2px; margin-right: 15px;}
 div.footer div.externalinks a.tearma {color: #006699;}
 div.footer div.externalinks a.tearma:hover {color: #2288bb;}
 div.footer div.externalinks a.focloir {color: #8b0000;}

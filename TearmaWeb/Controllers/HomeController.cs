@@ -21,19 +21,25 @@ namespace TearmaWeb.Controllers
         public IActionResult Index() {
 			Models.Home.Index model=new Models.Home.Index();
 			Broker.DoIndex(model);
-			return View("Index", model);
+            ViewData["PageTitle"] = "téarma.ie";
+            ViewData["TagLine"] = "An Bunachar Náisiúnta Téarmaíochta don Ghaeilge · The National Terminology Database for Irish";
+            return View("Index", model);
 		}
 
 		public IActionResult Entry(int id) {
 			Models.Home.Entry model=new Models.Home.Entry();
 			model.id=id;
 			Broker.DoEntry(model);
-			return View("Entry", model);
+            ViewData["PageTitle"] = "téarma.ie";
+            ViewData["TagLine"] = "An Bunachar Náisiúnta Téarmaíochta don Ghaeilge · The National Terminology Database for Irish";
+            return View("Entry", model);
 		}
 
 		public IActionResult QuickSearch(string word, string lang) {
 			IActionResult ret;
-			if(Regex.IsMatch(word, @"^\#[0-9]+$")){
+            if (word.IsNullOrWhiteSpace()) {
+                ret = new RedirectToActionResult("Index", "Home", null);
+            } else if (Regex.IsMatch(word, @"^\#[0-9]+$")){
 				ret=new RedirectResult("/id/"+word.Replace("#", ""));
 			} else {
                 using (var stopwatch = new SimpleTimer()) {
@@ -51,6 +57,7 @@ namespace TearmaWeb.Controllers
                         JsonData = model.searchData()
                     };
                     _queryLogger.Log(query);
+                    ViewData["PageTitle"] = $"\"{model.word}\"";
                 }
 			}
 			return ret;
@@ -71,6 +78,7 @@ namespace TearmaWeb.Controllers
                 model.page = page;
                 if (model.word == "") {
                     Broker.PrepareAdvSearch(model);
+                    ViewData["PageTitle"] = "Cuardach casta · Advanced search";
                 } else {
                     Broker.DoAdvSearch(model);
                     var query = new Query {
@@ -82,6 +90,7 @@ namespace TearmaWeb.Controllers
                         JsonData = model.searchData()
                     };
                     _queryLogger.Log(query);
+                    ViewData["PageTitle"] = $"\"{model.word}\" | Cuardach casta · Advanced search";
                 }
 
                 return View("AdvSearch", model);
@@ -93,7 +102,8 @@ namespace TearmaWeb.Controllers
 			Models.Home.Domains model=new Models.Home.Domains();
 			model.lang=lang;
 			Broker.DoDomains(model);
-			return View("Domains", model);
+            ViewData["PageTitle"] = "Brabhsáil · Browse";
+            return View("Domains", model);
 		}
 
 		public IActionResult Domain(int domID, int subdomID, string lang, int page) {
@@ -104,7 +114,8 @@ namespace TearmaWeb.Controllers
 			model.subdomID=subdomID;
 			model.page=page;
 			Broker.DoDomain(model);
-			return View("Domain", model);
+            ViewData["PageTitle"] = "Brabhsáil · Browse";
+            return View("Domain", model);
 		}
 	}
 }
