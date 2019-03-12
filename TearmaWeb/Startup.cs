@@ -41,11 +41,11 @@ namespace TearmaWeb
 			if (env.IsDevelopment()) {
 				app.UseDeveloperExceptionPage();
 				app.UseStatusCodePages();
-            } else { 
+            } else {
+                app.UseExceptionHandler("/error/500");
+                app.UseStatusCodePagesWithReExecute("/error/{0}");
                 app.UseExceptional();
             }
-
-            app.UseDeveloperExceptionPage();
 
             var options=new RewriteOptions();
 			options.Rules.Add(new RedirectToWwwRule());
@@ -71,8 +71,11 @@ namespace TearmaWeb
 				//Home page:
 				routes.MapRoute(name: "", template: "/", defaults: new {controller="Home", action="Index"});
 
-				//A single entry:
-				routes.MapRoute(name: "", template: "/id/{id:int}/", defaults: new {controller="Home", action="Entry"});
+                //Error page:
+                routes.MapRoute(name: "", template: "/error/{code:int}", defaults: new { controller = "Home", action = "Error" });
+
+                //A single entry:
+                routes.MapRoute(name: "", template: "/id/{id:int}/", defaults: new {controller="Home", action="Entry"});
 
 				//Quick search:
 				routes.MapRoute(name: "", template: "/q/{word}/{lang?}/", defaults: new {controller="Home", action="QuickSearch", lang=""});

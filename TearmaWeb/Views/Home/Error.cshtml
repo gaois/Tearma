@@ -1,0 +1,39 @@
+﻿@using TearmaWeb.Models
+@model ErrorModel
+
+@{
+    Layout = "_HomeLayout";
+    ViewBag.swapper = "";
+}
+
+<div class="parallel">
+    <div class="ga" lang="ga">
+        @if (Model.HttpStatusCode == 404) {
+            <h1>Earráid 404</h1>
+            <p>Níor aimsíodh an leathanach.</p>
+            <p>Cinntigh go bhfuil seoladh gréasáin cruinn in úsáid agat nó téigh siar chuig <a asp-controller="Home" asp-action="Index">leathanach baile an&nbsp;tsuímh</a>.</p>
+        } else {
+            <h1>Earráid</h1>
+            <p>Tharla earráid agus an leathanach á oscailt.</p>
+            <p>Sa chás go gceapann tú go bhfuil fadhb leis an suíomh ba mhór againn dá gcuirfeá ar an eolas muid trí rphost a sheoladh chuig <a href="mailto:tearma@dcu.ie">tearma@dcu.ie</a>. Bheimis buíoch díot ach an seoladh gréasáin (URL) a thugtar i do bhrabhsálaí a lua sa teachtaireacht mar aon leis an uimhir aitheantais a thugtar&nbsp;thíos.</p>
+        }
+        @if (Model.ShowRequestID) {
+            <p>Uimhir aitheantais an iarratais: <code>@Model.RequestID</code></p>
+        }
+    </div>
+    <div class="en" lang="en">
+        @if (Model.HttpStatusCode == 404) {
+            <h1>Error 404</h1>
+            <p>The requested page was not found.</p>
+            <p>Please make sure that you provided the correct web address above or else return to the website&nbsp;<a asp-controller="Home" asp-action="Index">homepage</a>.</p>
+        } else {
+            <h1>Error</h1>
+            <p>An error occurred while attempting to open this&nbsp;page.</p>
+            <p>If you believe you encountered a problem with this website please let us know by sending an e-mail to <a href="mailto:tearma@dcu.ie">tearma@dcu.ie</a>. We would appreciate if you could include the current web address (URL) displayed in your browser as well as the request ID below in your&nbsp;message.</p>
+        }
+        @if (Model.ShowRequestID) {
+            <p>Request ID: <code>@Model.RequestID</code></p>
+        }
+    </div>
+    <div class="clear"></div>
+</div>

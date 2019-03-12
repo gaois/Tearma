@@ -1,6 +1,7 @@
 ﻿using Ansa.Extensions;
 using Gaois.QueryLogger;
 using Microsoft.AspNetCore.Mvc;
+using System.Diagnostics;
 using System.Text.RegularExpressions;
 
 namespace TearmaWeb.Controllers
@@ -117,5 +118,23 @@ namespace TearmaWeb.Controllers
             ViewData["PageTitle"] = "Brabhsáil · Browse";
             return View("Domain", model);
 		}
+
+        public IActionResult Error(int? code) {
+            var model = new Models.ErrorModel() {
+                HttpStatusCode = HttpContext.Response.StatusCode,
+                RequestID = Activity.Current?.Id ?? HttpContext.TraceIdentifier
+            };
+            switch (model.HttpStatusCode) {
+                case 404:
+                    ViewData["PageTitle"] = "Earráid 404 · Error 404";
+                    ViewData["MetaDescription"] = "Níor aimsíodh an leathanach · Page not found";
+                    break;
+                default:
+                    ViewData["PageTitle"] = "Earráid · Error";
+                    ViewData["MetaDescription"] = "Tharla earráid agus an leathanach seo á oscailt · An error occurred while attempting to open this page";
+                    break;
+            }
+            return View(model);
+        }
 	}
 }
