@@ -1,11 +1,10 @@
-﻿using System.Collections.Generic;
-using Microsoft.AspNetCore.Builder;
+﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Rewrite;
 using Gaois.QueryLogger;
+using TearmaWeb.Rules;
 
 namespace TearmaWeb
 {
@@ -33,48 +32,6 @@ namespace TearmaWeb
 				settings.Store.ConnectionString = Configuration["ConnectionStrings:Users"];
             });
         }
-
-		public class RedirectToWwwRule : IRule {
-			public virtual void ApplyRule(RewriteContext context) {
-				context.Result=RuleResult.ContinueRules;
-				HttpRequest req = context.HttpContext.Request;
-
-				//Redirect to www:
-				string domain=req.Host.Host;
-				if(domain!="localhost" && domain!="www-tearma-ie.gaois.ie" && domain!="www.tearma.ie") {
-					HttpResponse response=context.HttpContext.Response;
-					response.StatusCode=301;
-					response.Headers[Microsoft.Net.Http.Headers.HeaderNames.Location]="http://www.tearma.ie"+req.Path.Value;
-					context.Result=RuleResult.EndResponse;
-				}
-
-				//Redirect (simple) old URLs:
-				Dictionary<string, string> urls=new Dictionary<string, string>();
-				urls.Add("/home.aspx", "/");
-				urls.Add("/searchbox.aspx", "/breiseain/bosca/");
-				urls.Add("/tal.aspx", "/breiseain/tearma-an-lae/");
-				urls.Add("/liostai.aspx", "/ioslodail/");
-				urls.Add("/widgets.aspx", "/breiseain/");
-				urls.Add("/enquiry.aspx", "/ceist/");
-				urls.Add("/help.aspx", "/cabhair/");
-				urls.Add("/about.aspx", "/eolas/");
-				string path=req.Path.Value.ToLower();
-				if(urls.ContainsKey(path)) {
-					HttpResponse response=context.HttpContext.Response;
-					response.StatusCode=301;
-					response.Headers[Microsoft.Net.Http.Headers.HeaderNames.Location]=urls[path];
-					context.Result=RuleResult.EndResponse;
-				}
-
-				//redirect old quick search URL:
-				if(req.Path.Value.ToLower()=="/search.aspx" && req.Query.ContainsKey("term")) {
-					HttpResponse response=context.HttpContext.Response;
-					response.StatusCode=301;
-					response.Headers[Microsoft.Net.Http.Headers.HeaderNames.Location]="/q/"+req.Query["term"]+"/";
-					context.Result=RuleResult.EndResponse;
-				}
-			}
-		}
 
 		public void Configure(IApplicationBuilder app, IHostingEnvironment env) {
 			if(env.IsDevelopment()) {
