@@ -87,7 +87,12 @@ namespace TearmaWeb
 			options.Rules.Add(new RedirectToWwwRule());
 			app.UseRewriter(options);
 
-			app.UseStaticFiles();
+            if (env.IsProduction()) {
+                app.UseHsts();
+                app.UseHttpsRedirection();
+            }
+
+            app.UseStaticFiles();
 
 			app.UseMvc(routes => {
 				//Home page:
