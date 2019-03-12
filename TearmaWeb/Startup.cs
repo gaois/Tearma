@@ -22,6 +22,9 @@ namespace TearmaWeb
         public void ConfigureServices(IServiceCollection services) {
 			services.AddMvc();
 
+            services.AddExceptional(_configuration.GetSection("Exceptional"));
+            services.AddWebOptimizer();
+
             services.AddQueryLogger(settings =>
             {
                 settings.ApplicationName = "Téarma";
@@ -32,15 +35,16 @@ namespace TearmaWeb
 				IConfigurationRoot Configuration = builder.Build();
 				settings.Store.ConnectionString = Configuration["ConnectionStrings:Users"];
             });
-
-            services.AddWebOptimizer();
         }
 
 		public void Configure(IApplicationBuilder app, IHostingEnvironment env) {
-			if(env.IsDevelopment()) {
+			if (env.IsDevelopment()) {
 				app.UseDeveloperExceptionPage();
 				app.UseStatusCodePages();
+            } else { 
+                app.UseExceptional();
             }
+
             app.UseDeveloperExceptionPage();
 
             var options=new RewriteOptions();
