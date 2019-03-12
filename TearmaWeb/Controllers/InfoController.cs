@@ -11,8 +11,14 @@ namespace TearmaWeb.Controllers {
 		public IActionResult Topic(string section, string nickname, string lang) {
 			IActionResult ret;
 			Models.Info.Topic model=new Models.Info.Topic();
-			if(section=="eolas") model.toc=Models.Info.Toc.InfoToc();
-			if(section=="cabhair") model.toc=Models.Info.Toc.HelpToc();
+			if(section=="eolas") {
+                model.toc=Models.Info.Toc.InfoToc();
+                ViewData["PageTitle"] = "Eolas · About";
+            }
+			if(section=="cabhair") {
+                model.toc=Models.Info.Toc.HelpToc();
+                ViewData["PageTitle"] = "Cabhair · Help";
+            }
 			if(nickname==null){
 				ret=new RedirectResult("/"+section+"/"+model.toc[0].nickname+"."+lang);
 			} else {
@@ -21,22 +27,23 @@ namespace TearmaWeb.Controllers {
 				model.lang=lang;
 				string path=@"./wwwroot/"+section+"/"+nickname+"."+lang+".md";
 				if(System.IO.File.Exists(path)) model.body=System.IO.File.ReadAllText(path);
-				ret=View("Topic", model);
+                ret =View("Topic", model);
 			}
 			return ret;
 		}
 
 		public IActionResult Download() {
 			Models.Info.Download model=new Models.Info.Download();
-			IActionResult ret=View("Download", model);
+            ViewData["PageTitle"] = "Liostaí le híoslódáil · Downloadable Lists";
+            IActionResult ret=View("Download", model);
 			return ret;
 		}
 
 		public IActionResult Widgets() {
 			Models.Info.Widgets model=new Models.Info.Widgets();
-			IActionResult ret=View("Widgets", model);
+            ViewData["PageTitle"] = "Ábhar do shuíomhanna eile · Content for other websites";
+            IActionResult ret=View("Widgets", model);
 			return ret;
 		}
-
 	}
 }

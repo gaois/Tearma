@@ -12,7 +12,8 @@ namespace TearmaWeb.Controllers {
 		public IActionResult Ask() {
 			Models.Ask.Ask model=new Models.Ask.Ask();
 			model.mode="empty";
-			IActionResult ret=View("Ask", model);
+            ViewData["PageTitle"] = "Fiosruithe · Queries";
+            IActionResult ret=View("Ask", model);
 			return ret;
 		}
 
@@ -46,8 +47,9 @@ namespace TearmaWeb.Controllers {
                 SendEmail("tearmai@forasnagaeilge.ie", subject, html);
 			} else {
 				model.mode="error";
-			}
-			IActionResult ret=View("Ask", model);
+            }
+            ViewData["PageTitle"] = "Fiosruithe · Queries";
+            IActionResult ret=View("Ask", model);
 			return ret;
 		}
 
@@ -61,6 +63,5 @@ namespace TearmaWeb.Controllers {
 			System.Net.Mail.SmtpClient client=new System.Net.Mail.SmtpClient("localhost");
 			client.Send(msg);
 		}
-
 	}
 }
