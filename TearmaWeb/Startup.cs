@@ -1,12 +1,11 @@
 ﻿using Gaois.QueryLogger;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Rewrite;
-using System.Collections.Generic;
-using TearmaWeb.Controllers;
+using System;
+using TearmaWeb.Rules;
 
 namespace TearmaWeb
 {
@@ -23,6 +22,9 @@ namespace TearmaWeb
         public void ConfigureServices(IServiceCollection services) {
 			services.AddMvc();
 
+            services.AddExceptional(_configuration.GetSection("Exceptional"));
+            services.AddWebOptimizer();
+
             services.AddQueryLogger(settings =>
             {
                 settings.ApplicationName = "Téarma";
@@ -33,67 +35,45 @@ namespace TearmaWeb
             services.AddScoped<Broker>();
         }
 
-		public class RedirectToWwwRule : IRule {
-			public virtual void ApplyRule(RewriteContext context) {
-				context.Result=RuleResult.ContinueRules;
-				HttpRequest req = context.HttpContext.Request;
-
-				//Redirect to www:
-				string domain=req.Host.Host;
-				if(domain!="localhost" && domain!="www-tearma-ie.gaois.ie" && domain!="www.tearma.ie") {
-					HttpResponse response=context.HttpContext.Response;
-					response.StatusCode=301;
-					response.Headers[Microsoft.Net.Http.Headers.HeaderNames.Location]="http://www.tearma.ie"+req.Path.Value;
-					context.Result=RuleResult.EndResponse;
-				}
-
-				//Redirect (simple) old URLs:
-				Dictionary<string, string> urls=new Dictionary<string, string>();
-				urls.Add("/home.aspx", "/");
-				urls.Add("/searchbox.aspx", "/breiseain/bosca/");
-				urls.Add("/tal.aspx", "/breiseain/tearma-an-lae/");
-				urls.Add("/liostai.aspx", "/ioslodail/");
-				urls.Add("/widgets.aspx", "/breiseain/");
-				urls.Add("/enquiry.aspx", "/ceist/");
-				urls.Add("/help.aspx", "/cabhair/");
-				urls.Add("/about.aspx", "/eolas/");
-				string path=req.Path.Value.ToLower();
-				if(urls.ContainsKey(path)) {
-					HttpResponse response=context.HttpContext.Response;
-					response.StatusCode=301;
-					response.Headers[Microsoft.Net.Http.Headers.HeaderNames.Location]=urls[path];
-					context.Result=RuleResult.EndResponse;
-				}
-
-				//redirect old quick search URL:
-				if(req.Path.Value.ToLower()=="/search.aspx" && req.Query.ContainsKey("term")) {
-					HttpResponse response=context.HttpContext.Response;
-					response.StatusCode=301;
-					response.Headers[Microsoft.Net.Http.Headers.HeaderNames.Location]="/q/"+req.Query["term"]+"/";
-					context.Result=RuleResult.EndResponse;
-				}
-			}
-		}
-
 		public void Configure(IApplicationBuilder app, IHostingEnvironment env) {
-			if(env.IsDevelopment()) {
+			if (env.IsDevelopment()) {
 				app.UseDeveloperExceptionPage();
 				app.UseStatusCodePages();
+            } else {
+                app.UseExceptionHandler("/error/500");
+                app.UseStatusCodePagesWithReExecute("/error/{0}");
+                app.UseExceptional();
             }
-            app.UseDeveloperExceptionPage();
 
-            RewriteOptions options=new RewriteOptions();
+            var options=new RewriteOptions();
 			options.Rules.Add(new RedirectToWwwRule());
 			app.UseRewriter(options);
 
-			app.UseStaticFiles();
+            if (env.IsProduction()) {
+                app.UseHsts();
+                app.UseHttpsRedirection();
+            }
+
+            app.UseWebOptimizer();
+
+            app.UseStaticFiles(new StaticFileOptions
+            {
+                OnPrepareResponse = context =>
+                {
+                    context.Context.Response.Headers.Add("Cache-Control", "public,max-age=2678400");
+                    context.Context.Response.Headers.Add("Expires", DateTime.UtcNow.AddDays(31).ToString("R"));
+                }
+            });
 
 			app.UseMvc(routes => {
 				//Home page:
 				routes.MapRoute(name: "", template: "/", defaults: new {controller="Home", action="Index"});
 
-				//A single entry:
-				routes.MapRoute(name: "", template: "/id/{id:int}/", defaults: new {controller="Home", action="Entry"});
+                //Error page:
+                routes.MapRoute(name: "", template: "/error/{code:int}", defaults: new { controller = "Home", action = "Error" });
+
+                //A single entry:
+                routes.MapRoute(name: "", template: "/id/{id:int}/", defaults: new {controller="Home", action="Entry"});
 
 				//Quick search:
 				routes.MapRoute(name: "", template: "/q/{word}/{lang?}/", defaults: new {controller="Home", action="QuickSearch", lang=""});

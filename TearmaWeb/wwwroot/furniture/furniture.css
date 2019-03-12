@@ -2,10 +2,13 @@ body {font-family: sans-serif; background-color: #ffffff; margin: 0; padding: 0;
 .ga {font-weight: bold;}
 .en {font-weight: normal;}
 
+.accessText {position: absolute; left: -10000px; top: auto; width: 1px; height: 1px; overflow: hidden;}
+.accessText:focus {position: static; width: auto; height: auto;}
+
 div.topbar {padding: 15px 0px; background-color: #006699;}
 div.topbar div.inside {padding: 0px 20px; max-width: 1400px; margin: 0px auto;}
 div.topbar a {color: #dddddd; text-decoration: none; padding: 11px 25px; margin-right: 8px; font-weight: bold; border-radius: 4px; white-space: nowrap;}
-div.topbar a img {position: relative; top: 1px; width: 25px;}
+div.topbar a img {position: relative; top: 2px; width: 25px;}
 div.topbar a span {margin-left: 1em;}
 div.topbar a.focloir {background-color: #8b0000;}
 div.topbar a.teanglann {background-color: #ea5c0f;}
@@ -22,56 +25,56 @@ div.topbar a.current:hover {color: #2288bb;}
 }
 body.printable div.topbar {display: none;}
 
-div.footer {padding: 30px 0px 75px 0px; background-color: #dddddd; border-top: 3px dotted #ffffff; text-shadow: 1px 1px 0px #eeeeee; color: #666666;}
-div.footer div.inside {padding: 0px 20px; max-width: 1400px; margin: 0px auto;}
-div.footer div.logos {}
-div.footer div.logos a {text-decoration: none; margin-right: 20px; display: inline-block; box-sizing: border-box;}
-div.footer div.logos a img {max-height: 80px; border-radius: 2px;}
-div.footer div.statement {margin-top: 1em; line-height: 1.5em;}
-div.footer div.statement div {}
-div.footer div.statement span.label {}
-div.footer div.statement a {color: #006699; text-decoration: none; white-space: nowrap;}
-div.footer div.statement a:hover {color: #2288bb;}
-div.footer div.icons {margin-top: 1.5em;}
-div.footer div.icons a {font-size: 30px; text-decoration: none; margin-right: 0.5em; }
-div.footer div.icons a.facebook {color: rgb(66, 103, 178);}
-div.footer div.icons a.twitter {color: rgb(29, 161, 242);}
-div.footer div.icons a.instagram {color: #666666; margin-left: -0.25em;}
-div.footer div.icons a:hover {position: relative; top: -1px;}
-div.footer div.icons a.email {font-size: 1rem; text-decoration: none; color: #006699; position: relative; top: -5px !important;}
-div.footer div.icons a.email:hover {color: #2288bb;}
-div.footer div.sitelinks {margin-top: 1em; box-sizing: border-box; overflow: auto;}
-div.footer div.sitelinks a {display: block; text-decoration: none; color: #666666; position: relative; padding-left: 50px; margin: 15px 35px 15px 0px; float: left; box-sizing: border-box;}
-div.footer div.sitelinks a:hover {color: #006699;}
-div.footer div.sitelinks a span.icon {font-size: 25px; position: absolute; left: 0px; top: 5px;}
-div.footer div.sitelinks a span {display: block;}
-div.footer div.externalinks {margin-top: 1.75em; font-size: 1.1em; margin-left: -2px;}
-div.footer div.externalinks span.sep {color: #aaaaaa; margin: 0 0.75em;}
-div.footer div.externalinks a {text-decoration: none; font-weight: bold; white-space: nowrap;}
-div.footer div.externalinks a img {width: 30px; position: relative; top: 1px; margin-right: 15px;}
-div.footer div.externalinks a.tearma {color: #006699;}
-div.footer div.externalinks a.tearma:hover {color: #2288bb;}
-div.footer div.externalinks a.focloir {color: #8b0000;}
-div.footer div.externalinks a.focloir:hover {color: #c72323;}
-div.footer div.externalinks a.teanglann {color: #ea5c0f;}
-div.footer div.externalinks a.teanglann:hover {color: #ff823e;}
-div.footer div.externalinks a.minor {color: #2288bb;}
-div.footer div.externalinks a.minor:hover {color: #3399cc;}
-div.footer div.externalinks a.minor img {width: 16px; top: 5px; margin-right: 10px;}
+footer.footer {padding: 30px 0px 75px 0px; background-color: #dddddd; border-top: 3px dotted #ffffff; text-shadow: 1px 1px 0px #eeeeee; color: #666666;}
+footer.footer div.inside {padding: 0px 20px; max-width: 1400px; margin: 0px auto;}
+footer.footer div.logos {}
+footer.footer div.logos a {text-decoration: none; margin-right: 20px; display: inline-block; box-sizing: border-box;}
+footer.footer div.logos a img {max-height: 80px; border-radius: 2px;}
+footer.footer div.statement {margin-top: 1em; line-height: 1.5em;}
+footer.footer div.statement div {}
+footer.footer div.statement span.label {}
+footer.footer div.statement a {color: #006699; text-decoration: none; white-space: nowrap;}
+footer.footer div.statement a:hover {color: #2288bb;}
+footer.footer div.icons {margin-top: 1.5em;}
+footer.footer div.icons a {font-size: 30px; text-decoration: none; margin-right: 0.5em; }
+footer.footer div.icons a.facebook {color: rgb(66, 103, 178);}
+footer.footer div.icons a.twitter {color: rgb(29, 161, 242);}
+footer.footer div.icons a.instagram {color: #666666; margin-left: -0.25em;}
+footer.footer div.icons a:hover {position: relative; top: -1px;}
+footer.footer div.icons a.email {font-size: 1rem; text-decoration: none; color: #006699; position: relative; top: -5px !important;}
+footer.footer div.icons a.email:hover {color: #2288bb;}
+footer.footer div.sitelinks {margin-top: 1em; box-sizing: border-box; overflow: auto;}
+footer.footer div.sitelinks a {display: block; text-decoration: none; color: #666666; position: relative; padding-left: 50px; margin: 15px 35px 15px 0px; float: left; box-sizing: border-box;}
+footer.footer div.sitelinks a:hover {color: #006699;}
+footer.footer div.sitelinks a span.icon {font-size: 25px; position: absolute; left: 0px; top: 5px;}
+footer.footer div.sitelinks a span {display: block;}
+footer.footer div.externalinks {margin-top: 1.75em; font-size: 1.1em; margin-left: -2px;}
+footer.footer div.externalinks span.sep {color: #aaaaaa; margin: 0 0.75em;}
+footer.footer div.externalinks a {text-decoration: none; font-weight: bold; white-space: nowrap;}
+footer.footer div.externalinks a img {width: 30px; position: relative; top: 2px; margin-right: 15px;}
+footer.footer div.externalinks a.tearma {color: #006699;}
+footer.footer div.externalinks a.tearma:hover {color: #2288bb;}
+footer.footer div.externalinks a.focloir {color: #8b0000;}
+footer.footer div.externalinks a.focloir:hover {color: #c72323;}
+footer.footer div.externalinks a.teanglann {color: #ea5c0f;}
+footer.footer div.externalinks a.teanglann:hover {color: #ff823e;}
+footer.footer div.externalinks a.minor {color: #2288bb;}
+footer.footer div.externalinks a.minor:hover {color: #3399cc;}
+footer.footer div.externalinks a.minor img {width: 16px; top: 5px; margin-right: 10px;}
 @media (max-width: 800px){
-  div.footer div.statement div {margin: 0.5em 0;}
-  div.footer div.statement span.label {display: block;}
-  div.footer div.externalinks span.sep {width: 1px; overflow: hidden; display: block;}
-  div.footer div.externalinks a {display: inline-block; min-height: 20px;}
-  div.footer div.externalinks a.minor img {width: 15px; margin-left: 10px; margin-right: 20px;}
+  footer.footer div.statement div {margin: 0.5em 0;}
+  footer.footer div.statement span.label {display: block;}
+  footer.footer div.externalinks span.sep {width: 1px; overflow: hidden; display: block;}
+  footer.footer div.externalinks a {display: inline-block; min-height: 20px;}
+  footer.footer div.externalinks a.minor img {width: 15px; margin-left: 10px; margin-right: 20px;}
 }
 @media (max-width: 400px){
-  div.footer div.sitelinks a {width: auto;}
+  footer.footer div.sitelinks a {width: auto;}
 }
-body.printable div.footer {background-color: transparent; border-top: 2px solid #dddddd; text-shadow: 0px 0px 0px transparent;}
-body.printable div.footer div.icons {display: none;}
-body.printable div.footer div.sitelinks {display: none;}
-body.printable div.footer div.externalinks {display: none;}
+body.printable footer.footer {background-color: transparent; border-top: 2px solid #dddddd; text-shadow: 0px 0px 0px transparent;}
+body.printable footer.footer div.icons {display: none;}
+body.printable footer.footer div.sitelinks {display: none;}
+body.printable footer.footer div.externalinks {display: none;}
 
 div.envelope {padding: 0px 20px; max-width: 1400px; margin: 0px auto; min-height: 900px}
 div.envelope div.rightie {width: 400px; float: right; padding-top: 40px; position: relative;}
@@ -84,25 +87,25 @@ div.envelope div.leftie {margin-right: 430px; padding-top: 20px; padding-bottom:
 body.printable div.envelope div.rightie {width: auto; float: none;}
 body.printable div.leftie {margin-right: auto;}
 
-div.logobox {box-sizing: border-box; padding: 0px 20px;}
-div.logobox a.logo {display: block; width: 300px; margin: 0px -10px}
-div.logobox a.logo img {width: 100%;}
-div.logobox a.logo:hover {position: relative; top: -1px;}
-div.logobox div.title {margin: 10px 0px 0px 0px; color: #666666; line-height: 1.5em; white-space: nowrap;}
-div.logobox div.icons {margin: 20px 0px 0px 0px;}
-div.logobox div.icons a {font-size: 30px; text-decoration: none; margin-right: 0.5em; }
-div.logobox div.icons a.facebook {color: rgb(66, 103, 178);}
-div.logobox div.icons a.twitter {color: rgb(29, 161, 242);}
-div.logobox div.icons a.instagram {color: #666666; margin-left: -0.25em;}
-div.logobox div.icons a:hover {position: relative; top: -1px;}
+header.logobox {box-sizing: border-box; padding: 0px 20px;}
+header.logobox a.logo {display: block; width: 300px; margin: 0px -10px}
+header.logobox a.logo img {width: 100%;}
+header.logobox a.logo:hover {position: relative; top: -1px;}
+header.logobox div.title {margin: 10px 0px 0px 0px; color: #666666; line-height: 1.5em; white-space: nowrap;}
+header.logobox div.icons {margin: 20px 0px 0px 0px;}
+header.logobox div.icons a {font-size: 30px; text-decoration: none; margin-right: 0.5em; }
+header.logobox div.icons a.facebook {color: rgb(66, 103, 178);}
+header.logobox div.icons a.twitter {color: rgb(29, 161, 242);}
+header.logobox div.icons a.instagram {color: #666666; margin-left: -0.25em;}
+header.logobox div.icons a:hover {position: relative; top: -1px;}
 @media (max-width: 1200px){
-  div.logobox {padding: 0px 10px;}
-  div.logobox div.icons {display: none;}
+  header.logobox {padding: 0px 10px;}
+  header.logobox div.icons {display: none;}
 }
 @media (max-width: 600px){
-  div.logobox {padding: 0px 10px;}
-  div.logobox a.logo img {width: 85%;}
-  div.logobox div.title {white-space: initial;}
+  header.logobox {padding: 0px 10px;}
+  header.logobox a.logo img {width: 85%;}
+  header.logobox div.title {white-space: initial;}
 }
 body.printable div.icons {display: none;}
 
@@ -152,48 +155,48 @@ body.printable a.printableOff {display: block; float: right;}
 	a.printableOff {display: none !important;}
 }
 
-div.swapper {height: 84px; position: relative; border-bottom: 1px solid #cccccc; margin-bottom: 30px;}
-div.swapper a {display: block; float: left; color: #bbbbbb; position: relative; padding: 20px 60px 20px 85px; text-decoration: none; margin-right: 20px; box-sizing: border-box; height: 89px;}
-div.swapper a span.icon {font-size: 30px; position: absolute; left: 35px; top: 25px; text-shadow: -1px -1px 0px #aaaaaa;}
-div.swapper a:first-child {padding-left: 65px;}
-div.swapper a:first-child span.icon {left: 15px;}
-div.swapper a:last-child {margin-right: 0px;}
-div.swapper a span {display: block; white-space: nowrap;}
-div.swapper a:hover {color: #555555;}
-div.swapper a:hover span.icon {text-shadow: -1px -1px 0px #999999;}
-div.swapper a.current {color: #555555; border-bottom: 8px solid #555555;}
-div.swapper a.current span.icon {text-shadow: -1px -1px 0px #999999;}
+nav.swapper {height: 84px; position: relative; border-bottom: 1px solid #cccccc; margin-bottom: 30px;}
+nav.swapper a {display: block; float: left; color: #bbbbbb; position: relative; padding: 20px 60px 20px 85px; text-decoration: none; margin-right: 20px; box-sizing: border-box; height: 89px;}
+nav.swapper a span.icon {font-size: 30px; position: absolute; left: 35px; top: 25px; text-shadow: -1px -1px 0px #aaaaaa;}
+nav.swapper a:first-child {padding-left: 65px;}
+nav.swapper a:first-child span.icon {left: 15px;}
+nav.swapper a:last-child {margin-right: 0px;}
+nav.swapper a span {display: block; white-space: nowrap;}
+nav.swapper a:hover {color: #555555;}
+nav.swapper a:hover span.icon {text-shadow: -1px -1px 0px #999999;}
+nav.swapper a.current {color: #555555; border-bottom: 8px solid #555555;}
+nav.swapper a.current span.icon {text-shadow: -1px -1px 0px #999999;}
 @media (max-width: 1300px){
-  div.swapper a {padding-right: 20px;}
-  div.swapper a:first-child {padding-left: 85px;}
-  div.swapper a:first-child span.icon {left: 35px;}
-  div.swapper a span.ga {display: none;}
-  div.swapper a span.en {display: none;}
+  nav.swapper a {padding-right: 20px;}
+  nav.swapper a:first-child {padding-left: 85px;}
+  nav.swapper a:first-child span.icon {left: 35px;}
+  nav.swapper a span.ga {display: none;}
+  nav.swapper a span.en {display: none;}
 }
 @media (max-width: 1200px){
-  div.swapper a {padding-right: 60px;}
-  div.swapper a:first-child {padding-left: 65px;}
-  div.swapper a:first-child span.icon {left: 15px;}
-  div.swapper a span.ga {display: block;}
-  div.swapper a span.en {display: block;}
+  nav.swapper a {padding-right: 60px;}
+  nav.swapper a:first-child {padding-left: 65px;}
+  nav.swapper a:first-child span.icon {left: 15px;}
+  nav.swapper a span.ga {display: block;}
+  nav.swapper a span.en {display: block;}
 }
 @media (max-width: 900px){
-  div.swapper a {padding-right: 20px;}
-  div.swapper a:first-child {padding-left: 85px;}
-  div.swapper a:first-child span.icon {left: 35px;}
-  div.swapper a span.ga {display: none;}
-  div.swapper a span.en {display: none;}
+  nav.swapper a {padding-right: 20px;}
+  nav.swapper a:first-child {padding-left: 85px;}
+  nav.swapper a:first-child span.icon {left: 35px;}
+  nav.swapper a span.ga {display: none;}
+  nav.swapper a span.en {display: none;}
 }
 @media (max-width: 600px){
-  div.swapper a {padding-right: 5px;}
-  div.swapper a {padding-left: 70px;}
-  div.swapper a span.icon {left: 20px;}
-  div.swapper a:first-child {padding-left: 70px;}
-  div.swapper a:first-child span.icon {left: 20px;}
-  div.swapper a span.ga {display: none;}
-  div.swapper a span.en {display: none;}
+  nav.swapper a {padding-right: 5px;}
+  nav.swapper a {padding-left: 70px;}
+  nav.swapper a span.icon {left: 20px;}
+  nav.swapper a:first-child {padding-left: 70px;}
+  nav.swapper a:first-child span.icon {left: 20px;}
+  nav.swapper a span.ga {display: none;}
+  nav.swapper a span.en {display: none;}
 }
-body.printable div.swapper {display: none;}
+body.printable nav.swapper {display: none;}
 
 form.textbox {box-shadow: 0px 0px 5px #333333; border-radius: 4px; position: relative; border: 1px solid #666666;}
 form.textbox div.text {box-sizing: border-box; margin-right: 65px; border-radius: 4px;}
