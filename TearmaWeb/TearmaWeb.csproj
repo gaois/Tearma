@@ -18,6 +18,7 @@
   <ItemGroup>
     <PackageReference Include="Ansa.Extensions" Version="0.2.6" />
     <PackageReference Include="Gaois.QueryLogger.AspNetCore" Version="0.5.7-alpha" />
+    <PackageReference Include="LigerShark.WebOptimizer.Core" Version="1.0.236" />
     <PackageReference Include="Microsoft.AspNetCore.App" />
     <PackageReference Include="Microsoft.AspNetCore.Rewrite" Version="2.1.1" />
     <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />

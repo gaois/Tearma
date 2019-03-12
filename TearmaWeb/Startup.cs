@@ -1,11 +1,11 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using Gaois.QueryLogger;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Rewrite;
-using Gaois.QueryLogger;
-using TearmaWeb.Rules;
 using System;
+using TearmaWeb.Rules;
 
 namespace TearmaWeb
 {
@@ -32,6 +32,8 @@ namespace TearmaWeb
 				IConfigurationRoot Configuration = builder.Build();
 				settings.Store.ConnectionString = Configuration["ConnectionStrings:Users"];
             });
+
+            services.AddWebOptimizer();
         }
 
 		public void Configure(IApplicationBuilder app, IHostingEnvironment env) {
@@ -41,7 +43,7 @@ namespace TearmaWeb
             }
             app.UseDeveloperExceptionPage();
 
-            RewriteOptions options=new RewriteOptions();
+            var options=new RewriteOptions();
 			options.Rules.Add(new RedirectToWwwRule());
 			app.UseRewriter(options);
 
@@ -49,6 +51,8 @@ namespace TearmaWeb
                 app.UseHsts();
                 app.UseHttpsRedirection();
             }
+
+            app.UseWebOptimizer();
 
             app.UseStaticFiles(new StaticFileOptions
             {
