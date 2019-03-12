@@ -5,6 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Rewrite;
 using Gaois.QueryLogger;
 using TearmaWeb.Rules;
+using System;
 
 namespace TearmaWeb
 {
@@ -49,7 +50,14 @@ namespace TearmaWeb
                 app.UseHttpsRedirection();
             }
 
-            app.UseStaticFiles();
+            app.UseStaticFiles(new StaticFileOptions
+            {
+                OnPrepareResponse = context =>
+                {
+                    context.Context.Response.Headers.Add("Cache-Control", "public,max-age=2678400");
+                    context.Context.Response.Headers.Add("Expires", DateTime.UtcNow.AddDays(31).ToString("R"));
+                }
+            });
 
 			app.UseMvc(routes => {
 				//Home page:
