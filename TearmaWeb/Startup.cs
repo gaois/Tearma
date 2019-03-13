@@ -22,6 +22,7 @@ namespace TearmaWeb
         public void ConfigureServices(IServiceCollection services) {
 			services.AddMvc();
 
+            services.AddMiniProfiler();
             services.AddExceptional(_configuration.GetSection("Exceptional"));
             services.AddWebOptimizer();
 
@@ -56,6 +57,7 @@ namespace TearmaWeb
                 app.UseHttpsRedirection();
             }
 
+            app.UseMiniProfiler();
             app.UseWebOptimizer();
 
             app.UseStaticFiles(new StaticFileOptions

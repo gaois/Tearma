@@ -41,25 +41,28 @@
     <script type="text/javascript" src="~/furniture/furniture.js"></script>
 </head>
 <body>
+    <environment exclude="Production">
+        <mini-profiler />
+    </environment>
     <div id="skip" class="accessText">
         <a href="#main">Skip to main content</a>
     </div>
     <div class="topbar">
         <div class="inside">
             <a class="current" href="~/">
-                <img src="~/furniture/minilogo-tearma.svg" alt=""/><span>téarma.ie</span>
+                <img src="~/furniture/minilogo-tearma.svg" alt="" /><span>téarma.ie</span>
             </a>
             <a class="focloir" href="https://www.focloir.ie/" rel="noopener" target="_blank">
-                <img src="~/furniture/minilogo-white.svg" alt=""/><span>foclóir.ie</span>
+                <img src="~/furniture/minilogo-white.svg" alt="" /><span>foclóir.ie</span>
             </a>
             <a class="teanglann" href="https://www.teanglann.ie/" rel="noopener" target="_blank">
-                <img src="~/furniture/minilogo-white.svg" alt=""/><span>teanglann.ie</span>
+                <img src="~/furniture/minilogo-white.svg" alt="" /><span>teanglann.ie</span>
             </a>
             <a class="minor gaois" href="https://www.gaois.ie/" rel="noopener" target="_blank">
-                <img src="~/furniture/gaois-white.png" alt=""/><span>gaois.ie</span>
+                <img src="~/furniture/gaois-white.png" alt="" /><span>gaois.ie</span>
             </a>
             <a class="minor logainm" href="https://www.logainm.ie/" rel="noopener" target="_blank">
-                <img src="~/furniture/logainm-white.png" alt=""/><span>logainm.ie</span>
+                <img src="~/furniture/logainm-white.png" alt="" /><span>logainm.ie</span>
             </a>
         </div>
     </div>
@@ -67,14 +70,14 @@
     <div class="envelope">
         <div class="rightie">
             <a class="printableOff" href="javascript:printableOff()">
-	            <span class="icon fas fa-desktop"></span>
-	            <span class="ga" lang="ga">Ar ais chuig leagan don scáileán</span>
-	            <span class="en" lang="en">Back to screen version</span>
-	        </a>
+                <span class="icon fas fa-desktop"></span>
+                <span class="ga" lang="ga">Ar ais chuig leagan don scáileán</span>
+                <span class="en" lang="en">Back to screen version</span>
+            </a>
             <header class="logobox">
                 <a href="~/" class="logo">
-                    <img src="~/furniture/tearma.png" alt="téarma.ie" 
-                         title="Bunachar Náisiúnta Téarmaíochta don Ghaeilge · National Terminology Database for Irish"/>
+                    <img src="~/furniture/tearma.png" alt="téarma.ie"
+                         title="Bunachar Náisiúnta Téarmaíochta don Ghaeilge · National Terminology Database for Irish" />
                 </a>
                 <div class="title">
                     <div class="ga" lang="ga">An Bunachar Náisiúnta Téarmaíochta don&nbsp;Ghaeilge</div>
@@ -95,12 +98,12 @@
                     <span class="ga" lang="ga">Cuardach tapa</span>
                     <span class="en" lang="en">Quick search</span>
                 </a>
-                <a  href="~/plus/" class="@(ViewBag.swapper=="plus" ? "current" : "")">
+                <a href="~/plus/" class="@(ViewBag.swapper=="plus" ? "current" : "")">
                     <span class="icon fas fa-search-plus" title="Cuardach casta · Advanced search"></span>
                     <span class="ga" lang="ga">Cuardach casta</span>
                     <span class="en" lang="en">Advanced search</span>
                 </a>
-                <a  href="~/dom/ga/" class="@(ViewBag.swapper=="dom" ? "current" : "")">
+                <a href="~/dom/ga/" class="@(ViewBag.swapper=="dom" ? "current" : "")">
                     <span class="icon fas fa-sitemap" title="Brabhsáil · Browse"></span>
                     <span class="ga" lang="ga">Brabhsáil</span>
                     <span class="en" lang="en">Browse</span>
@@ -116,10 +119,10 @@
         <div class="inside">
             <div class="logos">
                 <a rel="noopener" target="_blank" href="https://www.forasnagaeilge.ie/" class="fnag">
-                    <img src="~/furniture/fnag.png" alt="Foras na Gaeilge"/>
+                    <img src="~/furniture/fnag.png" alt="Foras na Gaeilge" />
                 </a>
                 <a rel="noopener" target="_blank" href="https://www.dcu.ie/" class="dcu">
-                    <img src="~/furniture/dcu.png" alt="DCU"/>
+                    <img src="~/furniture/dcu.png" alt="DCU" />
                 </a>
             </div>
             <div class="statement">
@@ -167,23 +170,23 @@
             </div>
             <div class="externalinks">
                 <a class="tearma" href="~/">
-                    <img src="~/furniture/minilogo-tearma.svg" alt=""/>&nbsp;téarma.ie
+                    <img src="~/furniture/minilogo-tearma.svg" alt="" />&nbsp;téarma.ie
                 </a>
                 <span class="sep">|</span>
                 <a class="focloir" href="https://www.focloir.ie/" rel="noopener" target="_blank">
-                    <img src="~/furniture/minilogo-focloir.svg" alt=""/>&nbsp;foclóir.ie
+                    <img src="~/furniture/minilogo-focloir.svg" alt="" />&nbsp;foclóir.ie
                 </a>
                 <span class="sep">|</span>
                 <a class="teanglann" href="https://www.teanglann.ie/" rel="noopener" target="_blank">
-                    <img src="~/furniture/minilogo-teanglann.svg" alt=""/>&nbsp;teanglann.ie
+                    <img src="~/furniture/minilogo-teanglann.svg" alt="" />&nbsp;teanglann.ie
                 </a>
                 <span class="sep">|</span>
                 <a class="minor gaois" href="https://www.gaois.ie/" rel="noopener" target="_blank">
-                    <img src="~/furniture/gaois-blue.png" alt=""/>&nbsp;gaois.ie
+                    <img src="~/furniture/gaois-blue.png" alt="" />&nbsp;gaois.ie
                 </a>
                 <span class="sep">|</span>
                 <a class="minor logainm" href="https://www.logainm.ie/" rel="noopener" target="_blank">
-                    <img src="~/furniture/logainm-blue.png" alt=""/>&nbsp;logainm.ie
+                    <img src="~/furniture/logainm-blue.png" alt="" />&nbsp;logainm.ie
                 </a>
             </div>
         </div>
