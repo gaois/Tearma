@@ -7,15 +7,22 @@ namespace TearmaWeb.Rules {
 		public virtual void ApplyRule(RewriteContext context) {
 			context.Result=RuleResult.ContinueRules;
 			HttpRequest req = context.HttpContext.Request;
+            HttpResponse response = context.HttpContext.Response;
 
-			//Redirect to www:
-			string domain=req.Host.Host;
+            //Redirect to www:
+            string domain=req.Host.Host;
 			if(domain!="localhost" && domain!="www-tearma-ie.gaois.ie" && domain!="www.tearma.ie") {
-				HttpResponse response=context.HttpContext.Response;
 				response.StatusCode=301;
 				response.Headers[Microsoft.Net.Http.Headers.HeaderNames.Location]="https://www.tearma.ie"+req.Path.Value;
 				context.Result=RuleResult.EndResponse;
 			}
+
+            //Redirect to https:
+            if(domain != "localhost" && domain != "www-tearma-ie.gaois.ie" && !req.IsHttps) {
+                response.StatusCode = 301;
+                response.Headers[Microsoft.Net.Http.Headers.HeaderNames.Location] = "https://www.tearma.ie" + req.Path.Value;
+                context.Result = RuleResult.EndResponse;
+            }
 
 			//Redirect (simple) old URLs:
 			Dictionary<string, string> urls=new Dictionary<string, string>();
@@ -29,7 +36,6 @@ namespace TearmaWeb.Rules {
 			urls.Add("/about.aspx", "/eolas/");
 			string path=req.Path.Value.ToLower();
 			if(urls.ContainsKey(path)) {
-				HttpResponse response=context.HttpContext.Response;
 				response.StatusCode=301;
 				response.Headers[Microsoft.Net.Http.Headers.HeaderNames.Location]=urls[path];
 				context.Result=RuleResult.EndResponse;
@@ -37,7 +43,6 @@ namespace TearmaWeb.Rules {
 
 			//redirect old quick search URL:
 			if(req.Path.Value.ToLower()=="/search.aspx" && req.Query.ContainsKey("term")) {
-				HttpResponse response=context.HttpContext.Response;
 				response.StatusCode=301;
 				response.Headers[Microsoft.Net.Http.Headers.HeaderNames.Location]="/q/"+req.Query["term"]+"/";
 				context.Result=RuleResult.EndResponse;
