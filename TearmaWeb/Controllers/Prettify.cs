@@ -1,12 +1,15 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using System;
 using System.Collections.Generic;
 using System.Text.Encodings.Web;
+using System.Text.RegularExpressions;
 
 namespace TearmaWeb.Controllers
 {
     public class Prettify {
 		private static Models.Home.Lookups Lookups;
+
 
 		public static string EntryLink(int id, string json, string primLang) {
 			Models.Data.Entry entry=JsonConvert.DeserializeObject<Models.Data.Entry>(json);
@@ -322,4 +325,30 @@ namespace TearmaWeb.Controllers
 		}
 
 	}
+
+	//custom JSON converter to convert partly-faulty integers like "9+" and "1o" into correct integers like 9 and 10
+	//adapted from http://jigarbagadai.blogspot.com/2012/11/custom-json-convertor-for-nullable.html
+	public class IntegerJsonConverter: JsonConverter{
+        public override bool CanConvert(Type objectType){
+            return objectType == typeof(int?) || objectType == typeof(int);
+        }
+		public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer){
+            if(reader.TokenType == JsonToken.Null) return null;
+            if(reader.TokenType == JsonToken.Integer) return reader.Value;
+            if(reader.TokenType == JsonToken.String) {
+
+				string text=(string)reader.Value;
+				text=text.Replace("o", "0");
+				text=text.Replace("O", "0");
+				text=Regex.Replace(text, @"[^0-9]", "");
+
+                if(string.IsNullOrEmpty(text)) return null;
+				int num; if(int.TryParse(text, out num)) return num;
+            }
+			return 0;
+        }
+		public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer) {
+            writer.WriteValue(value);
+        }
+    }
 }

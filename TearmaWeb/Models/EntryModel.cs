@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace TearmaWeb.Models.Data {
 	
@@ -45,8 +47,8 @@ namespace TearmaWeb.Models.Data {
 	}
 
 	public class Annot {
-		public int start;
-		public int stop;
+		[JsonConverter(typeof(TearmaWeb.Controllers.IntegerJsonConverter))] public int start;
+		[JsonConverter(typeof(TearmaWeb.Controllers.IntegerJsonConverter))] public int stop;
 		public AnnotLabel label;
 	}
 
