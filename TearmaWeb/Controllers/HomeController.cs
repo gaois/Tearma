@@ -3,72 +3,75 @@ using Gaois.QueryLogger;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 using System.Text.RegularExpressions;
+using TearmaWeb.Models.Home;
 
 namespace TearmaWeb.Controllers
 {
     public class HomeController : Controller {
         private readonly IQueryLogger _queryLogger;
+        private readonly Broker _broker;
 
-        public HomeController(IQueryLogger queryLogger) {
+        public HomeController(IQueryLogger queryLogger, Broker broker) {
             _queryLogger = queryLogger;
+            _broker = broker;
         }
 
-		private string myDecodeShashes(string text){
+		private string myDecodeShashes(string text) {
 			text=text.Replace("$backslash;", @"\");
 			text=text.Replace("$forwardslash;", @"/");
 			return text;
 		}
 
-        public IActionResult Index() {
-			Models.Home.Index model=new Models.Home.Index();
-			Broker.DoIndex(model);
-            ViewData["PageTitle"] = "téarma.ie";
-            ViewData["TagLine"] = "An Bunachar Náisiúnta Téarmaíochta don Ghaeilge · The National Terminology Database for Irish";
-            return View("Index", model);
+    public IActionResult Index() {
+			Index model=new Index();
+      _broker.DoIndex(model);
+      ViewData["PageTitle"] = "téarma.ie";
+      ViewData["TagLine"] = "An Bunachar Náisiúnta Téarmaíochta don Ghaeilge · The National Terminology Database for Irish";
+			return View("Index", model);
 		}
 
 		public IActionResult Entry(int id) {
-			Models.Home.Entry model=new Models.Home.Entry();
+      Entry model=new Entry();
 			model.id=id;
-			Broker.DoEntry(model);
-            ViewData["PageTitle"] = "téarma.ie";
-            ViewData["TagLine"] = "An Bunachar Náisiúnta Téarmaíochta don Ghaeilge · The National Terminology Database for Irish";
-            return View("Entry", model);
+      _broker.DoEntry(model);
+      ViewData["PageTitle"] = "téarma.ie";
+      ViewData["TagLine"] = "An Bunachar Náisiúnta Téarmaíochta don Ghaeilge · The National Terminology Database for Irish";
+			return View("Entry", model);
 		}
 
 		public IActionResult QuickSearch(string word, string lang) {
-			IActionResult ret;
-            if (word.IsNullOrWhiteSpace()) {
-                ret = new RedirectToActionResult("Index", "Home", null);
-            } else if (Regex.IsMatch(word, @"^\#[0-9]+$")){
-				ret=new RedirectResult("/id/"+word.Replace("#", ""));
-			} else {
-                using (var stopwatch = new SimpleTimer()) {
-                    Models.Home.QuickSearch model = new Models.Home.QuickSearch();
-                    model.word = this.myDecodeShashes(word);
-                    model.lang = lang ?? "";
-                    Broker.DoQuickSearch(model);
-                    ret = View("QuickSearch", model);
-                    var query = new Query {
-                        QueryCategory = "QuickSearch",
-                        QueryTerms = word,
-                        QueryText = Request.Path,
-                        ExecutionTime = (int)stopwatch.ElapsedMilliseconds,
-                        ResultCount = model.exacts.Count,
-                        JsonData = model.searchData()
-                    };
-                    _queryLogger.Log(query);
-                    ViewData["PageTitle"] = $"\"{model.word}\"";
-                }
-			}
-			return ret;
+        if (word.IsNullOrWhiteSpace()) {
+          return new RedirectToActionResult("Index", "Home", null);
+        }
+      
+			  if(Regex.IsMatch(word, @"^\#[0-9]+$")) {
+				  return new RedirectResult("/id/"+word.Replace("#", ""));
+        }
+
+        using (var stopwatch = new SimpleTimer()) {
+            QuickSearch model = new QuickSearch();
+            model.word = myDecodeShashes(word);
+            model.lang = lang ?? "";
+            _broker.DoQuickSearch(model);
+            var query = new Query {
+                QueryCategory = "QuickSearch",
+                QueryTerms = word,
+                QueryText = Request.Path,
+                ExecutionTime = (int)stopwatch.ElapsedMilliseconds,
+                ResultCount = model.exacts.Count,
+                JsonData = model.searchData()
+            };
+            _queryLogger.Log(query);
+            ViewData["PageTitle"] = $"\"{model.word}\"";
+            return View("QuickSearch", model);
+        }
 		}
 
 		public IActionResult AdvSearch(string word, string length, string extent, string lang, int posLabel, int domainID, int subdomainID, int page) {
             using (var stopwatch = new SimpleTimer()) {
                 if (lang is null) lang = "";
                 if (page < 1) page = 1;
-                Models.Home.AdvSearch model = new Models.Home.AdvSearch();
+                AdvSearch model = new AdvSearch();
                 model.word = this.myDecodeShashes(word ?? "");
                 model.length = length;
                 model.extent = extent;
@@ -77,11 +80,11 @@ namespace TearmaWeb.Controllers
                 model.domainID = domainID;
                 model.subdomainID = subdomainID;
                 model.page = page;
-                if (model.word == "") {
-                    Broker.PrepareAdvSearch(model);
+                if (model.word.IsNullOrWhiteSpace()) {
+                    _broker.PrepareAdvSearch(model);
                     ViewData["PageTitle"] = "Cuardach casta · Advanced search";
                 } else {
-                    Broker.DoAdvSearch(model);
+                    _broker.DoAdvSearch(model);
                     var query = new Query {
                         QueryCategory = "AdvSearch",
                         QueryTerms = word,
@@ -100,7 +103,7 @@ namespace TearmaWeb.Controllers
 
 		public IActionResult Domains(string lang) {
 			if(lang is null) lang="";
-			Models.Home.Domains model=new Models.Home.Domains();
+            Domains model=new Domains();
 			model.lang=lang;
 			Broker.DoDomains(model);
             ViewData["PageTitle"] = "Brabhsáil · Browse";
@@ -109,12 +112,12 @@ namespace TearmaWeb.Controllers
 
 		public IActionResult Domain(int domID, int subdomID, string lang, int page) {
 			if(lang is null) lang="";
-			Models.Home.Domain model=new Models.Home.Domain();
+            Domain model=new Domain();
 			model.lang=lang;
 			model.domID=domID;
 			model.subdomID=subdomID;
 			model.page=page;
-			Broker.DoDomain(model);
+			_broker.DoDomain(model);
             ViewData["PageTitle"] = "Brabhsáil · Browse";
             return View("Domain", model);
 		}

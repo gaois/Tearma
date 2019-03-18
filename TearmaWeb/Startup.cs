@@ -30,12 +30,10 @@ namespace TearmaWeb
             {
                 settings.ApplicationName = "Téarma";
                 settings.IsEnabled = _environment.IsProduction();
-				//settings.Store.ConnectionString = _configuration.GetConnectionString("Users");
-
-				var builder = new ConfigurationBuilder().SetBasePath(System.IO.Directory.GetCurrentDirectory()).AddJsonFile("appsettings.json");
-				IConfigurationRoot Configuration = builder.Build();
-				settings.Store.ConnectionString = Configuration["ConnectionStrings:Users"];
+				settings.Store.ConnectionString = _configuration.GetConnectionString("Users");
             });
+
+            services.AddScoped<Broker>();
         }
 
 		public void Configure(IApplicationBuilder app, IHostingEnvironment env) {
