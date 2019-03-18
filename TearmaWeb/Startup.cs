@@ -33,7 +33,7 @@ namespace TearmaWeb
 				settings.Store.ConnectionString = _configuration.GetConnectionString("Users");
             });
 
-            services.AddScoped<Broker>();
+            services.AddScoped<Controllers.Broker>();
         }
 
 		public void Configure(IApplicationBuilder app, IHostingEnvironment env) {

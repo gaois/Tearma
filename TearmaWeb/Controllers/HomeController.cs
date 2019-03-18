@@ -105,7 +105,7 @@ namespace TearmaWeb.Controllers
 			if(lang is null) lang="";
             Domains model=new Domains();
 			model.lang=lang;
-			Broker.DoDomains(model);
+			_broker.DoDomains(model);
             ViewData["PageTitle"] = "Brabhsáil · Browse";
             return View("Domains", model);
 		}
