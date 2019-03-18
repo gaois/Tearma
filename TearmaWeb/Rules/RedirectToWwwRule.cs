@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Rewrite;
 using System.Collections.Generic;
+using System.Text.Encodings.Web;
 
 namespace TearmaWeb.Rules {
     public class RedirectToWwwRule : IRule {
@@ -44,7 +45,9 @@ namespace TearmaWeb.Rules {
 			//redirect old quick search URL:
 			if(req.Path.Value.ToLower()=="/search.aspx" && req.Query.ContainsKey("term")) {
 				response.StatusCode=301;
-				response.Headers[Microsoft.Net.Http.Headers.HeaderNames.Location]="/q/"+req.Query["term"]+"/";
+				string x=Models.Home.Tools.SlashEncode(req.Query["term"]);
+				x=UrlEncoder.Default.Encode(x);
+				response.Headers[Microsoft.Net.Http.Headers.HeaderNames.Location]="/q/"+x+"/";
 				context.Result=RuleResult.EndResponse;
 			}
 		}
