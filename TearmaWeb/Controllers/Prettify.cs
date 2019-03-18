@@ -142,25 +142,31 @@ namespace TearmaWeb.Controllers
 				int stop=annot.stop; if(stop>chars.Count) stop=chars.Count; if(stop==0) stop=chars.Count;
 				for(int i=start; i<stop; i++) {
 					if(annot.label.type == "posLabel") {
-				        chars[i].markupBefore="<span class='char h"+index+"'>"+chars[i].markupBefore;
-						chars[i].markupAfter=chars[i].markupAfter+"</span>";
-						Models.Home.Metadatum label=Lookups.posLabelsById[int.Parse(annot.label.value)];
-						string symbol=label.abbr;
-						if(i==stop-1) chars[i].labelsAfter=chars[i].labelsAfter+"<span class='label "+annot.label.type+" hintable' onmouseover='hon(this, "+index+")' onmouseout='hoff(this, "+index+")' title='"+label.name["ga"]+"/"+label.name["en"]+"'>"+symbol+"</span>";
+						if(Lookups.posLabelsById.ContainsKey(int.Parse(annot.label.value))) {
+							chars[i].markupBefore="<span class='char h"+index+"'>"+chars[i].markupBefore;
+							chars[i].markupAfter=chars[i].markupAfter+"</span>";
+							Models.Home.Metadatum label=Lookups.posLabelsById[int.Parse(annot.label.value)];
+							string symbol=label.abbr;
+							if(i==stop-1) chars[i].labelsAfter=chars[i].labelsAfter+"<span class='label "+annot.label.type+" hintable' onmouseover='hon(this, "+index+")' onmouseout='hoff(this, "+index+")' title='"+label.name["ga"]+"/"+label.name["en"]+"'>"+symbol+"</span>";
+						}
 					}
 					else if(annot.label.type == "inflectLabel") {
-				        chars[i].markupBefore="<span class='char h"+index+"'>"+chars[i].markupBefore;
-						chars[i].markupAfter=chars[i].markupAfter+"</span>";
-						Models.Home.Metadatum label=Lookups.inflectLabelsById[int.Parse(annot.label.value)];
-						string symbol=label.abbr;
-						if(i==stop-1) chars[i].labelsAfter=chars[i].labelsAfter+"<span class='label "+annot.label.type+" hintable' onmouseover='hon(this, "+index+")' onmouseout='hoff(this, "+index+")' title='"+label.name["ga"]+"/"+label.name["en"]+"'>"+symbol+"</span>";
+						if(Lookups.inflectLabelsById.ContainsKey(int.Parse(annot.label.value))) {
+							chars[i].markupBefore="<span class='char h"+index+"'>"+chars[i].markupBefore;
+							chars[i].markupAfter=chars[i].markupAfter+"</span>";
+							Models.Home.Metadatum label=Lookups.inflectLabelsById[int.Parse(annot.label.value)];
+							string symbol=label.abbr;
+							if(i==stop-1) chars[i].labelsAfter=chars[i].labelsAfter+"<span class='label "+annot.label.type+" hintable' onmouseover='hon(this, "+index+")' onmouseout='hoff(this, "+index+")' title='"+label.name["ga"]+"/"+label.name["en"]+"'>"+symbol+"</span>";
+						}
 					}
 					else if(annot.label.type == "langLabel") {
-				        chars[i].markupBefore="<span class='char h"+index+"'>"+chars[i].markupBefore;
-						chars[i].markupAfter=chars[i].markupAfter+"</span>";
-						Models.Home.Language label=Lookups.languagesByAbbr[annot.label.value];
-						string symbol=label.abbr.ToUpper();
-						if(i==stop-1) chars[i].labelsAfter=chars[i].labelsAfter+"<span class='label "+annot.label.type+" hintable' onmouseover='hon(this, "+index+")' onmouseout='hoff(this, "+index+")' title='"+label.name["ga"]+"/"+label.name["en"]+"'>"+symbol+"</span>";
+						if(Lookups.languagesByAbbr.ContainsKey(annot.label.value)) {
+							chars[i].markupBefore="<span class='char h"+index+"'>"+chars[i].markupBefore;
+							chars[i].markupAfter=chars[i].markupAfter+"</span>";
+							Models.Home.Language label=Lookups.languagesByAbbr[annot.label.value];
+							string symbol=label.abbr.ToUpper();
+							if(i==stop-1) chars[i].labelsAfter=chars[i].labelsAfter+"<span class='label "+annot.label.type+" hintable' onmouseover='hon(this, "+index+")' onmouseout='hoff(this, "+index+")' title='"+label.name["ga"]+"/"+label.name["en"]+"'>"+symbol+"</span>";
+						}
 					}
 					else if(annot.label.type == "symbol" && annot.label.value!="proper") {
 				        chars[i].markupBefore="<span class='char h"+index+"'>"+chars[i].markupBefore;
