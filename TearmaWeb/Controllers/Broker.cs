@@ -74,11 +74,13 @@ namespace TearmaWeb.Controllers
             //read lookups:
             Lookups lookups =ReadLookups(reader);
 
+            /*
 			//read similars:
 			reader.NextResult();
 			while(reader.Read()) {
 				model.similars.Add((string)reader["similar"]);
 			}
+            */
 
 			//read languages in which matches have been found:
 			reader.NextResult();
