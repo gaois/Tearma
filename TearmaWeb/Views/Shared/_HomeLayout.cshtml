@@ -39,14 +39,16 @@
 
     <script type="text/javascript" src="~/furniture/jquery.js"></script>
     <script type="text/javascript" src="~/furniture/furniture.js"></script>
-    
-    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-13194751-10"></script>
-    <script>
-        window.dataLayer = window.dataLayer || [];
-        function gtag() { dataLayer.push(arguments); }
-        gtag('js', new Date());
-        gtag('config', 'UA-13194751-10');
-    </script>
+
+    <environment include="Production">
+        <script async src="https://www.googletagmanager.com/gtag/js?id=UA-13194751-10"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag() { dataLayer.push(arguments); }
+            gtag('js', new Date());
+            gtag('config', 'UA-13194751-10');
+        </script>
+    </environment>
 </head>
 <body>
     <environment exclude="Production">
