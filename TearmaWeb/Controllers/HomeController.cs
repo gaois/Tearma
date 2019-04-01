@@ -22,49 +22,49 @@ namespace TearmaWeb.Controllers
 			return text;
 		}
 
-    public IActionResult Index() {
-			Index model=new Index();
-      _broker.DoIndex(model);
-      ViewData["PageTitle"] = "téarma.ie";
-      ViewData["TagLine"] = "An Bunachar Náisiúnta Téarmaíochta don Ghaeilge · The National Terminology Database for Irish";
+        public IActionResult Index() {
+		    Index model=new Index();
+            _broker.DoIndex(model);
+            ViewData["PageTitle"] = "téarma.ie";
+            ViewData["TagLine"] = "An Bunachar Náisiúnta Téarmaíochta don Ghaeilge · The National Terminology Database for Irish";
 			return View("Index", model);
 		}
 
 		public IActionResult Entry(int id) {
-      Entry model=new Entry();
+            Entry model=new Entry();
 			model.id=id;
-      _broker.DoEntry(model);
-      ViewData["PageTitle"] = "téarma.ie";
-      ViewData["TagLine"] = "An Bunachar Náisiúnta Téarmaíochta don Ghaeilge · The National Terminology Database for Irish";
+            _broker.DoEntry(model);
+            ViewData["PageTitle"] = "téarma.ie";
+            ViewData["TagLine"] = "An Bunachar Náisiúnta Téarmaíochta don Ghaeilge · The National Terminology Database for Irish";
 			return View("Entry", model);
 		}
 
 		public IActionResult QuickSearch(string word, string lang) {
-        if (word.IsNullOrWhiteSpace()) {
-          return new RedirectToActionResult("Index", "Home", null);
-        }
+            if(word.IsNullOrWhiteSpace()) {
+              return new RedirectToActionResult("Index", "Home", null);
+            }
       
-			  if(Regex.IsMatch(word, @"^\#[0-9]+$")) {
-				  return new RedirectResult("/id/"+word.Replace("#", ""));
-        }
+			if(Regex.IsMatch(word, @"^\#[0-9]+$")) {
+				return new RedirectResult("/id/"+word.Replace("#", ""));
+            }
 
-        using (var stopwatch = new SimpleTimer()) {
-            QuickSearch model = new QuickSearch();
-            model.word = myDecodeShashes(word);
-            model.lang = lang ?? "";
-            _broker.DoQuickSearch(model);
-            var query = new Query {
-                QueryCategory = "QuickSearch",
-                QueryTerms = word,
-                QueryText = Request.Path,
-                ExecutionTime = (int)stopwatch.ElapsedMilliseconds,
-                ResultCount = model.exacts.Count,
-                JsonData = model.searchData()
-            };
-            _queryLogger.Log(query);
-            ViewData["PageTitle"] = $"\"{model.word}\"";
-            return View("QuickSearch", model);
-        }
+            using (var stopwatch = new SimpleTimer()) {
+                QuickSearch model = new QuickSearch();
+                model.word = myDecodeShashes(word);
+                model.lang = lang ?? "";
+                _broker.DoQuickSearch(model);
+                var query = new Query {
+                    QueryCategory = "QuickSearch",
+                    QueryTerms = word,
+                    QueryText = Request.Path,
+                    ExecutionTime = (int)stopwatch.ElapsedMilliseconds,
+                    ResultCount = model.exacts.Count,
+                    JsonData = model.searchData()
+                };
+                _queryLogger.Log(query);
+                ViewData["PageTitle"] = $"\"{model.word}\"";
+                return View("QuickSearch", model);
+            }
 		}
 
 		public IActionResult AdvSearch(string word, string length, string extent, string lang, int posLabel, int domainID, int subdomainID, int page) {

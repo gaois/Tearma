@@ -26,12 +26,7 @@ namespace TearmaWeb
             services.AddExceptional(_configuration.GetSection("Exceptional"));
             services.AddWebOptimizer();
 
-            services.AddQueryLogger(settings =>
-            {
-                settings.ApplicationName = "Téarma";
-                settings.IsEnabled = _environment.IsProduction();
-				settings.Store.ConnectionString = _configuration.GetConnectionString("Users");
-            });
+            services.AddQueryLogger(_configuration.GetSection("QueryLogger"));
 
             services.AddScoped<Controllers.Broker>();
         }
