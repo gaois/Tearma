@@ -273,7 +273,8 @@ namespace TearmaWeb.Models.Home
 
 		public string urlByPage(int page) {
 			string ret="/plus/";
-			ret+=HtmlEncoder.Default.Encode(Tools.SlashEncode(this.word))+"/";
+			//ret+=HtmlEncoder.Default.Encode(Tools.SlashEncode(this.word))+"/";
+			ret+=Tools.SlashEncode(this.word)+"/";
 			ret+=this.length+"/";
 			ret+=this.extent+"/";
 			ret+="lang"+(this.lang!="" ? this.lang : "0")+"/";
