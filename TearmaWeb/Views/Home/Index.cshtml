@@ -42,7 +42,7 @@
 }
 
 <form class="textbox" action="." onsubmit="return submitQuickSearch(this)">
-    <div class="text"><input name="word"/></div>
+    <div class="text"><input name="word" class="searchbox" onblur="searchboxBlur()"/></div>
     <button class="submit" aria-label="Cuardaigh · Search">
         <span class="icon fas fa-search"></span>
     </button>

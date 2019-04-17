@@ -178,3 +178,15 @@ function printableOn() {
 function printableOff() {
     $("body").removeClass("printable");
 }
+
+function searchboxBlur() {
+    var text = $("input.searchbox").val() || "";
+    Cookies.set("searchText", text, { expires: 1 });
+}
+$(document).ready(function () {
+    var text = Cookies.get("searchText") || "";
+    if ($("input.searchbox").val() == "") $("input.searchbox").val(text);
+
+    var text = $("input.searchbox").val() || "";
+    Cookies.set("searchText", text, { expires: 1 });
+});
