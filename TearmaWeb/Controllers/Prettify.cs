@@ -188,7 +188,10 @@ namespace TearmaWeb.Controllers
 				}
 				index++;
 			}
-			string s=""; foreach(Char c in chars) s+=c.markupBefore+c.character+c.markupAfter+c.labelsAfter;
+			string s=""; foreach(Char c in chars) {
+				if(c.labelsAfter!="") c.labelsAfter=" "+c.labelsAfter;
+				s +=c.markupBefore+c.character+c.markupAfter+c.labelsAfter;
+			}
 			return "<a class='prettyWording' href='/q/"+HtmlEncoder.Default.Encode(wording)+"/"+lang+"/'>"+s+"</a>";
 		}
 		private class Char {
