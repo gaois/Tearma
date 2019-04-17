@@ -136,6 +136,7 @@ $(document).ready(function () {
             $entry.find(".hideDetails").hide();
             $entry.find(".showDetails").show();
         });
+        if (Cookies.get("showAllDetails") == "true") showAllDetails();
     }
 });
 function showAllDetails() {
@@ -146,6 +147,7 @@ function showAllDetails() {
     });
     $("#showAllDetails").hide();
     $("#hideAllDetails").show().css("display", "block");
+    Cookies.set("showAllDetails", "true", {expires: 1});
 }
 function hideAllDetails() {
     $(".nonessential").slideUp("fast").each(function () {
@@ -155,6 +157,7 @@ function hideAllDetails() {
     });
     $("#hideAllDetails").hide();
     $("#showAllDetails").show().css("display", "block");
+    Cookies.set("showAllDetails", "false", { expires: 1 });
 }
 function showDetails(a) {
     var $entry = $(a).closest(".prettyEntry");
