@@ -116,7 +116,7 @@ function termMenuClick(clicker) {
         $item.appendTo($menu);
     }
     if (lang == "ga") {
-        var $item = $("<a class='icon nci' target='_blank' href='http://corpas.focloir.ie/" + encodeURIComponent(wording) + "'></a>");
+        var $item = $("<a class='icon nci' target='_blank' href='http://focloir.sketchengine.co.uk/auth/run.cgi/simple_search?queryselector=iqueryrow&iquery=" + encodeURIComponent(wording) + "'></a>");
         $item.append("<span class='arrow'>»</span>")
         $item.append("<span class='title ga' lang='ga'>Nua-Chorpas na hÉireann <span class='remark'>(clárúchán de dhíth)</span></span>");
         $item.append("<span class='title en' lang='en'>New Corpus for Ireland <span class='remark'>(registration required)</span></span>");
