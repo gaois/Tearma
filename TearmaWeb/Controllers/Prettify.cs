@@ -57,6 +57,18 @@ namespace TearmaWeb.Controllers
 			//domains:
 			foreach(Models.Data.DomainAssig obj in entry.domains) ret+=Prettify.DomainAssig(obj, leftLang, rightLang);
 
+			//draft status:
+			if(entry.dStatus=="0") {
+				Dictionary<string, string> label=new Dictionary<string, string>();
+				label.Add("ga", "DRÉACHT-IONTRÁIL");
+				label.Add("en", "DRAFT ENTRY");
+				ret += "<div class='prettyStatus'>";
+				ret += "<div class='left' lang='"+leftLang+"'>" + label[leftLang] + "</div>";
+				ret += "<div class='right' lang='"+rightLang+"'>" + label[rightLang] + "</div>";
+				ret += "<div class='clear'></div>";
+				ret += "</div>";
+			}
+
 			//desigs and intros:
 			{
 				string html=""; bool withLangLabel=true;

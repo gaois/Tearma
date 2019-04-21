@@ -8,6 +8,7 @@ using Newtonsoft.Json.Linq;
 namespace TearmaWeb.Models.Data {
 	
 	public class Entry {
+		public string dStatus;
 		public List<DomainAssig> domains;
 		public List<Desig> desigs;
 		public Dictionary<string, string> intros;
