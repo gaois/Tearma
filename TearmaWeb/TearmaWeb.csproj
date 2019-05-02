@@ -5,17 +5,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="wwwroot\download\**" />
-    <Compile Remove="wwwroot\info\**" />
-    <Content Remove="wwwroot\download\**" />
-    <Content Remove="wwwroot\info\**" />
-    <EmbeddedResource Remove="wwwroot\download\**" />
-    <EmbeddedResource Remove="wwwroot\info\**" />
-    <None Remove="wwwroot\download\**" />
-    <None Remove="wwwroot\info\**" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="Ansa.Extensions" Version="0.2.6" />
     <PackageReference Include="Gaois.QueryLogger.AspNetCore" Version="0.6.4-alpha" />
     <PackageReference Include="LigerShark.WebOptimizer.Core" Version="1.0.236" />
@@ -26,42 +15,6 @@
     <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
     <PackageReference Include="StackExchange.Exceptional.AspNetCore" Version="2.0.0" />
     <PackageReference Include="Westwind.AspNetCore.Markdown" Version="3.2.2" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Content Update="Views\Ask\Ask.cshtml">
-      <Pack>$(IncludeRazorContentInPack)</Pack>
-    </Content>
-    <Content Update="Views\Home\Domain.cshtml">
-      <Pack>$(IncludeRazorContentInPack)</Pack>
-    </Content>
-    <Content Update="Views\Home\Domains.cshtml">
-      <Pack>$(IncludeRazorContentInPack)</Pack>
-    </Content>
-    <Content Update="Views\Home\AdvSearch.cshtml">
-      <Pack>$(IncludeRazorContentInPack)</Pack>
-    </Content>
-    <Content Update="Views\Home\QuickSearch.cshtml">
-      <Pack>$(IncludeRazorContentInPack)</Pack>
-    </Content>
-    <Content Update="Views\Info\Widgets.cshtml">
-      <Pack>$(IncludeRazorContentInPack)</Pack>
-    </Content>
-    <Content Update="Views\Info\Download.cshtml">
-      <Pack>$(IncludeRazorContentInPack)</Pack>
-    </Content>
-    <Content Update="Views\Info\Topic.cshtml">
-      <Pack>$(IncludeRazorContentInPack)</Pack>
-    </Content>
-    <Content Update="Views\Shared\_WidgetLayout.cshtml">
-      <Pack>$(IncludeRazorContentInPack)</Pack>
-    </Content>
-    <Content Update="Views\Widgets\Tod.cshtml">
-      <Pack>$(IncludeRazorContentInPack)</Pack>
-    </Content>
-    <Content Update="Views\Widgets\Box.cshtml">
-      <Pack>$(IncludeRazorContentInPack)</Pack>
-    </Content>
   </ItemGroup>
 
 </Project>
