@@ -46,19 +46,32 @@ function advChangeLang(obj) {
 }
 function advChangeDomain(obj, subdomID) {
     var $option = $(obj).find("option[value='" + $(obj).val() + "']");
-    var subdoms = JSON.parse($option.attr("data-subs"));
     $(".line.subdomain").hide();
-    var $select = $(".line.subdomain select")
-    var val = $select.val() || subdomID || 0;
-    $select.html("");
-    $select.append("<option value='0'>foréimse ar bith &middot; any subdomain</option>");
-    for (var i = 0; i < subdoms.length; i++) {
-        var subdom = subdoms[i];
-        var $option = $("<option/>").attr("value", subdom.id).html(subdom.name);
-        $option.appendTo($select);
+    if ($option.attr("data-subs") != "") {
+        step2(obj, subdomID);
+    } else {
+        var domID = $(obj).val();
+        $.get("/subdoms/"+domID+".json", function (subdoms) {
+            $option.attr("data-subs", subdoms);
+            step2(obj, subdomID);
+        });
     }
-    $select.val(val);
-    if (subdoms.length>0) $(".line.subdomain").show();
+    function step2(obj, subdomID) {
+        var $option = $(obj).find("option[value='" + $(obj).val() + "']");
+        var subdoms = JSON.parse($option.attr("data-subs"));
+        var $select = $(".line.subdomain select")
+        var val = $select.val() || subdomID || 0;
+        $select.html("");
+        $select.append("<option value='0'>foréimse ar bith &middot; any subdomain</option>");
+        for (var i = 0; i < subdoms.length; i++) {
+            var subdom = subdoms[i];
+            var $option = $("<option/>").attr("value", subdom.id).html(subdom.name);
+            $option.appendTo($select);
+        }
+        $select.val(val);
+        if (!$select.val()) $select.val("0");
+        if (subdoms.length > 0) $(".line.subdomain").show();
+    }
 }
 
 function hon(label, i) {

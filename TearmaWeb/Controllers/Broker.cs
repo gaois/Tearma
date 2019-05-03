@@ -134,11 +134,11 @@ namespace TearmaWeb.Controllers
 
                     using (var reader = command.ExecuteReader()) {
                         //read lookups:
-                        Lookups lookups =ReadLookups(reader);
+                        Lookups lookups=ReadLookups(reader);
 			            foreach(Language language in lookups.languages) model.langs.Add(language);
 			            foreach(Metadatum datum in lookups.posLabels) model.posLabels.Add(datum);
 			            foreach(Metadatum datum in lookups.domains) {
-				            datum.subdomainsJson=FlattenSubdomainsIntoJson(datum);
+				            //datum.subdomainsJson=FlattenSubdomainsIntoJson(datum);
 				            model.domains.Add(datum);
 			            }
                     }
@@ -169,7 +169,7 @@ namespace TearmaWeb.Controllers
 			            foreach(Language language in lookups.languages) model.langs.Add(language);
 			            foreach(Metadatum datum in lookups.posLabels) model.posLabels.Add(datum);
 			            foreach(Metadatum datum in lookups.domains) {
-				            datum.subdomainsJson=FlattenSubdomainsIntoJson(datum);
+				            //datum.subdomainsJson=FlattenSubdomainsIntoJson(datum);
 				            model.domains.Add(datum);
 			            }
 
@@ -290,6 +290,29 @@ namespace TearmaWeb.Controllers
                 }
             }
         }
+
+		public string GetSubdoms(int domID) {
+			string ret="[]";
+            using (var conn = new SqlConnection(_connectionString)) {
+                conn.Open();
+
+                using (var command = new SqlCommand("dbo.pub_subdoms", conn)) {
+			        command.CommandType=CommandType.StoredProcedure;
+			        SqlParameter param;
+			        param=new SqlParameter(); param.ParameterName="@domID"; param.SqlDbType=SqlDbType.Int; param.Value=domID; command.Parameters.Add(param);
+                    
+                    using (var reader = command.ExecuteReader()) {
+                        //read lookups:
+                        Lookups lookups =ReadLookups(reader);
+			            if(lookups.domainsById.ContainsKey(domID)){
+                            Metadatum md =lookups.domainsById[domID];
+							ret=FlattenSubdomainsIntoJson(md);
+			            }
+					}
+				}
+			}
+			return ret;
+		}
 
 		/// <summary>Populates the view model of the page that lists entries by domain.</summary>
 		public void DoDomain(Domain model) {

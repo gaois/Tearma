@@ -84,7 +84,7 @@ namespace TearmaWeb.Models.Home
 		/// <summary>The JSON object that encodes this metadatum in the database.</summary>
 		public JObject jo;
 
-		public string subdomainsJson="[]";
+		public string subdomainsJson="";
 
 		public Metadatum(int id, JObject jo) {
 			this.jo=jo;
