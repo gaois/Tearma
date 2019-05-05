@@ -6,7 +6,7 @@
 
   <ItemGroup>
     <PackageReference Include="Ansa.Extensions" Version="0.2.6" />
-    <PackageReference Include="Gaois.QueryLogger.AspNetCore" Version="0.6.7-alpha" />
+    <PackageReference Include="Gaois.QueryLogger.AspNetCore" Version="0.6.8-alpha" />
     <PackageReference Include="LigerShark.WebOptimizer.Core" Version="1.0.236" />
     <PackageReference Include="Microsoft.AspNetCore.App" />
     <PackageReference Include="Microsoft.AspNetCore.Rewrite" Version="2.1.1" />
