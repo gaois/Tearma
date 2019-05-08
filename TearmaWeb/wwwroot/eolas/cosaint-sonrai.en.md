@@ -4,7 +4,7 @@ This information applies to the **téarma.ie** public website.
 
 ## What usage data we collect:
 
-We collect certain usage data with the aid of cookies while users browse the website. These cookies store certain data related to Google Analytics. We use Google Analytics to record information about where our users come from and what they do while on this site. Google Analytics collects and stores technical details about the browser and the computer used to visit the site.
+We collect certain usage data with the aid of cookies while users browse the website. These cookies store certain data primarly related to Google Analytics. We use Google Analytics to record information about where our users come from and what they do while on this site. Google Analytics collects and stores technical details about the browser and the computer used to visit the site. An additional cookie is used to store information about the most recent search you completed on the website. This information is stored for 24 hours only and the cookie is not linked to any personal data.
 
 ## How we use this usage data:
 
