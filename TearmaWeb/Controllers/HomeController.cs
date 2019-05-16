@@ -117,16 +117,27 @@ namespace TearmaWeb.Controllers
 		}
 
 		public IActionResult Domain(int domID, int subdomID, string lang, int page) {
-			if(lang is null) lang="";
-            Domain model=new Domain();
-			model.lang=lang;
-			model.domID=domID;
-			model.subdomID=subdomID;
-			model.page=page;
-			_broker.DoDomain(model);
-            ViewData["PageTitle"] = "Brabhsáil · Browse";
-            return View("Domain", model);
-		}
+            using (var stopwatch = new SimpleTimer()) {
+			    if(lang is null) lang="";
+                Domain model=new Domain();
+			    model.lang=lang;
+			    model.domID=domID;
+			    model.subdomID=subdomID;
+			    model.page=page;
+			    _broker.DoDomain(model);
+                var query = new Query {
+                    QueryCategory = "Domain",
+                    QueryTerms = (subdomID > 0) ? subdomID.ToString() : domID.ToString(),
+                    QueryText = Request.Path,
+                    ExecutionTime = (int)stopwatch.ElapsedMilliseconds,
+                    ResultCount = model.matches.Count,
+                    JsonData = model.searchData()
+                };
+                _queryLogger.Log(query);
+                ViewData["PageTitle"] = "Brabhsáil · Browse";
+                return View("Domain", model);
+            }
+        }
 
         public IActionResult Error(int? code) {
             var model = new Models.ErrorModel() {

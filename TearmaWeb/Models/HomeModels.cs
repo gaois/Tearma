@@ -393,6 +393,12 @@ namespace TearmaWeb.Models.Home
 			ret+=lang+"/";
 			return ret;
 		}
-	}
 
+        public string searchData() => JsonConvert.SerializeObject(new {
+            domID,
+            subdomID,
+            page,
+            lang
+        });
+	}
 }
