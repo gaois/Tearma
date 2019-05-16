@@ -204,7 +204,7 @@ namespace TearmaWeb.Controllers
 				if(c.labelsAfter!="") c.labelsAfter=" "+c.labelsAfter;
 				s +=c.markupBefore+c.character+c.markupAfter+c.labelsAfter;
 			}
-			return "<a class='prettyWording' href='/q/"+HtmlEncoder.Default.Encode(wording)+"/"+lang+"/'>"+s+"</a>";
+			return "<a class='prettyWording' href='/q/"+Uri.EscapeDataString(wording)+"/"+lang+"/'>"+s+"</a>";
 		}
 		private class Char {
 			public string character="";
