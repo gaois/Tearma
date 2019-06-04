@@ -2,6 +2,7 @@
 using System.Text.Encodings.Web;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json;
+using System;
 
 namespace TearmaWeb.Models.Home
 {
@@ -172,7 +173,7 @@ namespace TearmaWeb.Models.Home
 		public string sortlang="";
 
 		public string advSearchUrl() {
-			string ret="/plus/"+HtmlEncoder.Default.Encode(Tools.SlashEncode(this.word))+"/al/ft/";
+			string ret="/plus/"+Uri.EscapeDataString(Tools.SlashEncode(this.word))+"/al/ft/";
 			if(this.lang!="") ret+="lang"+this.lang+"/"; else ret+="lang0/";
 			ret+="pos0/dom0/sub0/";
 			return ret;
