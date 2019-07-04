@@ -36,7 +36,7 @@ namespace TearmaWeb
 				app.UseDeveloperExceptionPage();
 				app.UseStatusCodePages();
             } else {
-                app.UseExceptionHandler("/error/500");
+                app.UseExceptionHandler("/error/");
                 app.UseStatusCodePagesWithReExecute("/error/{0}");
                 app.UseExceptional();
             }
@@ -67,7 +67,7 @@ namespace TearmaWeb
 				routes.MapRoute(name: "", template: "/", defaults: new {controller="Home", action="Index"});
 
                 //Error page:
-                routes.MapRoute(name: "", template: "/error/{code:int}", defaults: new { controller = "Home", action = "Error" });
+                routes.MapRoute(name: "", template: "/error/{code:int?}", defaults: new { controller = "Home", action = "Error" });
 
                 //A single entry:
                 routes.MapRoute(name: "", template: "/id/{id:int}/", defaults: new {controller="Home", action="Entry"});

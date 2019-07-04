@@ -141,7 +141,7 @@ namespace TearmaWeb.Controllers
 
         public IActionResult Error(int? code) {
             var model = new Models.ErrorModel() {
-                HttpStatusCode = HttpContext.Response.StatusCode,
+                HttpStatusCode = code ?? HttpContext.Response.StatusCode,
                 RequestID = Activity.Current?.Id ?? HttpContext.TraceIdentifier
             };
             switch (model.HttpStatusCode) {
