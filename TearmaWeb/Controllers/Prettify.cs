@@ -9,8 +9,7 @@ namespace TearmaWeb.Controllers
 {
     public class Prettify {
 		private static Models.Home.Lookups Lookups;
-
-
+        
 		public static string EntryLink(int id, string json, string primLang) {
 			Models.Data.Entry entry=JsonConvert.DeserializeObject<Models.Data.Entry>(json);
 
