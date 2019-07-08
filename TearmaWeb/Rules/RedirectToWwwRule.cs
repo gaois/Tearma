@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Rewrite;
 using System.Collections.Generic;
+using System.Net;
 using System.Text.Encodings.Web;
 
 namespace TearmaWeb.Rules {
@@ -14,28 +15,31 @@ namespace TearmaWeb.Rules {
             string domain=req.Host.Host;
 			if(domain!="localhost" && domain!="www-tearma-ie.gaois.ie" && domain!="www.tearma.ie") {
 				response.StatusCode=301;
-				response.Headers[Microsoft.Net.Http.Headers.HeaderNames.Location]="https://www.tearma.ie"+req.Path.Value;
+				response.Headers[Microsoft.Net.Http.Headers.HeaderNames.Location]="https://www.tearma.ie" + req.Path.Value;
 				context.Result=RuleResult.EndResponse;
 			}
 
             //Redirect to https:
             if(domain != "localhost" && domain != "www-tearma-ie.gaois.ie" && !req.IsHttps) {
+                var requestPath = WebUtility.UrlEncode(req.Path.Value);
                 response.StatusCode = 301;
-                response.Headers[Microsoft.Net.Http.Headers.HeaderNames.Location] = "https://www.tearma.ie" + req.Path.Value;
+                response.Headers[Microsoft.Net.Http.Headers.HeaderNames.Location] = "https://www.tearma.ie" + requestPath;
                 context.Result = RuleResult.EndResponse;
             }
 
-			//Redirect (simple) old URLs:
-			Dictionary<string, string> urls=new Dictionary<string, string>();
-			urls.Add("/home.aspx", "/");
-			urls.Add("/searchbox.aspx", "/breiseain/bosca/");
-			urls.Add("/tal.aspx", "/breiseain/tearma-an-lae/");
-			urls.Add("/liostai.aspx", "/ioslodail/");
-			urls.Add("/widgets.aspx", "/breiseain/");
-			urls.Add("/enquiry.aspx", "/ceist/");
-			urls.Add("/help.aspx", "/cabhair/");
-			urls.Add("/about.aspx", "/eolas/");
-			string path=req.Path.Value.ToLower();
+            //Redirect (simple) old URLs:
+            Dictionary<string, string> urls = new Dictionary<string, string>
+            {
+                { "/home.aspx", "/" },
+                { "/searchbox.aspx", "/breiseain/bosca/" },
+                { "/tal.aspx", "/breiseain/tearma-an-lae/" },
+                { "/liostai.aspx", "/ioslodail/" },
+                { "/widgets.aspx", "/breiseain/" },
+                { "/enquiry.aspx", "/ceist/" },
+                { "/help.aspx", "/cabhair/" },
+                { "/about.aspx", "/eolas/" }
+            };
+            string path=req.Path.Value.ToLower();
 			if(urls.ContainsKey(path)) {
 				response.StatusCode=301;
 				response.Headers[Microsoft.Net.Http.Headers.HeaderNames.Location]=urls[path];
