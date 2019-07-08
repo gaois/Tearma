@@ -1,13 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using System.Text.RegularExpressions;
+﻿using Microsoft.AspNetCore.Mvc;
 
-namespace TearmaWeb.Controllers {
-	public class AskController : Controller {
-
+namespace TearmaWeb.Controllers
+{
+    public class AskController : Controller {
 		[HttpGet]
 		public IActionResult Ask() {
 			Models.Ask.Ask model=new Models.Ask.Ask();
@@ -58,7 +53,7 @@ namespace TearmaWeb.Controllers {
 			//System.Net.Mail.MailMessage msg=new System.Net.Mail.MailMessage("noreply@tearma.ie", to, subject, body);
 			System.Net.Mail.MailMessage msg=new System.Net.Mail.MailMessage("noreply@tearma.ie", to, subject, body);
 			msg.IsBodyHtml=true;
-			msg.Bcc.Add("eolas@tearma.ie");
+			msg.Bcc.Add("tearma@dcu.ie");
 			msg.BodyEncoding=System.Text.Encoding.UTF8;
 			System.Net.Mail.SmtpClient client=new System.Net.Mail.SmtpClient("localhost");
 			client.Send(msg);
