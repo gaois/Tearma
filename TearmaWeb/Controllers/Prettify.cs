@@ -72,7 +72,8 @@ namespace TearmaWeb.Controllers
 			{
 				string html=""; bool withLangLabel=true;
 				foreach(Models.Data.Desig desig in entry.desigs) {if(desig.term.lang==leftLang) {html+=Prettify.Desig(desig, withLangLabel); withLangLabel=false;}}
-				if(entry.intros[leftLang]!="") html+="<div class='intro'><span>("+entry.intros[leftLang]+")</span></div>";
+				if(entry.intros.ContainsKey(leftLang) && entry.intros[leftLang]!="")
+                    html +="<div class='intro'><span>("+entry.intros[leftLang]+")</span></div>";
 				ret+="<div class='desigBlock left'>"+html+"</div>";
 			}
 			{
@@ -267,18 +268,22 @@ namespace TearmaWeb.Controllers
 					List<Models.Home.SubdomainListing> subs = Broker.FlattenSubdomains(1, domain.jo.Value<JArray>("subdomains"), null, subdomID);
 					foreach(Models.Home.SubdomainListing sub in subs) {
 						if(sub.visible) {
-							substepsLeft += " » " + sub.name[leftLang];
-							substepsRight += " » " + sub.name[rightLang];
+							substepsLeft += (sub.name.ContainsKey(leftLang))
+                                ? $" » {sub.name[leftLang]}" : $" » {sub.name["ga"]}";
+                            substepsRight += (sub.name.ContainsKey(rightLang))
+                                ? $" » {sub.name[rightLang]}" : $" » {sub.name["en"]}";
 						}
 					}
 				}
 
 				string urlFrag=da.superdomain.ToString();
 				if(da.subdomain!=null) urlFrag+="/"+da.subdomain;
+                var domainNameLeft = domain.name.ContainsKey(leftLang) ? domain.name[leftLang] : domain.name["ga"];
+                var domainNameRight = domain.name.ContainsKey(rightLang) ? domain.name[rightLang] : domain.name["en"];
 
-				ret += "<div class='prettyDomain'>";
-				ret += "<div class='left'><a href='/dom/"+urlFrag+"/"+leftLang+"/'>" + domain.name[leftLang] + substepsLeft + "</a></div>";
-				ret += "<div class='right'><a href='/dom/"+urlFrag+"/"+rightLang+"/'>" + domain.name[rightLang] + substepsRight + "</a></div>";
+                ret += "<div class='prettyDomain'>";
+				ret += "<div class='left'><a href='/dom/"+urlFrag+"/"+leftLang+"/'>" + domainNameLeft + substepsLeft + "</a></div>";
+				ret += "<div class='right'><a href='/dom/"+urlFrag+"/"+rightLang+"/'>" + domainNameRight + substepsRight + "</a></div>";
 				ret += "<div class='clear'></div>";
 				ret += "</div>"; //.prettyDomain
 			}
@@ -318,7 +323,8 @@ namespace TearmaWeb.Controllers
 			ret += "<div class='prettyDefinition"+nonessential+"'>";
 			ret += "<div class='left'>";
 				foreach(Models.Data.DomainAssig da in def.domains) ret+=DomainAssig(da, leftLang)+" ";
-				ret += def.texts[leftLang];
+                if (def.texts.ContainsKey(leftLang))
+				    ret += def.texts[leftLang];
 			ret += "</div>";
 			ret += "<div class='right'>";
 				foreach(Models.Data.DomainAssig da in def.domains) ret+=DomainAssig(da, rightLang)+" ";
@@ -334,7 +340,8 @@ namespace TearmaWeb.Controllers
 			string nonessential=(ex.nonessential==1 ? " nonessential" : "");
 			ret += "<div class='prettyExample"+nonessential+"'>";
 			ret += "<div class='left'>";
-				foreach(string text in ex.texts[leftLang]) ret += "<div class='text'>"+text+"</div>";
+                if (ex.texts.ContainsKey(leftLang))
+				    foreach(string text in ex.texts[leftLang]) ret += "<div class='text'>"+text+"</div>";
 			ret += "</div>";
 			ret += "<div class='right'>";
 				foreach(string text in ex.texts[rightLang]) ret += "<div class='text'>"+text+"</div>";
