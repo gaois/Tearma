@@ -1,12 +1,11 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Rewrite;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net;
 using System.Text.Encodings.Web;
 
-namespace TearmaWeb.Rules {
+namespace TearmaWeb.Rules
+{
     public class RedirectToWwwRule : IRule {
 		public virtual void ApplyRule(RewriteContext context) {
 			context.Result=RuleResult.ContinueRules;
