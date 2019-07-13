@@ -31,8 +31,8 @@ namespace TearmaWeb
             services.AddScoped<Controllers.Broker>();
         }
 
-		public void Configure(IApplicationBuilder app, IHostingEnvironment env) {
-			if (env.IsDevelopment()) {
+		public void Configure(IApplicationBuilder app) {
+			if (_environment.IsDevelopment()) {
 				app.UseDeveloperExceptionPage();
 				app.UseStatusCodePages();
             } else {
@@ -42,10 +42,10 @@ namespace TearmaWeb
             }
 
             var options=new RewriteOptions();
-			options.Rules.Add(new RedirectToWwwRule());
+			options.Rules.Add(new RedirectToWwwRule(_environment));
 			app.UseRewriter(options);
 
-            if (env.IsProduction()) {
+            if (_environment.IsProduction()) {
                 app.UseHsts();
                 app.UseHttpsRedirection();
             }

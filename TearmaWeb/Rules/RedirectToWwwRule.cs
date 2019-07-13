@@ -1,5 +1,7 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Rewrite;
+using Microsoft.Net.Http.Headers;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.Encodings.Web;
@@ -7,29 +9,38 @@ using System.Text.Encodings.Web;
 namespace TearmaWeb.Rules
 {
     public class RedirectToWwwRule : IRule {
-		public virtual void ApplyRule(RewriteContext context) {
-			context.Result=RuleResult.ContinueRules;
-			HttpRequest req = context.HttpContext.Request;
-            HttpResponse response = context.HttpContext.Response;
+        private readonly IHostingEnvironment _environment;
+
+        public RedirectToWwwRule(IHostingEnvironment environment) {
+            _environment = environment;
+        }
+
+        public void ApplyRule(RewriteContext context) {
+			context.Result = RuleResult.ContinueRules;
+			var request = context.HttpContext.Request;
+            var path = request.Path.Value;
+            var response = context.HttpContext.Response;
 
             //Redirect to www:
-            string domain=req.Host.Host;
-			if(domain!="localhost" && domain!="www-tearma-ie.gaois.ie" && domain!="www.tearma.ie") {
-				response.StatusCode=301;
-				response.Headers[Microsoft.Net.Http.Headers.HeaderNames.Location]="https://www.tearma.ie" + req.Path.Value;
-				context.Result=RuleResult.EndResponse;
+            var domain = request.Host.Host;
+
+			if (_environment.IsProduction() && domain != "www.tearma.ie") {
+                var urlEncodedPath = string.Join("/", path.Split("/").Select(s => UrlEncoder.Default.Encode(s)));
+				response.StatusCode = 301;
+				response.Headers[HeaderNames.Location] = string.Concat("https://www.tearma.ie", urlEncodedPath);
+				context.Result = RuleResult.EndResponse;
 			}
 
             //Redirect to https:
-            if(domain != "localhost" && domain != "www-tearma-ie.gaois.ie" && !req.IsHttps) {
-                var requestPath = string.Join("/", req.Path.Value.Split("/").Select(s => UrlEncoder.Default.Encode(s)));
+            if (_environment.IsProduction() && !request.IsHttps) {
+                var urlEncodedPath = string.Join("/", path.Split("/").Select(s => UrlEncoder.Default.Encode(s)));
                 response.StatusCode = 301;
-                response.Headers[Microsoft.Net.Http.Headers.HeaderNames.Location] = "https://www.tearma.ie" + requestPath;
+                response.Headers[HeaderNames.Location] = string.Concat("https://www.tearma.ie", urlEncodedPath);
                 context.Result = RuleResult.EndResponse;
             }
 
             //Redirect (simple) old URLs:
-            Dictionary<string, string> urls = new Dictionary<string, string>
+            var urls = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
             {
                 { "/home.aspx", "/" },
                 { "/searchbox.aspx", "/breiseain/bosca/" },
@@ -40,20 +51,22 @@ namespace TearmaWeb.Rules
                 { "/help.aspx", "/cabhair/" },
                 { "/about.aspx", "/eolas/" }
             };
-            string path=req.Path.Value.ToLower();
-			if(urls.ContainsKey(path)) {
-				response.StatusCode=301;
-				response.Headers[Microsoft.Net.Http.Headers.HeaderNames.Location]=urls[path];
+
+			if (urls.ContainsKey(path)) {
+				response.StatusCode = 301;
+				response.Headers[HeaderNames.Location] = urls[path];
 				context.Result=RuleResult.EndResponse;
 			}
 
-			//redirect old quick search URL:
-			if(req.Path.Value.ToLower()=="/search.aspx" && req.Query.ContainsKey("term")) {
-				response.StatusCode=301;
-				string x=Models.Home.Tools.SlashEncode(req.Query["term"]);
-				x=UrlEncoder.Default.Encode(x);
-				response.Headers[Microsoft.Net.Http.Headers.HeaderNames.Location]="/q/"+x+"/";
-				context.Result=RuleResult.EndResponse;
+            //redirect old quick search URL:
+            var query = request.Query;
+
+            if (path.Equals("/search.aspx", StringComparison.OrdinalIgnoreCase) && query.ContainsKey("term")) {
+				response.StatusCode = 301;
+				var x = Models.Home.Tools.SlashEncode(query["term"]);
+				x = UrlEncoder.Default.Encode(x);
+				response.Headers[HeaderNames.Location] = $"/q/{x}/";
+				context.Result = RuleResult.EndResponse;
 			}
 		}
 	}
