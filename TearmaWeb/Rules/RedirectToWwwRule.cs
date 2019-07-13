@@ -55,7 +55,7 @@ namespace TearmaWeb.Rules
 			if (urls.ContainsKey(path)) {
 				response.StatusCode = 301;
 				response.Headers[HeaderNames.Location] = urls[path];
-				context.Result=RuleResult.EndResponse;
+				context.Result = RuleResult.EndResponse;
 			}
 
             //redirect old quick search URL:
