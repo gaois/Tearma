@@ -24,7 +24,11 @@ namespace TearmaWeb
 
             services.AddMiniProfiler();
             services.AddExceptional(_configuration.GetSection("Exceptional"));
-            services.AddWebOptimizer();
+            services.AddWebOptimizer(pipeline =>
+            {
+                pipeline.MinifyCssFiles("furniture/**/*.css");
+                pipeline.MinifyJsFiles("furniture/**/*.js");
+            });
 
             services.AddQueryLogger(_configuration.GetSection("QueryLogger"));
 
