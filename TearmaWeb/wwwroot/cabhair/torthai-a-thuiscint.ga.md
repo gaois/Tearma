@@ -36,7 +36,7 @@ I gcás téarmaí ilfhoclacha, is minic nod gramadaí a bheith ceangailte le cui
 
 Is i bhfoirm giorrúchán a léirítear ranna cainte. Má chuireann tú cúrsóir na luchóige os cionn giorrúchán ar bith ar an scáileán, tiocfaidh bosca beag aníos agus míniú an ghiorrúcháin istigh ann.
 
-[Is féidir liosta iomlán de ghiorrúcháin a fháil ach cliceáil anseo](#).
+<!--Is féidir liosta iomlán de ghiorrúcháin a fháil ach cliceáil anseo.-->
 
 ### Foirmeacha infhillte
 

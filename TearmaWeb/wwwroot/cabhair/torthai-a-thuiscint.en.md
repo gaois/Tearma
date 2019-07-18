@@ -36,7 +36,7 @@ In the case of multi-word terms, the grammatical notation refers to part of the 
 
 Grammatical notation is given in abbreviated form. If you place the cursor over any of these abbreviations on screen, a box will appear giving the full form of the abbreviation.
 
-[Click here for a complete list of abbreviations and symbols](#).
+<!--Click here for a complete list of abbreviations and symbols.-->
  
 ### Inflected forms
 
