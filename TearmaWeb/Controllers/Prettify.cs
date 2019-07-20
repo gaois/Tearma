@@ -58,12 +58,18 @@ namespace TearmaWeb.Controllers
 
 			//draft status:
 			if(entry.dStatus=="0") {
-				Dictionary<string, string> label=new Dictionary<string, string>();
-				label.Add("ga", "DRÉACHT-IONTRÁIL");
-				label.Add("en", "DRAFT ENTRY");
-				ret += "<div class='prettyStatus'>";
-				ret += "<div class='left' lang='"+leftLang+"'>" + label[leftLang] + "</div>";
-				ret += "<div class='right' lang='"+rightLang+"'>" + label[rightLang] + "</div>";
+                var label = new Dictionary<string, string>
+                {
+                    { "ga", "DRÉACHT-IONTRÁIL" },
+                    { "en", "DRAFT ENTRY" }
+                };
+
+                var labelLeft = label.ContainsKey(leftLang) ? label[leftLang] : label["ga"];
+                var labelRight = label.ContainsKey(rightLang) ? label[rightLang] : label["en"];
+
+                ret += "<div class='prettyStatus'>";
+				ret += "<div class='left' lang='" + leftLang + "'>" + labelLeft + "</div>";
+				ret += "<div class='right' lang='" + rightLang + "'>" + labelRight + "</div>";
 				ret += "<div class='clear'></div>";
 				ret += "</div>";
 			}
