@@ -1,13 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using System.Text.RegularExpressions;
+﻿using Microsoft.AspNetCore.Mvc;
 
-namespace TearmaWeb.Controllers {
-	public class InfoController : Controller {
-
+namespace TearmaWeb.Controllers
+{
+    public class InfoController : Controller {
 		public IActionResult Topic(string section, string nickname, string lang) {
 			IActionResult ret;
 			Models.Info.Topic model=new Models.Info.Topic();
@@ -26,8 +21,12 @@ namespace TearmaWeb.Controllers {
 				model.nickname=nickname;
 				model.lang=lang;
 				string path=@"./wwwroot/"+section+"/"+nickname+"."+lang+".md";
-				if(System.IO.File.Exists(path)) model.body=System.IO.File.ReadAllText(path);
-                ret =View("Topic", model);
+				if(System.IO.File.Exists(path)) {
+                    model.body=System.IO.File.ReadAllText(path);
+                    ret=View("Topic", model);
+                } else {
+                    ret=new NotFoundResult();
+                }
 			}
 			return ret;
 		}
