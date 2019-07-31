@@ -176,7 +176,7 @@ namespace TearmaWeb.Models.Home
 		public string sortlang="";
 
 		/// <summary>Auxilliary matches.</summary>
-		public List<string> auxes=new List<string>();
+		public Dictionary<string, List<Tuple<string, string>>> auxes=new Dictionary<string, List<Tuple<string, string>>>();
 
 		public string advSearchUrl() {
 			string ret="/plus/"+Uri.EscapeDataString(Tools.SlashEncode(this.word))+"/al/ft/";

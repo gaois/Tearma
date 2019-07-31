@@ -125,7 +125,9 @@ namespace TearmaWeb.Controllers
 						if(model.super) {
 							reader.NextResult();
 							while(reader.Read()) {
-								model.auxes.Add((string)reader["Placeholder"]);
+								var coll=(string)reader["coll"];
+								if(!model.auxes.ContainsKey(coll)) model.auxes.Add(coll, new List<System.Tuple<string, string>>());
+								model.auxes[coll].Add(new System.Tuple<string, string>((string)reader["en"], (string)reader["ga"]));
 							}
 						}
                     }

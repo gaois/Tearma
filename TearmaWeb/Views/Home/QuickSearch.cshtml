@@ -114,6 +114,24 @@
             <div class="en">No terms found.</div>
         </div>
     } else {
-        @foreach(string s in Model.auxes){@Html.Raw(s)}
+        @foreach(string coll in Model.auxes.Keys){
+            <div class="auxBlock">
+                <div class="auxTitle">
+                    @if(coll.Trim()=="mileata"){
+                        <span>TÉARMAÍ MÍLEATA</span>
+                    }
+                    @if(coll.Trim()=="iate"){
+                        <span>IATE</span>
+                    }
+                </div>
+                @foreach(Tuple<string, string> tuple in Model.auxes[coll]) {
+                    <div class="auxItem">
+                        <div class="auxLeft" lang="en">@tuple.Item1</div>
+                        <div class="auxRight" lang="ga">@tuple.Item2</div>
+                        <div class="clear"></div>
+                    </div>
+                }
+            </div>
+        }
     }
 }
