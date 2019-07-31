@@ -149,7 +149,7 @@ $(document).ready(function () {
             $entry.find(".hideDetails").hide();
             $entry.find(".showDetails").show();
         });
-        if (Cookies.get("showAllDetails") == "true") showAllDetails();
+        if (window.SUPER || Cookies.get("showAllDetails") == "true") showAllDetails();
     }
 });
 function showAllDetails() {

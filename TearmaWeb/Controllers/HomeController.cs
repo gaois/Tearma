@@ -52,6 +52,7 @@ namespace TearmaWeb.Controllers
                 QuickSearch model = new QuickSearch();
                 model.word = myDecodeShashes(word);
                 model.lang = lang ?? "";
+				if(Request.Host.Host=="localhost") model.super=true; //superuser mode (with auxilliary glossaries etc.)
                 _broker.DoQuickSearch(model);
                 var query = new Query {
                     QueryCategory = "QuickSearch",

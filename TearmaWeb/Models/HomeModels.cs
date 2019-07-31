@@ -154,6 +154,9 @@ namespace TearmaWeb.Models.Home
 		/// <summary>The language code of the language in which the user has requested to see results. Empty string if all languages.</summary>
 		public string lang="";
 
+		/// <summary>Whether this search is in superser mode (with the auxilliary glossary etc).</summary>
+		public bool super=false;
+
 		/// <summary>Spelling suggestions.</summary>
 		public List<string> similars=new List<string>();
 
@@ -171,6 +174,9 @@ namespace TearmaWeb.Models.Home
 
 		/// <summary>The language code of the language in which results are sorted: "en" or "ga". Empty string if no results.</summary>
 		public string sortlang="";
+
+		/// <summary>Auxilliary matches.</summary>
+		public List<string> auxes=new List<string>();
 
 		public string advSearchUrl() {
 			string ret="/plus/"+Uri.EscapeDataString(Tools.SlashEncode(this.word))+"/al/ft/";

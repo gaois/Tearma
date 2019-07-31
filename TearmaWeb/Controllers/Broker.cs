@@ -70,6 +70,7 @@ namespace TearmaWeb.Controllers
 			        SqlParameter param;
 			        param=new SqlParameter(); param.ParameterName="@word"; param.SqlDbType=SqlDbType.NVarChar; param.Value=model.word; command.Parameters.Add(param);
 			        param=new SqlParameter(); param.ParameterName="@lang"; param.SqlDbType=SqlDbType.NVarChar; param.Value=model.lang; command.Parameters.Add(param);
+			        param=new SqlParameter(); param.ParameterName="@super"; param.SqlDbType=SqlDbType.Bit; param.Value=model.super; command.Parameters.Add(param);
                     
                     using (var reader = command.ExecuteReader()) {
                         //read lookups:
@@ -119,6 +120,14 @@ namespace TearmaWeb.Controllers
 				            }
 			            }
 			            if(relatedCount>100) model.relatedMore=true;
+
+						//read auxilliary matches:
+						if(model.super) {
+							reader.NextResult();
+							while(reader.Read()) {
+								model.auxes.Add((string)reader["Placeholder"]);
+							}
+						}
                     }
                 }
             }

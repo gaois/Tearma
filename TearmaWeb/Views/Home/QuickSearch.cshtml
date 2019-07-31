@@ -100,3 +100,20 @@
         </a>
     </div>
 }
+
+@if(Model.super) {
+    <script type="text/javascript">var SUPER = true;</script>
+    <div class="sectitle strong">
+        <span class="icon fas fa-plus"></span>
+        <span class="ga" lang="ga">Gluaiseanna breise</span>
+        <span class="en" lang="en">Auxilliary glossaries</span>
+    </div>
+    @if(Model.auxes.Count == 0) {
+        <div class="nojoy">
+            <div class="ga">Níor aimsíodh téarma ar bith.</div>
+            <div class="en">No terms found.</div>
+        </div>
+    } else {
+        @foreach(string s in Model.auxes){@Html.Raw(s)}
+    }
+}
