@@ -3,12 +3,17 @@
 namespace TearmaWeb.Controllers
 {
     public class AskController : Controller {
+		private bool isSuper(Microsoft.AspNetCore.Http.HttpRequest request) {
+			return request.Host.Host=="super.tearma.ie";
+		}
+
 		[HttpGet]
 		public IActionResult Ask() {
 			Models.Ask.Ask model=new Models.Ask.Ask();
 			model.mode="empty";
             ViewData["PageTitle"] = "Fiosruithe · Queries";
             IActionResult ret=View("Ask", model);
+			ViewData["IsSuper"]=this.isSuper(Request);	
 			return ret;
 		}
 
@@ -45,6 +50,7 @@ namespace TearmaWeb.Controllers
             }
             ViewData["PageTitle"] = "Fiosruithe · Queries";
             IActionResult ret=View("Ask", model);
+			ViewData["IsSuper"]=this.isSuper(Request);	
 			return ret;
 		}
 

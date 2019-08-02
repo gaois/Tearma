@@ -10,6 +10,9 @@ namespace TearmaWeb.Controllers
     public class HomeController : Controller {
         private readonly IQueryLogger _queryLogger;
         private readonly Broker _broker;
+		private bool isSuper(Microsoft.AspNetCore.Http.HttpRequest request) {
+			return request.Host.Host=="super.tearma.ie";
+		}
 
         public HomeController(IQueryLogger queryLogger, Broker broker) {
             _queryLogger = queryLogger;
@@ -27,6 +30,7 @@ namespace TearmaWeb.Controllers
             _broker.DoIndex(model);
             ViewData["PageTitle"] = "téarma.ie";
             ViewData["TagLine"] = "An Bunachar Náisiúnta Téarmaíochta don Ghaeilge · The National Terminology Database for Irish";
+			ViewData["IsSuper"]=this.isSuper(Request);	
 			return View("Index", model);
 		}
 
@@ -36,6 +40,7 @@ namespace TearmaWeb.Controllers
             _broker.DoEntry(model);
             ViewData["PageTitle"] = "téarma.ie";
             ViewData["TagLine"] = "An Bunachar Náisiúnta Téarmaíochta don Ghaeilge · The National Terminology Database for Irish";
+			ViewData["IsSuper"]=this.isSuper(Request);
 			return View("Entry", model);
 		}
 
@@ -52,7 +57,7 @@ namespace TearmaWeb.Controllers
                 QuickSearch model = new QuickSearch();
                 model.word = myDecodeShashes(word);
                 model.lang = lang ?? "";
-				if(Request.Host.Host=="localhost") model.super=true; //superuser mode (with auxilliary glossaries etc.)
+				if(this.isSuper(Request)) model.super=true; //superuser mode (with auxilliary glossaries etc.)
                 _broker.DoQuickSearch(model);
                 var query = new Query {
                     QueryCategory = "QuickSearch",
@@ -64,6 +69,7 @@ namespace TearmaWeb.Controllers
                 };
                 _queryLogger.Log(query);
                 ViewData["PageTitle"] = $"\"{model.word}\"";
+				ViewData["IsSuper"]=this.isSuper(Request);
                 return View("QuickSearch", model);
             }
 		}
@@ -98,6 +104,7 @@ namespace TearmaWeb.Controllers
                     ViewData["PageTitle"] = $"\"{model.word}\" | Cuardach casta · Advanced search";
                 }
 
+				ViewData["IsSuper"]=this.isSuper(Request);	
                 return View("AdvSearch", model);
             }
 		}
@@ -114,7 +121,8 @@ namespace TearmaWeb.Controllers
 			model.lang=lang;
 			_broker.DoDomains(model);
             ViewData["PageTitle"] = "Brabhsáil · Browse";
-            return View("Domains", model);
+			ViewData["IsSuper"]=this.isSuper(Request);
+			return View("Domains", model);
 		}
 
 		public IActionResult Domain(int domID, int subdomID, string lang, int page) {
@@ -136,7 +144,8 @@ namespace TearmaWeb.Controllers
                 };
                 _queryLogger.Log(query);
                 ViewData["PageTitle"] = "Brabhsáil · Browse";
-                return View("Domain", model);
+				ViewData["IsSuper"]=this.isSuper(Request);
+				return View("Domain", model);
             }
         }
 
@@ -155,7 +164,8 @@ namespace TearmaWeb.Controllers
                     ViewData["MetaDescription"] = "Tharla earráid agus an leathanach seo á oscailt · An error occurred while attempting to open this page";
                     break;
             }
-            return View(model);
+			ViewData["IsSuper"]=this.isSuper(Request);
+			return View(model);
         }
 	}
 }

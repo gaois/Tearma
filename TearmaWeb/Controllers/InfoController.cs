@@ -3,6 +3,10 @@
 namespace TearmaWeb.Controllers
 {
     public class InfoController : Controller {
+		private bool isSuper(Microsoft.AspNetCore.Http.HttpRequest request) {
+			return request.Host.Host=="super.tearma.ie";
+		}
+
 		public IActionResult Topic(string section, string nickname, string lang) {
 			IActionResult ret;
 			Models.Info.Topic model=new Models.Info.Topic();
@@ -28,6 +32,7 @@ namespace TearmaWeb.Controllers
                     ret=new NotFoundResult();
                 }
 			}
+			ViewData["IsSuper"]=this.isSuper(Request);	
 			return ret;
 		}
 
@@ -35,6 +40,7 @@ namespace TearmaWeb.Controllers
 			Models.Info.Download model=new Models.Info.Download();
             ViewData["PageTitle"] = "Liostaí le híoslódáil · Downloadable Lists";
             IActionResult ret=View("Download", model);
+			ViewData["IsSuper"]=this.isSuper(Request);	
 			return ret;
 		}
 
@@ -42,6 +48,7 @@ namespace TearmaWeb.Controllers
 			Models.Info.Widgets model=new Models.Info.Widgets();
             ViewData["PageTitle"] = "Ábhar do shuíomhanna eile · Content for other websites";
             IActionResult ret=View("Widgets", model);
+			ViewData["IsSuper"]=this.isSuper(Request);	
 			return ret;
 		}
 	}

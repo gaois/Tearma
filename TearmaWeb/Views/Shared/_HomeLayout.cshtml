@@ -93,8 +93,10 @@
             </a>
             <header class="logobox">
                 <a href="~/" class="logo">
-                    <img src="~/furniture/tearma.png" alt="téarma.ie"
-                         title="Bunachar Náisiúnta Téarmaíochta don Ghaeilge · National Terminology Database for Irish" />
+                    <img src="~/furniture/tearma.png" alt="téarma.ie" title="Bunachar Náisiúnta Téarmaíochta don Ghaeilge · National Terminology Database for Irish" />
+                    @if((bool)ViewData["IsSuper"]) {
+                        <span class="super">super</span>
+                    }
                 </a>
                 <div class="title">
                     <div class="ga" lang="ga">An Bunachar Náisiúnta Téarmaíochta don&nbsp;Ghaeilge</div>

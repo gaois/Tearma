@@ -88,9 +88,10 @@ body.printable div.envelope div.rightie {width: auto; float: none;}
 body.printable div.leftie {margin-right: auto;}
 
 header.logobox {box-sizing: border-box; padding: 0px 20px;}
-header.logobox a.logo {display: block; width: 300px; margin: 0px -10px}
+header.logobox a.logo {display: block; width: 300px; margin: 0px -10px; position: relative;}
 header.logobox a.logo img {width: 100%;}
 header.logobox a.logo:hover {position: relative; top: -1px;}
+header.logobox a.logo span.super {position: absolute; top: -5px; left: 305px; background-color: #336699; color: #ffffff; font-style: italic; padding: 2px 8px; border-radius: 4px;}
 header.logobox div.title {margin: 10px 0px 0px 0px; color: #666666; line-height: 1.5em; white-space: nowrap;}
 header.logobox div.icons {margin: 20px 0px 0px 0px;}
 header.logobox div.icons a {font-size: 30px; text-decoration: none; margin-right: 0.5em; }
