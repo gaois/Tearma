@@ -8,6 +8,7 @@ namespace TearmaWeb.Models.Home
 {
     public class Tools {
 		public static string SlashEncode(string text) {
+			text=text.Replace(@"%", "%25");
 			text=text.Replace(@"\", "$backslash;");
 			text=text.Replace(@"/", "$forwardslash;");
 			return text;

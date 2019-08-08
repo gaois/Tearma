@@ -11,6 +11,7 @@ namespace TearmaWeb.Controllers
         private readonly IQueryLogger _queryLogger;
         private readonly Broker _broker;
 		private bool isSuper(Microsoft.AspNetCore.Http.HttpRequest request) {
+			//return request.Host.Host=="localhost";
 			return request.Host.Host=="super.tearma.ie";
 		}
 

@@ -165,7 +165,7 @@ namespace TearmaWeb.Controllers
 							chars[i].markupAfter=chars[i].markupAfter+"</span>";
 							Models.Home.Metadatum label=Lookups.posLabelsById[int.Parse(annot.label.value)];
 							string symbol=label.abbr;
-							if(i==stop-1) chars[i].labelsAfter=chars[i].labelsAfter+"<span class='label "+annot.label.type+" hintable' onmouseover='hon(this, "+index+")' onmouseout='hoff(this, "+index+")' title='"+label.name["ga"]+"/"+label.name["en"]+"'>"+symbol+"</span>";
+							if(i==stop-1) chars[i].labelsAfter=chars[i].labelsAfter+" <span class='label "+annot.label.type+" hintable' onmouseover='hon(this, "+index+")' onmouseout='hoff(this, "+index+")' title='"+label.name["ga"]+"/"+label.name["en"]+"'>"+symbol+"</span>";
 						}
 					}
 					else if(annot.label.type == "inflectLabel") {
@@ -174,7 +174,7 @@ namespace TearmaWeb.Controllers
 							chars[i].markupAfter=chars[i].markupAfter+"</span>";
 							Models.Home.Metadatum label=Lookups.inflectLabelsById[int.Parse(annot.label.value)];
 							string symbol=label.abbr;
-							if(i==stop-1) chars[i].labelsAfter=chars[i].labelsAfter+"<span class='label "+annot.label.type+" hintable' onmouseover='hon(this, "+index+")' onmouseout='hoff(this, "+index+")' title='"+label.name["ga"]+"/"+label.name["en"]+"'>"+symbol+"</span>";
+							if(i==stop-1) chars[i].labelsAfter=chars[i].labelsAfter+" <span class='label "+annot.label.type+" hintable' onmouseover='hon(this, "+index+")' onmouseout='hoff(this, "+index+")' title='"+label.name["ga"]+"/"+label.name["en"]+"'>"+symbol+"</span>";
 						}
 					}
 					else if(annot.label.type == "langLabel") {
@@ -183,7 +183,7 @@ namespace TearmaWeb.Controllers
 							chars[i].markupAfter=chars[i].markupAfter+"</span>";
 							Models.Home.Language label=Lookups.languagesByAbbr[annot.label.value];
 							string symbol=label.abbr.ToUpper();
-							if(i==stop-1) chars[i].labelsAfter=chars[i].labelsAfter+"<span class='label "+annot.label.type+" hintable' onmouseover='hon(this, "+index+")' onmouseout='hoff(this, "+index+")' title='"+label.name["ga"]+"/"+label.name["en"]+"'>"+symbol+"</span>";
+							if(i==stop-1) chars[i].labelsAfter=chars[i].labelsAfter+" <span class='label "+annot.label.type+" hintable' onmouseover='hon(this, "+index+")' onmouseout='hoff(this, "+index+")' title='"+label.name["ga"]+"/"+label.name["en"]+"'>"+symbol+"</span>";
 						}
 					}
 					else if(annot.label.type == "symbol" && annot.label.value!="proper") {
@@ -197,7 +197,7 @@ namespace TearmaWeb.Controllers
 						if(annot.label.value=="tm") title="trádmharc/trademark";
 						if(annot.label.value=="regtm") title="trádmharc cláraithe/registered trademark";
 						if(annot.label.value=="proper") title="ainm dílis/proper noun";
-						if(i==stop-1) chars[i].labelsAfter=chars[i].labelsAfter+"<span class='label "+annot.label.type+" hintable' onmouseover='hon(this, "+index+")' onmouseout='hoff(this, "+index+")' title='"+title+"'>"+symbol+"</span>";
+						if(i==stop-1) chars[i].labelsAfter=chars[i].labelsAfter+" <span class='label "+annot.label.type+" hintable' onmouseover='hon(this, "+index+")' onmouseout='hoff(this, "+index+")' title='"+title+"'>"+symbol+"</span>";
 					}
 					else if(annot.label.type == "formatting") {
 						chars[i].markupBefore="<span style='font-style: italic'>"+chars[i].markupBefore;
@@ -207,7 +207,7 @@ namespace TearmaWeb.Controllers
 				index++;
 			}
 			string s=""; foreach(Char c in chars) {
-				if(c.labelsAfter!="") c.labelsAfter=" "+c.labelsAfter;
+				//if(c.labelsAfter!="") c.labelsAfter=" "+c.labelsAfter;
 				s +=c.markupBefore+c.character+c.markupAfter+c.labelsAfter;
 			}
 			return "<a class='prettyWording' href='/q/"+Uri.EscapeDataString(wording)+"/"+lang+"/'>"+s+"</a>";
