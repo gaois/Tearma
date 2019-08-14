@@ -8,7 +8,7 @@ Please note that the database is being continually edited and therefore these di
 
 ### What is this stock?
 
-The main terminology collection on the www.tearma.ie site consists of the terminology stock accumulated by the Terminology Committee over the years. The various kinds of sources which comprise the stock are described below.
+The main terminology collection on the www.téarma.ie site consists of the terminology stock accumulated by the Terminology Committee over the years. The various kinds of sources which comprise the stock are described below.
 
 ### Domain-specific dictionaries
 

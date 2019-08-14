@@ -8,7 +8,7 @@ Ba chóir a thabhairt faoi deara go bhfuil eagarthóireacht á déanamh ar an mb
 
 ### Céard é an stoc seo?
 
-Is é atá ar fáil sa phríomhbhailiúchán téarmaíochta ar shuíomh www.tearma.ie ná an stoc téarmaíochta a bailíodh in oifig an Choiste Téarmaíochta in imeacht na mblianta. Seo thíos na cineálacha éagsúla foinsí a cuimsíodh sa bhailiúchán.
+Is é atá ar fáil sa phríomhbhailiúchán téarmaíochta ar shuíomh www.téarma.ie ná an stoc téarmaíochta a bailíodh in oifig an Choiste Téarmaíochta in imeacht na mblianta. Seo thíos na cineálacha éagsúla foinsí a cuimsíodh sa bhailiúchán.
 
 ### Foclóirí sainréimse
 

@@ -1,8 +1,8 @@
-# An Coiste Téarmaíochta
+# The Terminology Committee
 
 The Terminology Committee aims to develop, approve and provide authoritative standard Irish terminology to support the Irish language as a means of communication in a modern society.
 
-Monthly meetings are held in Foras na Gaeilge offices of the Terminology Committee, a voluntary committee of *c.*25 members appointed for a three year period. The Terminology Committee sets terminology principals, they plan and supervise the work, they create terms, they deal with various queries from the public and with translation questions from the Irish offices of the EU, and they establish subcommittees of experts as required.
+Monthly meetings are held in Foras na Gaeilge offices of the Terminology Committee, a voluntary committee of c.25 members appointed for a three year period. The Terminology Committee sets terminology principals, they plan and supervise the work, they create terms, they deal with various queries from the public and with translation questions from the Irish offices of the EU, and they establish subcommittees of experts as required.
 
 The Terminology Committee staff can be contacted by emailing <tearmai@forasnagaeilge.ie> or by calling 01-6398418.
 

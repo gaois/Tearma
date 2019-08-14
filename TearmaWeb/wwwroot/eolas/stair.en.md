@@ -4,7 +4,7 @@
 
 ## History of téarma.ie
 
-www.focal.ie was founded as a project within Fiontar (as it was called at the time), Dublin City University (DCU), in partnership with the University of Wales, Lampeter agus Foras na Gaeilge. ‘FIONTAR Téarmaí Unedig’ was the full title given to the project that lasted from 2004 until 2007. The main objective of the project from Ireland’s point of view was to increase the general public’s access to information technology resources with a particular focus on high-level Irish language terminology resources. The main outcome of this project in Ireland was www.focal.ie (www.tearma.ie from 1 March 2015 onward), which was a comprehensive public database of new Irish language terminology.
+www.focal.ie was founded as a project within Fiontar (as it was called at the time), Dublin City University (DCU), in partnership with the University of Wales, Lampeter agus Foras na Gaeilge. ‘FIONTAR Téarmaí Unedig’ was the full title given to the project that lasted from 2004 until 2007. The main objective of the project from Ireland’s point of view was to increase the general public’s access to information technology resources with a particular focus on high-level Irish language terminology resources. The main outcome of this project in Ireland was www.focal.ie (www.téarma.ie from 1 March 2015 onward), which was a comprehensive public database of new Irish language terminology.
 
 ![focal.ie V1](focalV1.jpg)
 
@@ -16,9 +16,9 @@ Under Phase III (2008-11), more material was added to the database, including na
 
 ![focal.ie V2](focalV2.jpg)
 
-During Phase IV (2011-14), the database was linked with the New Corpus for Ireland and a new hierarchy domain system was implemented throughout. As well as this, research was carried out on a major collection of art terms agus research was completed on the sport dictionary. A CD-ROM version of the database was published and a version for mobile devices was also developed, m.tearma.ie.
+During Phase IV (2011-14), the database was linked with the New Corpus for Ireland and a new hierarchy domain system was implemented throughout. As well as this, research was carried out on a major collection of art terms agus research was completed on the sport dictionary. A CD-ROM version of the database was published and a version for mobile devices was also developed, m.téarma.ie.
 
-During Phase V (2014-17), a new collection of information technology terms was developed. The internet address of the National Terminology Database for Irish changed from focal.ie to tearma.ie on 1 March 2015.
+During Phase V (2014-17), a new collection of information technology terms was developed. The internet address of the National Terminology Database for Irish changed from focal.ie to téarma.ie on 1 March 2015.
 
 ![téarma.ie V3](tearmaV3.jpg)
 

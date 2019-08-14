@@ -4,7 +4,7 @@
 
 ## Stair téarma.ie
 
-Bunaíodh www.focal.ie mar thionscadal de chuid Fiontar (mar a bhí), Ollscoil Chathair Bhaile Átha Cliath (DCU) i gcomhar le hOllscoil na Breataine Bige, Lampeter agus le Foras na Gaeilge. ‘FIONTAR Téarmaí Unedig’ an teideal iomlán a bhí ar an tionscadal seo, a mhair ó 2004 go 2007. Ba é príomhsprioc ghné na hÉireann den tionscadal ná méadú ar rochtain an ghnáthphobail ar acmhainní theicneolaíocht na faisnéise, sa chás seo acmhainní ardleibhéil téarmaíochta i nGaeilge. An príomhthoradh a bhí ar an tionscadal in Éirinn ná www.focal.ie (www.tearma.ie ón 1 Márta 2015), an bunachar cuimsitheach poiblí seo de nuathéarmaíocht na Gaeilge. 
+Bunaíodh www.focal.ie mar thionscadal de chuid Fiontar (mar a bhí), Ollscoil Chathair Bhaile Átha Cliath (DCU) i gcomhar le hOllscoil na Breataine Bige, Lampeter agus le Foras na Gaeilge. ‘FIONTAR Téarmaí Unedig’ an teideal iomlán a bhí ar an tionscadal seo, a mhair ó 2004 go 2007. Ba é príomhsprioc ghné na hÉireann den tionscadal ná méadú ar rochtain an ghnáthphobail ar acmhainní theicneolaíocht na faisnéise, sa chás seo acmhainní ardleibhéil téarmaíochta i nGaeilge. An príomhthoradh a bhí ar an tionscadal in Éirinn ná www.focal.ie (www.téarma.ie ón 1 Márta 2015), an bunachar cuimsitheach poiblí seo de nuathéarmaíocht na Gaeilge. 
 
 ![focal.ie V1](focalV1.jpg)
 
@@ -16,9 +16,9 @@ Faoi Chéim III (2008-11) cuireadh tuilleadh ábhair leis an mbunachar, ainmneac
 
 ![focal.ie V2](focalV2.jpg)
 
-I rith Chéim IV (2011-14), ceanglaíodh an bunachar le Nua-Chorpas na hÉireann agus cuireadh ordlathas nua réimsí eolais i bhfeidhm tríd síos. Chomh maith leis sin, rinneadh taighde ar mhórbhailiúchán téarmaí ealaíon agus críochnaíodh an taighde ar an bhfoclóir spóirt. Foilsíodh leagan den bhunachar ar CD-ROM agus forbraíodh leagan do ghléasanna móibíleacha, m.tearma.ie.
+I rith Chéim IV (2011-14), ceanglaíodh an bunachar le Nua-Chorpas na hÉireann agus cuireadh ordlathas nua réimsí eolais i bhfeidhm tríd síos. Chomh maith leis sin, rinneadh taighde ar mhórbhailiúchán téarmaí ealaíon agus críochnaíodh an taighde ar an bhfoclóir spóirt. Foilsíodh leagan den bhunachar ar CD-ROM agus forbraíodh leagan do ghléasanna móibíleacha, m.téarma.ie.
 
-I rith Chéim V (2014-17), forbraíodh cnuasach nua téarmaí teicneolaíochta faisnéise. Athraíodh seoladh idirlín an Bhunachair Náisiúnta Téarmaíochta don Ghaeilge ó *focal.ie* go *tearma.ie* ar an 1 Márta 2015.
+I rith Chéim V (2014-17), forbraíodh cnuasach nua téarmaí teicneolaíochta faisnéise. Athraíodh seoladh idirlín an Bhunachair Náisiúnta Téarmaíochta don Ghaeilge ó *focal.ie* go *téarma.ie* ar an 1 Márta 2015.
 
 ![téarma.ie V3](tearmaV3.jpg)
 
