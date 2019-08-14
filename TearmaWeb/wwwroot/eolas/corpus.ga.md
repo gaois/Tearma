@@ -4,7 +4,7 @@
 
 Is bailiúchán mór téacsanna Gaeilge é Nua-Chorpas na hÉireann a bhfuil timpeall is 30 milliún focal ann. Tá réimse leathan téacsanna ar fáil sa chorpas: saothair ficsin, téacsanna faisnéise, tuairiscí nuachta, cáipéisí oifigiúla agus eile. Tá an corpas cóirithe sa chaoi gur féidir taighde teangeolaíoch a dhéanamh air – mar shampla, samplaí a aimsiú d'fhocail faoi leith agus iad á n-úsáid i gcomhthéacs, nó minicíocht focal a fhiosrú.
 
-Foras na Gaeilge a thionscain Nua-Chorpas na hÉireann mar chuid de thionscadal an Fhoclóra Nua Béarla-Gaeilge. Sa bhreis air sin, tá an corpas ar fáil don phobal ar shuíomh faoi leith, <corpas.focloir.ie>. An comhlacht *Lexical Computing Limited* a chruthaigh an suíomh sin i gcomhar le Fiontar & Scoil na Gaeilge, DCU. Tá suíomh an chorpais nasctha leis an mbunachar téarmaíochta tearma.ie sa tslí gur féidir samplaí úsáide na dtéarmaí Gaeilge a lorg sa chorpas go saoráideach ach cliceáil ar dheilbhín in aice leis na téarmaí. (Téarmaí Gaeilge amháin atá i gceist. Téarmaí nach bhfuil deilbhín in aice leo, níl siad le fáil sa chorpas.)
+Foras na Gaeilge a thionscain Nua-Chorpas na hÉireann mar chuid de thionscadal an Fhoclóra Nua Béarla-Gaeilge. Sa bhreis air sin, tá an corpas ar fáil don phobal ar shuíomh faoi leith, <corpas.focloir.ie>. An comhlacht *Lexical Computing Limited* a chruthaigh an suíomh sin i gcomhar le Fiontar & Scoil na Gaeilge, DCU. Tá suíomh an chorpais nasctha leis an mbunachar téarmaíochta téarma.ie sa tslí gur féidir samplaí úsáide na dtéarmaí Gaeilge a lorg sa chorpas go saoráideach ach cliceáil ar dheilbhín in aice leis na téarmaí. (Téarmaí Gaeilge amháin atá i gceist. Téarmaí nach bhfuil deilbhín in aice leo, níl siad le fáil sa chorpas.)
 
 ## Rochtain ar Nua-Chorpas na hÉireann
 
@@ -14,13 +14,13 @@ Má tá tú cláraithe cheana, scríobh d’ainm agus do phasfhocal sa phreabfhu
 
 ## Conas an corpas a úsáid
 
-Tar éis duit teacht chuig an gcorpas ó tearma.ie, gheobhaidh tú leathanach agus trí chineál sonraí ann:
+Tar éis duit teacht chuig an gcorpas ó téarma.ie, gheobhaidh tú leathanach agus trí chineál sonraí ann:
 
 1. **Comhchordacht**: Feicfidh tú liosta samplaí den fhocal nó den téarma á úsáid in abairtí a roghnaíodh go huathoibríoch as an gcorpas. Beidh timpeall is deich sampla á léiriú ar an leathanach seo agus is féidir teacht ar a thuilleadh díobh ach cliceáil ar an nasc ‘tuilleadh’.
 2. **Comhlogaíochtaí**: Sa bhosca ar dheis, feicfidh tú liosta de na deich bhfocal is minice a úsáidtear in éineacht leis an bhfocal a chuardaigh tú. Mar shampla, má chuardaíonn tú *doras*, gheobhaidh tú focail ar nós *oscail*, *dúnta*, *plab* agus eile. Arís, is féidir tuilleadh díobh a fháil ach cliceáil ar an nasc ‘tuilleadh’. Tá liosta na gcomhlogaíochtaí seo bunaithe ar eolas a baineadh as an gcorpas go huathoibríoch.
 3. **Staitisticí**: Ag bun an leathanaigh, gheobhaidh tú eolas staitistiúil i dtaobh úsáid an fhocail de réir critéar áirithe, mar shampla de réir seánra nó canúna. Mar shampla, má chuardaíonn tú *fata*, feicfidh tú gur i gConnachta is coitianta é. Arís, tá na staitisticí seo bunaithe ar eolas a baineadh as an gcorpas go huathoibríoch. Is féidir teacht ar a thuilleadh staitisticí ach cliceáil ar an nasc ‘tuilleadh’.
 
-Ina theannta sin, is féidir an corpas a úsáid go neamhspleách ar tearma.ie ach dul chuig <corpas.focloir.ie>, logáil isteach agus focal nó téarma a scríobh isteach sa bhosca cuardaigh ar an leathanach baile.
+Ina theannta sin, is féidir an corpas a úsáid go neamhspleách ar téarma.ie ach dul chuig <corpas.focloir.ie>, logáil isteach agus focal nó téarma a scríobh isteach sa bhosca cuardaigh ar an leathanach baile.
 
 ## Cuardaigh níos casta
 
@@ -38,4 +38,4 @@ Más maith leat cuardaigh níos casta a dhéanamh sa chorpas ná mar is féidir 
 
 ## Breis eolais
 
-Tá suíomh an chorpais bunaithe ar Sketch Engine, bogearra cuardaigh corpais de chuid *Lexical Computing Limited*. Má tá breis eolais uait maidir leis na háiseanna atá ar fáil ar an suíomh, tá treoir chuimsitheach le fáil i g[comhaid chabhrach](https://www.sketchengine.eu/frequently-asked-questions/) *Sketch Engine* féin.
+Tá suíomh an chorpais bunaithe ar *Sketch Engine*, bogearra cuardaigh corpais de chuid *Lexical Computing Limited*. Má tá breis eolais uait maidir leis na háiseanna atá ar fáil ar an suíomh, tá treoir chuimsitheach le fáil i g[comhaid chabhrach](https://www.sketchengine.eu/frequently-asked-questions/) *Sketch Engine* féin.

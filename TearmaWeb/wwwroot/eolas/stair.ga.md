@@ -4,7 +4,7 @@
 
 ## Stair téarma.ie
 
-Bunaíodh www.focal.ie i 2004 mar thionscadal de chuid Fiontar (mar a bhí), Ollscoil Chathair Bhaile Átha Cliath (DCU) i gcomhar le hOllscoil na Breataine Bige, Lampeter agus le Foras na Gaeilge. ‘FIONTAR Téarmaí Unedig’ an teideal iomlán a bhí ar an tionscadal seo, a mhair go 2007. Ba é príomhsprioc ghné na hÉireann den tionscadal ná méadú ar rochtain an ghnáthphobail ar acmhainní theicneolaíocht na faisnéise, sa chás seo acmhainní ardleibhéil téarmaíochta i nGaeilge. An príomhthoradh a bhí ar an tionscadal in Éirinn ná www.focal.ie (www.tearma.ie ón 1 Márta 2015), an bunachar cuimsitheach poiblí seo de nuathéarmaíocht na Gaeilge. 
+Bunaíodh www.focal.ie mar thionscadal de chuid Fiontar (mar a bhí), Ollscoil Chathair Bhaile Átha Cliath (DCU) i gcomhar le hOllscoil na Breataine Bige, Lampeter agus le Foras na Gaeilge. ‘FIONTAR Téarmaí Unedig’ an teideal iomlán a bhí ar an tionscadal seo, a mhair ó 2004 go 2007. Ba é príomhsprioc ghné na hÉireann den tionscadal ná méadú ar rochtain an ghnáthphobail ar acmhainní theicneolaíocht na faisnéise, sa chás seo acmhainní ardleibhéil téarmaíochta i nGaeilge. An príomhthoradh a bhí ar an tionscadal in Éirinn ná www.focal.ie (www.tearma.ie ón 1 Márta 2015), an bunachar cuimsitheach poiblí seo de nuathéarmaíocht na Gaeilge. 
 
 ![focal.ie V1](focalV1.jpg)
 
