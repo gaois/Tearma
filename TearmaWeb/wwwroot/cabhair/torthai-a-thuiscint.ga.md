@@ -44,7 +44,7 @@ Tugtar foirmeacha infhillte de théarmaí go minic, dála an tuisil ghinidigh ag
 
 ### Cliceáil ar théarmaí
 
-Agus tú ag féachaint trí liosta na dtorthaí, is féidir leat cliceáil ar théarma ar bith, i dteanga ar bith. Is cuma cé acu cuardach tapa, cuardach casta nó brabhsáil réimsí atá ar siúl agat. Nuair a chliceálann tú ar théarma, tugtar go dtí an cuardach tapa tú agus déantar cuardach ansin ar an téarma ar chliceáil tú air. Is bealach gasta é seo chun tuilleadh eolais i dtaobh téarma áirithe a fháil.
+Agus tú ag féachaint trí liosta na dtorthaí, is féidir leat cliceáil ar théarma ar bith, i dteanga ar bith. Is cuma cé acu Cuardach Tapa, Cuardach Casta nó Brabhsáil réimsí atá ar siúl agat. Nuair a chliceálann tú ar théarma, tugtar go dtí an Cuardach Tapa tú agus déantar cuardach ansin ar an téarma ar chliceáil tú air. Is bealach gasta é seo chun tuilleadh eolais i dtaobh téarma áirithe a fháil.
 
 ### Saighead anuas
 

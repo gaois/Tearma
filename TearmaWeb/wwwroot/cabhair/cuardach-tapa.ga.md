@@ -1,4 +1,4 @@
-# An cuardach tapa
+# An Cuardach Tapa
 
 Chun téarma a chuardach, scríobh isteach é sa bhosca cuardaigh. Ní gá duit a chur in iúl cén teanga atá á hionchur agat. Níl an cuardach cásíogair – is é sin le rá, is cuma cé acu **téarma** nó **TÉARMA** (nó fiú **TéArMa**) a scríobhann tú, gheobhaidh tú na torthaí céanna.
 

@@ -1,4 +1,4 @@
-# Conas an cuardach casta a úsáid
+# Conas an Cuardach Casta a úsáid
 
 Murab ionann agus an Cuardach Tapa, tugann an cuardach seo na téarmaí siúd a chomhlíonann na critéir a roghnaigh tú go díreach, agus ní thugann sé aon téarmaí eile. Mar shampla, má chuardaíonn tú an téacs ***smoked***, gheobhaidh tú an téarma ***smoked***, ach ní bhfaighidh tú aon nasc chuig an téarma ***smoke*** – cé gurb ann dó sa bhunachar. Chomh maith leis sin, ní dhéanann an cuardach seo neamhaird de chúrsaí poncaíochta. Mar sin, má chuardaíonn tú ***rain-forest*** (le fleiscín), ní bhfaighidh tú é mar níl sa bhunachar ach ***rain forest*** (gan fleiscín). Rud amháin atá i gcoiteann ag an dá chuardach, áfach, nach bhfuil ceann ar bith acu cásíogair – mar sin, is cuma cé acu **téarma** nó **TÉARMA** (nó fiú **TéArMa**) a scríobhann tú, gheobhaidh tú na torthaí céanna.
 
@@ -30,7 +30,7 @@ Is féidir teaglaim ar bith de chritéir a roghnú agus cuardach á dhéanamh ag
 
 Más rud é nach bhfaigheann tú aon torthaí ar do chuardach, seans go bhfuil critéir róchúnga roghnaithe agat. Sa chás sin, is fiú féachaint siar ar na critéir agus iad a leathnú amach ar bhealach éigin.
 
-# Saoróga sa chuardach casta
+# Saoróga sa Cuardach Casta
 
 Bealach cliste chun solúbthacht a chur leis an gCuardach Casta is ea saoróga a úsáid sa bhosca 'Foclaíocht/Wording'. Is éard is saoróg ann siombail a sheasann do charachtar (nó sraith carachtar) neamhshonraithe eile. Seo iad na saoróga is féidir a úsáid:
 

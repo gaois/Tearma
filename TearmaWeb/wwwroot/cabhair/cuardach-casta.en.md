@@ -1,4 +1,4 @@
-# How to use advanced search
+# How to use Advanced Search
 
 Unlike the Quick Search, the Advanced Search lists only those terms that satisfy the search criteria exactly. For example, if you search for **smoked**, you will find the term **smoked**, but you will not find a link to the term **smoke** – although it is in the database. This search does not disregard punctuation. If you search for **rain-forest** (with a hyphen), you will not find it as the database only contains **rain forest** (without a hyphen). Neither of the searches is case-sensitive, however – so whether you enter ***téarma*** or ***TÉARMA*** (or even ***TéArMa***) you will get the same results.
 
@@ -31,7 +31,7 @@ You can select any combination of the above criteria for your search. The search
 If your search yields no result, you may have selected criteria that are too narrow. In that case, it is worth looking back on your criteria 
 and broadening them in some way.
 
-# Wildcards in advanced search
+# Wildcards in Advanced Search
 
 A clever way to make your Advanced Search more flexible is to use wildcards in the 'Foclaíocht/Wording' box. A wildcard is a symbol which stands for one or more unspecified characters. These are the available wildcards:
 
