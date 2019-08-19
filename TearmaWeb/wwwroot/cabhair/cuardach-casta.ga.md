@@ -22,7 +22,7 @@ Is féidir do thorthaí cuardaigh a theorannú do roinn chainte ar leith.  Mar s
 
 ## Réimse
 
-Is féidir do thorthaí cuardaigh a theorannú do réimse ar leith. Mar shampla, d’fhéadfá an focal Béarla ‘*bat*’ a chuardach agus na torthaí cuardaigh a theorannú don réimse ‘Spóirt’. Chuirfeadh sé sin liosta fada téarmaí as an áireamh a bhfuil mamach eitilte oíche luaite iontu.
+Is féidir do thorthaí cuardaigh a theorannú do réimse ar leith. Mar shampla, d’fhéadfá an focal Béarla ***bat*** a chuardach agus na torthaí cuardaigh a theorannú don réimse ‘Spóirt’. Chuirfeadh sé sin liosta fada téarmaí as an áireamh a bhfuil mamach eitilte oíche luaite iontu.
 
 ## Teaglamaí de chritéir
 
@@ -36,7 +36,7 @@ Bealach cliste chun solúbthacht a chur leis an gCuardach Casta is ea saoróga a
 
 ## An fhostríoc: _
 
-Seasann sí seo do charachtar aonair ar bith. Mar shampla, má lorgaíonn tú **l_w**, gheobhaidh tú ***law*** agus ***low***, chomh maith leis na giorrúcháin **LBW** agus **LLW**.
+Seasann sí seo do charachtar aonair ar bith. Mar shampla, má lorgaíonn tú ***l_w***, gheobhaidh tú ***law*** agus ***low***, chomh maith leis na giorrúcháin ***LBW*** agus ***LLW***.
 
 ![](cuardach-casta-01.jpg)
 

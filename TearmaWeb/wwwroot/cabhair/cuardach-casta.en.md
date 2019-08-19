@@ -22,7 +22,7 @@ This criteria allows you to limit your search results to a particular part of sp
 
 ## Domain
 
-This criteria allows you to limit your search results to a particular domain. For example you could search the word ‘bat’ and restrict your results to the ‘Sports’ domain, thus filtering out results relating to nocturnal flying mammals.
+This criteria allows you to limit your search results to a particular domain. For example you could search the word **bat** and restrict your results to the ‘Sports’ domain, thus filtering out results relating to nocturnal flying mammals.
 
 ## Combining Criteria
 

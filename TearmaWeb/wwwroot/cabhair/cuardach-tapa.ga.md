@@ -1,6 +1,6 @@
 # An cuardach tapa
 
-Chun téarma a chuardach, scríobh isteach é sa bhosca cuardaigh. Ní gá duit a chur in iúl cén teanga atá á hionchur agat. Níl an cuardach cásíogair – is é sin le rá, is cuma cé acu ***téarma*** nó ***TÉARMA*** (nó fiú ***TéArMa***) a scríobhann tú, gheobhaidh tú na torthaí céanna.
+Chun téarma a chuardach, scríobh isteach é sa bhosca cuardaigh. Ní gá duit a chur in iúl cén teanga atá á hionchur agat. Níl an cuardach cásíogair – is é sin le rá, is cuma cé acu **téarma** nó **TÉARMA** (nó fiú **TéArMa**) a scríobhann tú, gheobhaidh tú na torthaí céanna.
 
 Nuair a chuardaíonn tú téarma, liostófar 'Torthaí beachta' ar dtús agus thíos fúthu sin, feicfidh tú 'Torthaí gaolmhara' - is é sin gach téarma ilfhoclach sa bhunachar a bhfuil an téarma a chuardaigh tú féin mar chuid de. Oibríonn cuardach na dtéarmaí gaolmhara ag leibhéal na bhfocal aonair. Mar shampla, má chuardaíonn tú ***verse***, gheobhaidh tú ***free verse*** agus ***verse drama*** i measc na dtéarmaí gaolmhara, ach ní bhfaighidh tú ***adverse*** nó ***overseas***.
 
