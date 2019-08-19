@@ -22,9 +22,9 @@ Is féidir do thorthaí cuardaigh a theorannú do roinn chainte ar leith.  Mar s
 
 ## Réimse
 
-Is féidir do thorthaí cuardaigh a theorannú do réimse ar leith. Mar shampla, d’fhéadfá an focal Béarla ‘bat’ a chuardach agus na torthaí cuardaigh a theorannú don réimse ‘Spóirt’. Chuirfeadh sé sin liosta fada téarmaí as an áireamh a bhfuil mamach eitilte oíche luaite iontu.
+Is féidir do thorthaí cuardaigh a theorannú do réimse ar leith. Mar shampla, d’fhéadfá an focal Béarla ‘*bat*’ a chuardach agus na torthaí cuardaigh a theorannú don réimse ‘Spóirt’. Chuirfeadh sé sin liosta fada téarmaí as an áireamh a bhfuil mamach eitilte oíche luaite iontu.
 
-## Teaglaimí de chritéir
+## Teaglamaí de chritéir
 
 Is féidir teaglaim ar bith de chritéir a roghnú agus cuardach á dhéanamh agat. Liostaíonn an t-inneall cuardaigh téarmaí a chomhlíonann na critéir sin go léir.
 
@@ -32,7 +32,7 @@ Más rud é nach bhfaigheann tú aon torthaí ar do chuardach, seans go bhfuil c
 
 # Saoróga sa chuardach casta
 
-Bealach cliste chun solúbthacht a chur leis an gCuardach Casta is ea saoróga a úsáid sa bhosca *Foclaíocht/Wording*. Is éard is saoróg ann siombail a sheasann do charachtar (nó sraith carachtar) neamhshonraithe eile. Seo iad na saoróga is féidir a úsáid:
+Bealach cliste chun solúbthacht a chur leis an gCuardach Casta is ea saoróga a úsáid sa bhosca 'Foclaíocht/Wording'. Is éard is saoróg ann siombail a sheasann do charachtar (nó sraith carachtar) neamhshonraithe eile. Seo iad na saoróga is féidir a úsáid:
 
 ## An fhostríoc: _
 
@@ -42,6 +42,6 @@ Seasann sí seo do charachtar aonair ar bith. Mar shampla, má lorgaíonn tú **
 
 ## An céatadán: %
 
-Seasann sé seo do líon ar bith (náid san áireamh) de charachtair ar bith. Mar shampla, má chuardaíonn tú **met%rology**, gheobhaidh tú ***metamorphic petrology*** agus ***meteorology***, chomh maith le ***metrology*** féin. Nuair a usáidtear an tsaoróg seo léi féin sa chuardach casta, gintear liosta de gach iontráil a chomhlíonann na critéir chuardaigh.
+Seasann sé seo do líon ar bith (náid san áireamh) de charachtair ar bith. Mar shampla, má chuardaíonn tú **met%rology**, gheobhaidh tú ***metamorphic petrology*** agus ***meteorology***, chomh maith le ***metrology*** féin. Nuair a usáidtear an tsaoróg seo léi féin sa 'Cuardach Casta', gintear liosta de gach iontráil a chomhlíonann na critéir chuardaigh.
 
 ![](cuardach-casta-02.jpg)
