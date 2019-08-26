@@ -144,6 +144,7 @@ namespace TearmaWeb.Controllers
                     JsonData = model.searchData()
                 };
                 _queryLogger.Log(query);
+                if (model.domain is null) return NotFound();
                 ViewData["PageTitle"] = "Brabhsáil · Browse";
 				ViewData["IsSuper"]=this.isSuper(Request);
 				return View("Domain", model);

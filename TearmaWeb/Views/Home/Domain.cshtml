@@ -42,11 +42,16 @@
 	<span class="ga" lang="ga">Gach réimse</span>
 	<span class="en" lang="en">All domains</span>
 </a>
-
 <div class="domains formlike scrollable">
-    <a href="~/dom/@Model.domain.id/@Model.lang/" class="domain L0 current @(Model.subdomID==0 ? "selected" : "")"><span class="ga" lang="@Model.leftLang()">@Model.domain.name[Model.leftLang()]</span> <span class="en" lang="@Model.rightLang()">@Model.domain.name[Model.rightLang()]</span></a>
+    <a href="~/dom/@Model.domain.id/@Model.lang/" class="domain L0 current @(Model.subdomID==0 ? "selected" : "")">
+        <span class="ga" lang="@Model.leftLang()">@Model.domain.name[Model.leftLang()]</span>
+        <span class="en" lang="@Model.rightLang()">@Model.domain.name[Model.rightLang()]</span>
+    </a>
     @foreach(SubdomainListing subdom in Model.subdomains) {
-        <a href="~/dom/@Model.domID/@subdom.id/@Model.lang/" class="domain @("L"+subdom.level) @(subdom.visible ? "current" : "") @(subdom.id==Model.subdomID ? "selected" : "")"><span class="ga" lang="@Model.leftLang()">»&nbsp; @subdom.name[Model.leftLang()]</span> <span class="en" lang="@Model.rightLang()">»&nbsp; @subdom.name[Model.rightLang()]</span></a>
+        <a href="~/dom/@Model.domID/@subdom.id/@Model.lang/" class="domain @("L"+subdom.level) @(subdom.visible ? "current" : "") @(subdom.id==Model.subdomID ? "selected" : "")">
+            <span class="ga" lang="@Model.leftLang()">»&nbsp; @subdom.name[Model.leftLang()]</span>
+            <span class="en" lang="@Model.rightLang()">»&nbsp; @subdom.name[Model.rightLang()]</span>
+        </a>
     }
 </div>
 @if(Model.subdomains.Count>0){
