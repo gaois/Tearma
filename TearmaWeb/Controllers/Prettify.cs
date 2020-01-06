@@ -54,7 +54,7 @@ namespace TearmaWeb.Controllers
 			ret +="<a class='permalink' href='/id/"+id+"/'>#</a>";
 
 			//domains:
-			foreach(Models.Data.DomainAssig obj in entry.domains) ret+=Prettify.DomainAssig(obj, leftLang, rightLang);
+			foreach(int obj in entry.domains) ret+=Prettify.DomainAssig(obj, leftLang, rightLang);
 
 			//draft status:
 			if(entry.dStatus=="0") {
@@ -261,29 +261,29 @@ namespace TearmaWeb.Controllers
 			return ret;
 		}
 
-		public static string DomainAssig(Models.Data.DomainAssig da, string leftLang, string rightLang) {
-			int domID = da.superdomain;
+		public static string DomainAssig(int da, string leftLang, string rightLang) {
+			int domID = da;
 			Models.Home.Metadatum domain = Prettify.Lookups.domainsById[domID];
 			string ret = "";
 			if(domain != null) {
 
 				string substepsLeft = "";
 				string substepsRight = "";
-				int subdomID = da.subdomain ?? 0;
-				if(subdomID > 0) {
-					List<Models.Home.SubdomainListing> subs = Broker.FlattenSubdomains(1, domain.jo.Value<JArray>("subdomains"), null, subdomID);
-					foreach(Models.Home.SubdomainListing sub in subs) {
-						if(sub.visible) {
-							substepsLeft += (sub.name.ContainsKey(leftLang))
-                                ? $" » {sub.name[leftLang]}" : $" » {sub.name["ga"]}";
-                            substepsRight += (sub.name.ContainsKey(rightLang))
-                                ? $" » {sub.name[rightLang]}" : $" » {sub.name["en"]}";
-						}
-					}
-				}
+				//int subdomID = da.subdomain ?? 0;
+				//if(subdomID > 0) {
+				//	List<Models.Home.SubdomainListing> subs = Broker.FlattenSubdomains(1, domain.jo.Value<JArray>("subdomains"), null, subdomID);
+				//	foreach(Models.Home.SubdomainListing sub in subs) {
+				//		if(sub.visible) {
+				//			substepsLeft += (sub.name.ContainsKey(leftLang))
+    //                            ? $" » {sub.name[leftLang]}" : $" » {sub.name["ga"]}";
+    //                        substepsRight += (sub.name.ContainsKey(rightLang))
+    //                            ? $" » {sub.name[rightLang]}" : $" » {sub.name["en"]}";
+				//		}
+				//	}
+				//}
 
-				string urlFrag=da.superdomain.ToString();
-				if(da.subdomain!=null) urlFrag+="/"+da.subdomain;
+				string urlFrag=da.ToString();
+				// if(da.subdomain!=null) urlFrag+="/"+da.subdomain;
                 var domainNameLeft = domain.name.ContainsKey(leftLang) ? domain.name[leftLang] : domain.name["ga"];
                 var domainNameRight = domain.name.ContainsKey(rightLang) ? domain.name[rightLang] : domain.name["en"];
 
@@ -296,25 +296,25 @@ namespace TearmaWeb.Controllers
 			return ret;
 		}
 
-		public static string DomainAssig(Models.Data.DomainAssig da, string lang) {
-			int domID = da.superdomain;
+		public static string DomainAssig(int da, string lang) {
+			int domID = da;
 			Models.Home.Metadatum domain = Prettify.Lookups.domainsById[domID];
 			string ret = "";
 			if(domain != null) {
 
 				string substeps = "";
-				int subdomID = da.subdomain ?? 0;
-				if(subdomID > 0) {
-					List<Models.Home.SubdomainListing> subs = Broker.FlattenSubdomains(1, domain.jo.Value<JArray>("subdomains"), null, subdomID);
-					foreach(Models.Home.SubdomainListing sub in subs) {
-						if(sub.visible) {
-							substeps += " » " + sub.name[lang];
-						}
-					}
-				}
+				//int subdomID = da.subdomain ?? 0;
+				//if(subdomID > 0) {
+				//	List<Models.Home.SubdomainListing> subs = Broker.FlattenSubdomains(1, domain.jo.Value<JArray>("subdomains"), null, subdomID);
+				//	foreach(Models.Home.SubdomainListing sub in subs) {
+				//		if(sub.visible) {
+				//			substeps += " » " + sub.name[lang];
+				//		}
+				//	}
+				//}
 
-				string urlFrag=da.superdomain.ToString();
-				if(da.subdomain!=null) urlFrag+="/"+da.subdomain;
+				string urlFrag=da.ToString();
+				//if(da.subdomain!=null) urlFrag+="/"+da.subdomain;
 
 				ret += "<span class='prettyDomainInline'>";
 				ret += "<a href='/dom/"+urlFrag+"/"+lang+"/'>" + domain.name[lang] + substeps + "</a>";
@@ -328,12 +328,12 @@ namespace TearmaWeb.Controllers
 			string nonessential=(def.nonessential==1 ? " nonessential" : "");
 			ret += "<div class='prettyDefinition"+nonessential+"'>";
 			ret += "<div class='left'>";
-				foreach(Models.Data.DomainAssig da in def.domains) ret+=DomainAssig(da, leftLang)+" ";
+				foreach(int da in def.domains) ret+=DomainAssig(da, leftLang)+" ";
                 if (def.texts.ContainsKey(leftLang))
 				    ret += def.texts[leftLang];
 			ret += "</div>";
 			ret += "<div class='right'>";
-				foreach(Models.Data.DomainAssig da in def.domains) ret+=DomainAssig(da, rightLang)+" ";
+				foreach(int da in def.domains) ret+=DomainAssig(da, rightLang)+" ";
 				ret += def.texts[rightLang];
 			ret += "</div>";
 			ret += "<div class='clear'></div>";

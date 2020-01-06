@@ -9,7 +9,7 @@ namespace TearmaWeb.Models.Data {
 	
 	public class Entry {
 		public string dStatus;
-		public List<DomainAssig> domains;
+		public List<int> domains;
 		public List<Desig> desigs;
 		public Dictionary<string, string> intros;
 		public List<Definition> definitions;
@@ -24,14 +24,14 @@ namespace TearmaWeb.Models.Data {
 
 	public class Definition {
 		public Dictionary<string, string> texts;
-		public List<DomainAssig> domains;
+		public List<int> domains;
 		public int nonessential;
 	}
 
-	public class DomainAssig {
-		public int superdomain;
-		public int? subdomain;
-	}
+	//public class DomainAssig {
+	//	public int superdomain;
+	//	public int? subdomain;
+	//}
 
 	public class Desig {
 		public Term term;

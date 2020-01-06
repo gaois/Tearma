@@ -346,8 +346,8 @@ namespace TearmaWeb.Controllers
 				            model.domain=new DomainListing(md.id, md.name["ga"], md.name["en"]);
 
 				            //flatten the list of subdomains:
-				            JArray jSubdoms=(JArray)md.jo.Property("subdomains").Value;
-				            model.subdomains=FlattenSubdomains(1, jSubdoms, null, model.subdomID);
+				            //JArray jSubdoms=(JArray)md.jo.Property("subdomains").Value;
+				            //model.subdomains=FlattenSubdomains(1, jSubdoms, null, model.subdomID);
 			            }
 
 			            //read xref targets:
