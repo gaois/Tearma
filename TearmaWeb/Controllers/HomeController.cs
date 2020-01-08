@@ -75,7 +75,7 @@ namespace TearmaWeb.Controllers
             }
 		}
 
-		public IActionResult AdvSearch(string word, string length, string extent, string lang, int posLabel, int domainID, int subdomainID, int page) {
+		public IActionResult AdvSearch(string word, string length, string extent, string lang, int posLabel, int domainID, int page) {
             using (var stopwatch = new SimpleTimer()) {
                 if (lang is null) lang = "";
                 if (page < 1) page = 1;
@@ -86,7 +86,6 @@ namespace TearmaWeb.Controllers
                 if (lang != "0") model.lang = lang;
                 model.posLabel = posLabel;
                 model.domainID = domainID;
-                model.subdomainID = subdomainID;
                 model.page = page;
                 if (model.word.IsNullOrWhiteSpace()) {
                     _broker.PrepareAdvSearch(model);
@@ -126,18 +125,17 @@ namespace TearmaWeb.Controllers
 			return View("Domains", model);
 		}
 
-		public IActionResult Domain(int domID, int subdomID, string lang, int page) {
+		public IActionResult Domain(int domID, string lang, int page) {
             using (var stopwatch = new SimpleTimer()) {
 			    if(lang is null) lang="";
                 Domain model=new Domain();
 			    model.lang=lang;
 			    model.domID=domID;
-			    model.subdomID=subdomID;
 			    model.page=page;
 			    _broker.DoDomain(model);
                 var query = new Query {
                     QueryCategory = "Domain",
-                    QueryTerms = (subdomID > 0) ? subdomID.ToString() : domID.ToString(),
+                    QueryTerms = domID.ToString(),
                     QueryText = Request.Path,
                     ExecutionTime = (int)stopwatch.ElapsedMilliseconds,
                     ResultCount = model.matches.Count,

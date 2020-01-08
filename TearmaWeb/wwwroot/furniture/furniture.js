@@ -24,7 +24,6 @@ function submitAdvSearch(form) {
         url += "lang" + form["lang"].value + "/";
         url += "pos" + form["pos"].value + "/";
         url += "dom" + form["dom"].value + "/";
-        url += "sub" + form["sub"].value + "/";
         window.location = url;
     }
     return false;
@@ -43,35 +42,6 @@ function advChangeLang(obj) {
             $option.hide();
         }
     });
-}
-function advChangeDomain(obj, subdomID) {
-    var $option = $(obj).find("option[value='" + $(obj).val() + "']");
-    $(".line.subdomain").hide();
-    if ($option.attr("data-subs") != "") {
-        step2(obj, subdomID);
-    } else {
-        var domID = $(obj).val();
-        $.get("/subdoms/"+domID+".json", function (subdoms) {
-            $option.attr("data-subs", subdoms);
-            step2(obj, subdomID);
-        });
-    }
-    function step2(obj, subdomID) {
-        var $option = $(obj).find("option[value='" + $(obj).val() + "']");
-        var subdoms = JSON.parse($option.attr("data-subs"));
-        var $select = $(".line.subdomain select")
-        var val = $select.val() || subdomID || 0;
-        $select.html("");
-        $select.append("<option value='0'>foréimse ar bith &middot; any subdomain</option>");
-        for (var i = 0; i < subdoms.length; i++) {
-            var subdom = subdoms[i];
-            var $option = $("<option/>").attr("value", subdom.id).html(subdom.name);
-            $option.appendTo($select);
-        }
-        $select.val(val);
-        if (!$select.val()) $select.val("0");
-        if (subdoms.length > 0) $(".line.subdomain").show();
-    }
 }
 
 function hon(label, i) {
@@ -203,3 +173,82 @@ $(document).ready(function () {
     var text = $("input.searchbox").val() || "";
     Cookies.set("searchText", text, { expires: 1 });
 });
+
+function advDomTitles(select) {
+    var $select = $(select);
+    if ($select.attr("size") == "1") {
+        $select.find("option").each(function () {
+            var $option = $(this);
+            if ($option.data("longTitle")) $option.html($option.data("longTitle"));
+        });
+    } else {
+        $select.find("option").each(function () {
+            var $option = $(this);
+            if ($option.data("shortTitle")) $option.html($option.data("shortTitle"));
+        });
+    }
+};
+function getDomain (id) {
+    var ret = null;
+    allDomains.map(datum => { if (!ret && datum.id == id) ret = datum; });
+    return ret;
+};
+function domLongTitle(domain) {
+    var ret = domain.title;
+    var dom = domain; while (dom.parentID) {
+        var dom = getDomain(dom.parentID);
+        if (dom) ret = dom.title + " &nbsp;►&nbsp; " + ret;
+    }
+    return ret;
+};
+function advDomRefill(selectedDomainID) {
+    domains = [];
+    var selectedDomain = getDomain(selectedDomainID);
+    if (!selectedDomain) { //if no domain is selected:
+        allDomains.map(domain => { if (!domain.parentID) { domain.expanded = false; domains.push(domain); } });
+    } else {
+        selectedDomain.expanded = true;
+        domains.push(selectedDomain);
+        allDomains.map(domain => { if (domain.parentID == selectedDomainID) { domain.expanded = false; domains.push(domain); } });
+        //add all parents to the front of the list:
+        var parentID = selectedDomain.parentID;
+        while (parentID) {
+            var domain = getDomain(parentID);
+            parentID = null;
+            if (domain) {
+                domain.expanded = true;
+                domains.unshift(domain);
+                parentID = domain.parentID;
+            }
+        }
+    }
+    var $select = $("select#dom").html("");
+    var level = 0;
+    $select.append(`<option value="0">réimse ar bith &middot; any domain</option>`);
+    if (selectedDomain) {
+        var level = 1;
+    }
+    var prevDomainID = 0;
+    domains.map(domain => {
+        if (domain.parentID == prevDomainID) level++;
+        var padding = ""; for (var i = 0; i < level; i++) padding += "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
+        var driller = "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
+        if (domain.hasChildren) {
+            if (domain.expanded) driller = "▼&nbsp;";
+            else driller = "►&nbsp;";
+        }
+        var shortTitle = `${padding}${driller}${domain.title}`;
+        var longTitle = domLongTitle(domain);
+        var $option = $(`<option value="${domain.id}">${longTitle}</option>`);
+        $option.data("shortTitle", shortTitle);
+        $option.data("longTitle", longTitle);
+        $select.append($option);
+        prevDomainID = domain.id;
+    });
+    $select.find("option").on("click", function (e) {
+        advDomRefill($(e.delegateTarget).attr("value"));
+    });
+    advDomTitles($select);
+    if (typeof (selectedDomainID) == "number" || typeof (selectedDomainID) == "string") $select.val(selectedDomainID.toString());
+    else $select.val(0);
+};

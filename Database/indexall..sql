@@ -15,12 +15,11 @@ cross apply openjson(e.json, '$.xrefs') with(
   ) as pj
 
 truncate table entry_domain
-insert into entry_domain(entry_id, superdomain, subdomain)
-select e.id, pj.superdomain, pj.subdomain
+insert into entry_domain(entry_id, superdomain)
+select e.id, pj.superdomain
 from entries as e
 cross apply openjson(e.json, '$.domains') with(
-  superdomain int '$.superdomain'
-, subdomain int '$.subdomain'
+  superdomain int '$'
 ) as pj
 
 update metadata set

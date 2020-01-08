@@ -82,28 +82,34 @@ namespace TearmaWeb.Models.Home
 		public int level=0;
 
 		public string isfor="";
+		public int parentID=0; //0 means no parent
+		public bool hasChildren=false;
 
 		/// <summary>The JSON object that encodes this metadatum in the database.</summary>
 		public JObject jo;
 
 		public string subdomainsJson="";
 
-		public Metadatum(int id, JObject jo) {
+		public Metadatum(int id, JObject jo, bool hasChildren) {
 			this.jo=jo;
 			this.id=id;
+			this.hasChildren=hasChildren;
 			this.abbr=(string)jo.Property("abbr")?.Value ?? "";
 			this.name.Add("ga", (string)((JObject)jo.Property("title").Value).Property("ga").Value);
 			this.name.Add("en", (string)((JObject)jo.Property("title").Value).Property("en").Value);
 			this.level=(int?)jo.Property("level")?.Value ?? 0;
+			this.parentID=(int?)jo.Property("parentID")?.Value ?? 0;
 		}
 
-		public Metadatum(int id, JObject jo, List<Language> langs) {
+		public Metadatum(int id, JObject jo, bool hasChildren, List<Language> langs) {
 			this.jo=jo;
 			this.id=id;
+			this.hasChildren=hasChildren;
 			this.abbr=(string)jo.Property("abbr")?.Value ?? "";
 			this.name.Add("ga", (string)((JObject)jo.Property("title").Value).Property("ga").Value);
 			this.name.Add("en", (string)((JObject)jo.Property("title").Value).Property("en").Value);
 			this.level=(int?)jo.Property("level")?.Value ?? 0;
+			this.parentID=(int?)jo.Property("parentID")?.Value ?? 0;
 
 			JArray jarr=(JArray)jo.Property("isfor").Value;
 			IEnumerable<string> enu=jarr.Values<string>();
@@ -265,7 +271,6 @@ namespace TearmaWeb.Models.Home
 
 		/// <summary></summary>
 		public int domainID=0;
-		public int subdomainID=0;
 
 		/// <summary>The page the user has selected.</summary>
 		public int page=0;
@@ -288,7 +293,6 @@ namespace TearmaWeb.Models.Home
 			ret+="lang"+(this.lang!="" ? this.lang : "0")+"/";
 			ret+="pos"+this.posLabel+"/";
 			ret+="dom"+this.domainID+"/";
-			ret+="sub"+this.subdomainID+"/";
 			ret+=page+"/";
 			return ret;
 		}
@@ -300,7 +304,6 @@ namespace TearmaWeb.Models.Home
             lang,
             posLabel,
             domainID,
-            subdomainID,
             page,
             sortlang
         });
@@ -369,11 +372,8 @@ namespace TearmaWeb.Models.Home
 		/// <summary>The domain ID the user has requested.</summary>
 		public int domID=0;
 
-		/// <summary>The top-level domain.</summary>
+		/// <summary>The domain.</summary>
 		public DomainListing domain=null;
-
-		/// <summary>The subdomain ID the user has requested (0 if none).</summary>
-		public int subdomID=0;
 
 		/// <summary>A flattened list of all subdomains.</summary>
 		public List<SubdomainListing> subdomains=new List<SubdomainListing>();
@@ -389,7 +389,6 @@ namespace TearmaWeb.Models.Home
 
 		public string urlByPage(int page) {
 			string ret="/dom/"+this.domID+"/";
-			if(this.subdomID>0) ret+=this.subdomID+"/";
 			ret+=this.lang+"/";
 			ret+=page+"/";
 			return ret;
@@ -397,14 +396,12 @@ namespace TearmaWeb.Models.Home
 
 		public string urlByLang(string lang) {
 			string ret="/dom/"+this.domID+"/";
-			if(this.subdomID>0) ret+=this.subdomID+"/";
 			ret+=lang+"/";
 			return ret;
 		}
 
         public string searchData() => JsonConvert.SerializeObject(new {
             domID,
-            subdomID,
             page,
             lang
         });

@@ -37,7 +37,7 @@
         </div>
         <div class="line">
             <div class="label"><span class="text ga" lang="ga">Fad</span><span class="text en" lang="en">Length</span></div>
-            <select name="length">
+            <select name="length" size="1" onfocus="this.size='4'" onblur="this.size='1'">
                 <option value="al" @(Model.length=="al" ? "selected" : "")>téarmaí aonfhoclacha agus ilfhoclacha &middot; single-word and muti-word terms</option>
                 <option value="sw" @(Model.length=="sw" ? "selected" : "")>téarmaí aonfhoclacha amháin &middot; single-word terms only</option>
                 <option value="mw" @(Model.length=="mw" ? "selected" : "")>téarmaí ilfhoclacha amháin &middot; multi-word terms only</option>
@@ -45,7 +45,7 @@
         </div>
         <div class="line">
             <div class="label"><span class="text ga" lang="ga">Fairsinge</span><span class="text en" lang="en">Extent</span></div>
-            <select name="extent">
+            <select name="extent" size="1" onfocus="this.size='8'" onblur="this.size='1'">
                 <option value="al" @(Model.extent=="al" ? "selected" : "")>téarma iomlán &middot; complete term</option>
                 <option value="st" @(Model.extent=="st" ? "selected" : "")>tús téarma &middot; start of term</option>
                 <option value="ed" @(Model.extent=="ed" ? "selected" : "")>deireadh téarma &middot; end of term</option>
@@ -56,7 +56,7 @@
         </div>
         <div class="line">
             <div class="label"><span class="text ga" lang="ga">Teanga</span><span class="text en" lang="en">Language</span></div>
-            <select name="lang" onchange="advChangeLang(this)">
+            <select name="lang" onchange="advChangeLang(this)" size="1" onfocus="this.size='10'" onblur="this.size='1'">
                 <option value="0" @(Model.lang=="" ? "selected" : "")>teanga ar bith &middot; any language</option>
                 @foreach(Language lang in Model.langs) {
                     <option value="@lang.abbr" @(Model.lang==lang.abbr ? "selected" : "")>@lang.abbr.ToUpper() (@lang.name["ga"] &middot; @lang.name["en"])</option>
@@ -65,7 +65,7 @@
         </div>
         <div class="line">
             <div class="label"><span class="text ga" lang="ga">Roinn chainte</span><span class="text en" lang="en">Part of speech</span></div>
-            <select name="pos">
+            <select name="pos" size="1" onfocus="this.size='10'" onblur="this.size='1'">
                 <option value="0" data-isfor="" @(Model.posLabel==0 ? "selected" : "")>roinn chainte ar bith &middot; any part of speech</option>
                 @foreach(Metadatum datum in Model.posLabels) {
                     <option value="@datum.id" data-isfor="@datum.isfor" @(Model.posLabel==datum.id ? "selected" : "")>@datum.abbr (@datum.name["ga"] &middot; @datum.name["en"])</option>
@@ -74,16 +74,25 @@
         </div>
         <div class="line">
             <div class="label"><span class="text ga" lang="ga">Réimse</span><span class="text en" lang="en">Domain</span></div>
-            <select name="dom" onchange="advChangeDomain(this)">
-                <option value="0" data-subs="[]" @(Model.domainID==0 ? "selected" : "")>réimse ar bith &middot; any domain</option>
-                @foreach(Metadatum datum in Model.domains) {
-                    <option value="@datum.id" @(Model.domainID==datum.id ? "selected" : "") data-subs="@datum.subdomainsJson">@datum.name["ga"] &middot; @datum.name["en"]</option>
-                }
+            <select name="dom" id="dom" size="1" onfocus="this.size='10'; advDomTitles(this)" onblur="this.size='1'; advDomTitles(this)">
+                <option value="0">réimse ar bith &middot; any domain</option>
             </select>
-        </div>
-        <div class="line subdomain" style="display: none;">
-            <div class="label"><span class="text ga" lang="ga">Foréimse</span><span class="text en" lang="en">Subdomain</span></div>
-            <select name="sub"></select>
+            <script type="text/javascript">
+                var allDomains = [];
+            </script>
+            @foreach(Metadatum datum in Model.domains) {
+                <script type="text/javascript">
+                    allDomains.push({
+                        id: @datum.id,
+                        title: "@datum.name["ga"] &middot; @datum.name["en"]",
+                        parentID: @datum.parentID,
+                        hasChildren: @datum.hasChildren.ToString().ToLower(),
+                    });
+                </script>
+            }
+            <script type="text/javascript">
+                advDomRefill(@Model.domainID);
+            </script>
         </div>
     </div>
     <button class="submit">
@@ -92,7 +101,6 @@
     </button>
     <script type="text/javascript">
         advChangeLang(document.forms[0]["lang"]);
-        advChangeDomain(document.forms[0]["dom"], "@Model.subdomainID");
     </script>
 </form>
 @if(Model.word==""){ <script type="text/javascript">document.forms[0]["word"].focus();</script> }

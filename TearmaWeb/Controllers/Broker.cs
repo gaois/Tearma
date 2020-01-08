@@ -35,12 +35,13 @@ namespace TearmaWeb.Controllers
 				int id=(int)reader["id"];
 				string type=(string)reader["type"];
 				string json=(string)reader["json"];
+				bool hasChildren=false; if((int)reader["hasChildren"]>0) hasChildren=true;
 				JObject jo=JObject.Parse(json);
                 Metadatum metadatum;
 				if(type=="posLabel") {
-					metadatum=new Metadatum(id, jo, lookups.languages);
+					metadatum=new Metadatum(id, jo, hasChildren, lookups.languages);
 				} else {
-					metadatum=new Metadatum(id, jo);
+					metadatum=new Metadatum(id, jo, hasChildren);
 				}
 				lookups.addMetadatatum(type, metadatum);
 			}
@@ -149,8 +150,9 @@ namespace TearmaWeb.Controllers
 			            foreach(Language language in lookups.languages) model.langs.Add(language);
 			            foreach(Metadatum datum in lookups.posLabels) model.posLabels.Add(datum);
 			            foreach(Metadatum datum in lookups.domains) {
-				            //datum.subdomainsJson=FlattenSubdomainsIntoJson(datum);
-				            model.domains.Add(datum);
+				            //if(datum.parentID==0){
+					            model.domains.Add(datum);
+							//}
 			            }
                     }
 			    }
@@ -171,7 +173,6 @@ namespace TearmaWeb.Controllers
 			        param=new SqlParameter(); param.ParameterName="@lang"; param.SqlDbType=SqlDbType.NVarChar; param.Value=model.lang; command.Parameters.Add(param);
 			        param=new SqlParameter(); param.ParameterName="@pos"; param.SqlDbType=SqlDbType.Int; param.Value=model.posLabel; command.Parameters.Add(param);
 			        param=new SqlParameter(); param.ParameterName="@dom"; param.SqlDbType=SqlDbType.Int; param.Value=model.domainID; command.Parameters.Add(param);
-			        param=new SqlParameter(); param.ParameterName="@sub"; param.SqlDbType=SqlDbType.Int; param.Value=model.subdomainID; command.Parameters.Add(param);
 			        param=new SqlParameter(); param.ParameterName="@page"; param.SqlDbType=SqlDbType.Int; param.Value=model.page; command.Parameters.Add(param);
 
                     using (var reader = command.ExecuteReader()) {
@@ -180,8 +181,9 @@ namespace TearmaWeb.Controllers
 			            foreach(Language language in lookups.languages) model.langs.Add(language);
 			            foreach(Metadatum datum in lookups.posLabels) model.posLabels.Add(datum);
 			            foreach(Metadatum datum in lookups.domains) {
-				            //datum.subdomainsJson=FlattenSubdomainsIntoJson(datum);
-				            model.domains.Add(datum);
+							//if(datum.parentID == 0) {
+					            model.domains.Add(datum);
+							//}
 			            }
 
 			            //determine the sorting language:
@@ -226,7 +228,7 @@ namespace TearmaWeb.Controllers
                     using (var reader = command.ExecuteReader()) {
                         //read lookups:
                         Lookups lookups = ReadLookups(reader);
-                        foreach (Metadatum md in lookups.domains) model.domains.Add(new Models.Home.DomainListing(md.id, md.name["ga"], md.name["en"]));
+                        foreach (Metadatum md in lookups.domains) if(md.parentID==0) model.domains.Add(new Models.Home.DomainListing(md.id, md.name["ga"], md.name["en"]));
                     }
                 }
             }
@@ -243,7 +245,11 @@ namespace TearmaWeb.Controllers
                     using (var reader = command.ExecuteReader()) {
                         //read lookups:
                         Lookups lookups =ReadLookups(reader);
-			            foreach(Metadatum md in lookups.domains) model.domains.Add(new DomainListing(md.id, md.name["ga"], md.name["en"]));
+			            foreach(Metadatum md in lookups.domains){
+							if(md.parentID==0) {
+								model.domains.Add(new DomainListing(md.id, md.name["ga"], md.name["en"]));
+							}
+						}
 
 			            //read entry of the day:
 			            reader.NextResult();
@@ -317,7 +323,7 @@ namespace TearmaWeb.Controllers
                         Lookups lookups =ReadLookups(reader);
 			            if(lookups.domainsById.ContainsKey(domID)){
                             Metadatum md =lookups.domainsById[domID];
-							ret=FlattenSubdomainsIntoJson(md);
+							//ret=FlattenSubdomainsIntoJson(md);
 			            }
 					}
 				}
@@ -335,7 +341,6 @@ namespace TearmaWeb.Controllers
 			        SqlParameter param;
 			        param=new SqlParameter(); param.ParameterName="@lang"; param.SqlDbType=SqlDbType.NVarChar; param.Value=model.lang; command.Parameters.Add(param);
 			        param=new SqlParameter(); param.ParameterName="@domID"; param.SqlDbType=SqlDbType.Int; param.Value=model.domID; command.Parameters.Add(param);
-			        param=new SqlParameter(); param.ParameterName="@subdomID"; param.SqlDbType=SqlDbType.Int; param.Value=model.subdomID; command.Parameters.Add(param);
 			        param=new SqlParameter(); param.ParameterName="@page"; param.SqlDbType=SqlDbType.Int; param.Value=model.page; command.Parameters.Add(param);
                     
                     using (var reader = command.ExecuteReader()) {
@@ -372,54 +377,6 @@ namespace TearmaWeb.Controllers
 			        }
                 }
             }
-		}
-
-		public static List<SubdomainListing> FlattenSubdomains(int level, JArray jSubdoms, SubdomainListing parent, int currentID) {
-			List<SubdomainListing> ret=new List<SubdomainListing>();
-			for(int i=0; i<jSubdoms.Count; i++) {
-				JObject jSubdom=(JObject)jSubdoms[i];
-				int id=(int)jSubdom.Property("lid").Value;
-				string titleGA=(string)((JObject)jSubdom.Property("title").Value).Property("ga").Value;
-				string titleEN=(string)((JObject)jSubdom.Property("title").Value).Property("en").Value;
-                SubdomainListing sd=new SubdomainListing(id, titleGA, titleEN, level, false);
-				sd.parent=parent;
-				ret.Add(sd);
-
-				if(sd.id == currentID) {
-                    SubdomainListing obj=sd;
-					do {obj.visible=true; obj=obj.parent;} while(obj!=null);
-				}
-
-				JArray mySubdoms=(JArray)jSubdom.Property("subdomains").Value;
-				ret.AddRange(FlattenSubdomains(level+1, mySubdoms, sd, currentID));
-			}
-			return ret;
-		}
-
-		public static string FlattenSubdomainsIntoJson(Metadatum domain) {
-			JArray jSubdoms=(JArray)domain.jo.Property("subdomains").Value;
-			List<SubdomainListing> subdomains=FlattenSubdomains(1, jSubdoms, null, 0);
-			string ret="";
-			foreach(SubdomainListing subdom in subdomains) {
-				string title=subdom.name["ga"].Replace("\"", "\\\"")+" &middot; "+subdom.name["en"].Replace("\"", "\\\"");
-                SubdomainListing parent =subdom.parent;
-				while(parent != null) {
-					if(parent.name["ga"] != parent.name["en"]) {
-						title=parent.name["ga"].Replace("\"", "\\\"")+" &middot; "+parent.name["en"].Replace("\"", "\\\"")+" » "+title;
-					} else {
-						title=parent.name["ga"].Replace("\"", "\\\"")+" » "+title;
-					}
-					parent=parent.parent;
-				}
-				var s="{";
-				s+="\"id\": "+subdom.id+",";
-				s+="\"name\": \""+title+"\"";
-				s+="}";
-				if(ret!="") ret+=",";
-				ret+=s;
-			}
-			ret="["+ret+"]";
-			return ret;
 		}
 
 		/// <summary>Populates the view model of the term-of-the-day widget.</summary>

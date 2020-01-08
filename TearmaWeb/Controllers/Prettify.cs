@@ -261,65 +261,44 @@ namespace TearmaWeb.Controllers
 			return ret;
 		}
 
-		public static string DomainAssig(int da, string leftLang, string rightLang) {
-			int domID = da;
+		public static string DomainAssig(int domID, string leftLang, string rightLang) {
 			Models.Home.Metadatum domain = Prettify.Lookups.domainsById[domID];
-			string ret = "";
-			if(domain != null) {
+			string stepsLeft = "";
+			string stepsRight = "";
+			int recursionCounter=0;
+			while(domain != null) {
+				if(stepsLeft!="") stepsLeft=""+" » "+stepsLeft;
+				if(stepsRight!="") stepsRight=""+" » "+stepsRight;
 
-				string substepsLeft = "";
-				string substepsRight = "";
-				//int subdomID = da.subdomain ?? 0;
-				//if(subdomID > 0) {
-				//	List<Models.Home.SubdomainListing> subs = Broker.FlattenSubdomains(1, domain.jo.Value<JArray>("subdomains"), null, subdomID);
-				//	foreach(Models.Home.SubdomainListing sub in subs) {
-				//		if(sub.visible) {
-				//			substepsLeft += (sub.name.ContainsKey(leftLang))
-    //                            ? $" » {sub.name[leftLang]}" : $" » {sub.name["ga"]}";
-    //                        substepsRight += (sub.name.ContainsKey(rightLang))
-    //                            ? $" » {sub.name[rightLang]}" : $" » {sub.name["en"]}";
-				//		}
-				//	}
-				//}
+				stepsLeft  = (domain.name.ContainsKey(leftLang) ? domain.name[leftLang] : domain.name["ga"])   + stepsLeft;
+				stepsRight = (domain.name.ContainsKey(rightLang) ? domain.name[rightLang] : domain.name["en"]) + stepsRight;
 
-				string urlFrag=da.ToString();
-				// if(da.subdomain!=null) urlFrag+="/"+da.subdomain;
-                var domainNameLeft = domain.name.ContainsKey(leftLang) ? domain.name[leftLang] : domain.name["ga"];
-                var domainNameRight = domain.name.ContainsKey(rightLang) ? domain.name[rightLang] : domain.name["en"];
-
-                ret += "<div class='prettyDomain'>";
-				ret += "<div class='left'><a href='/dom/"+urlFrag+"/"+leftLang+"/'>" + domainNameLeft + substepsLeft + "</a></div>";
-				ret += "<div class='right'><a href='/dom/"+urlFrag+"/"+rightLang+"/'>" + domainNameRight + substepsRight + "</a></div>";
-				ret += "<div class='clear'></div>";
-				ret += "</div>"; //.prettyDomain
+				recursionCounter++;
+				domain = (domain.parentID>0 && recursionCounter<10) ? Prettify.Lookups.domainsById[domain.parentID] : null;
 			}
+			string ret = "";
+            ret += "<div class='prettyDomain'>";
+			ret += "<div class='left'><a href='/dom/"+domID+"/"+leftLang+"/'>" + stepsLeft + "</a></div>";
+			ret += "<div class='right'><a href='/dom/"+domID+"/"+rightLang+"/'>" + stepsRight + "</a></div>";
+			ret += "<div class='clear'></div>";
+			ret += "</div>"; //.prettyDomain
 			return ret;
 		}
 
-		public static string DomainAssig(int da, string lang) {
-			int domID = da;
+		public static string DomainAssig(int domID, string lang) {
 			Models.Home.Metadatum domain = Prettify.Lookups.domainsById[domID];
-			string ret = "";
-			if(domain != null) {
-
-				string substeps = "";
-				//int subdomID = da.subdomain ?? 0;
-				//if(subdomID > 0) {
-				//	List<Models.Home.SubdomainListing> subs = Broker.FlattenSubdomains(1, domain.jo.Value<JArray>("subdomains"), null, subdomID);
-				//	foreach(Models.Home.SubdomainListing sub in subs) {
-				//		if(sub.visible) {
-				//			substeps += " » " + sub.name[lang];
-				//		}
-				//	}
-				//}
-
-				string urlFrag=da.ToString();
-				//if(da.subdomain!=null) urlFrag+="/"+da.subdomain;
-
-				ret += "<span class='prettyDomainInline'>";
-				ret += "<a href='/dom/"+urlFrag+"/"+lang+"/'>" + domain.name[lang] + substeps + "</a>";
-				ret += "</span>"; //.prettyDomainInline
+			string steps = "";
+			int recursionCounter=0;
+			while(domain != null) {
+				if(steps!="") steps=""+" » "+steps;
+				steps = (domain.name.ContainsKey(lang) ? domain.name[lang] : domain.name["ga"]) + steps;
+				recursionCounter++;
+				domain = (domain.parentID>0 && recursionCounter<10) ? Prettify.Lookups.domainsById[domain.parentID] : null;
 			}
+			string ret = "";
+			ret += "<span class='prettyDomainInline'>";
+			ret += "<a href='/dom/"+domID+"/"+lang+"/'>" + steps + "</a>";
+			ret += "</span>"; //.prettyDomainInline
 			return ret;
 		}
 

@@ -220,7 +220,7 @@ form.multiline div.lines div.line div.label {position: absolute; top: 0px; left:
 form.multiline div.lines div.line div.label span {display: block; white-space: nowrap;}
 form.multiline div.lines div.line input {box-sizing: border-box; display: block; font: inherit; padding: 15px; font-size: 1.25em; margin-left: 30%; width: 70%; border: 0px; background-color: #ffffff; font-weight: bold;}
 form.multiline div.lines div.line select {box-sizing: border-box; display: block; font: inherit; padding: 16px 10px; font-size: 1em; margin-left: 30%; width: 70%; border: 0px; background-color: #ffffff; }
-form.multiline div.lines div.line select option {padding: 0px 0px; font: inherit;}
+form.multiline div.lines div.line select option {padding: 0px 6px; font: inherit; margin: 0px 0px 5px 0px}
 form.multiline div.lines div.line:first-child {border-radius: 4px 4px 0px 0px;}
 form.multiline div.lines div.line:first-child div.label {border-radius: 4px 0px 0px 0px;}
 form.multiline div.lines div.line:first-child input {border-radius: 0px 4px 0px 0px;}
