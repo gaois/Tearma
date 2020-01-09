@@ -29,6 +29,6 @@
 
 <div class="domains formlike">
     @foreach(DomainListing dom in Model.domains) {
-        <a href="~/dom/@dom.id/@Model.lang/" class="domain"><span class="ga" lang="@Model.leftLang()">@dom.name[Model.leftLang()]</span> <span class="en" lang="@Model.rightLang()">@dom.name[Model.rightLang()]</span> <span class="arrow">»</span></a>
+        <a href="~/dom/@dom.id/@Model.lang/" class="domain"><span class="ga" lang="@Model.leftLang()">@Html.Raw(dom.getExpandableTitle(Model.leftLang()))</span> <span class="en" lang="@Model.rightLang()">@Html.Raw(dom.getExpandableTitle(Model.rightLang()))</span></a>
     }
 </div>

@@ -228,7 +228,7 @@ namespace TearmaWeb.Controllers
                     using (var reader = command.ExecuteReader()) {
                         //read lookups:
                         Lookups lookups = ReadLookups(reader);
-                        foreach (Metadatum md in lookups.domains) if(md.parentID==0) model.domains.Add(new Models.Home.DomainListing(md.id, md.name["ga"], md.name["en"]));
+                        foreach (Metadatum md in lookups.domains) if(md.parentID==0) model.domains.Add(new Models.Home.DomainListing(md.id, md.name["ga"], md.name["en"], md.hasChildren));
                     }
                 }
             }
@@ -308,29 +308,6 @@ namespace TearmaWeb.Controllers
             }
         }
 
-		public string GetSubdoms(int domID) {
-			string ret="[]";
-            using (var conn = new SqlConnection(_connectionString)) {
-                conn.Open();
-
-                using (var command = new SqlCommand("dbo.pub_subdoms", conn)) {
-			        command.CommandType=CommandType.StoredProcedure;
-			        SqlParameter param;
-			        param=new SqlParameter(); param.ParameterName="@domID"; param.SqlDbType=SqlDbType.Int; param.Value=domID; command.Parameters.Add(param);
-                    
-                    using (var reader = command.ExecuteReader()) {
-                        //read lookups:
-                        Lookups lookups =ReadLookups(reader);
-			            if(lookups.domainsById.ContainsKey(domID)){
-                            Metadatum md =lookups.domainsById[domID];
-							//ret=FlattenSubdomainsIntoJson(md);
-			            }
-					}
-				}
-			}
-			return ret;
-		}
-
 		/// <summary>Populates the view model of the page that lists entries by domain.</summary>
 		public void DoDomain(Domain model) {
             using (var conn = new SqlConnection(_connectionString)) {
@@ -347,12 +324,18 @@ namespace TearmaWeb.Controllers
                         //read lookups:
                         Lookups lookups =ReadLookups(reader);
 			            if(lookups.domainsById.ContainsKey(model.domID)){
-                            Metadatum md =lookups.domainsById[model.domID];
-				            model.domain=new DomainListing(md.id, md.name["ga"], md.name["en"]);
-
-				            //flatten the list of subdomains:
-				            //JArray jSubdoms=(JArray)md.jo.Property("subdomains").Value;
-				            //model.subdomains=FlattenSubdomains(1, jSubdoms, null, model.subdomID);
+                            Metadatum md=lookups.domainsById[model.domID];
+				            model.domain=new DomainListing(md.id, md.name["ga"], md.name["en"], md.hasChildren);
+							while(md.parentID != 0) {
+								md=lookups.domainsById[md.parentID];
+								if(md!=null) model.parents.Add(new DomainListing(md.id, md.name["ga"], md.name["en"], md.hasChildren));
+							}
+							model.parents.Reverse();
+							foreach(Metadatum smd in lookups.domains) {
+								if(smd .parentID == model.domID) {
+									model.subdomains.Add(new DomainListing(smd.id, smd.name["ga"], smd.name["en"], smd.hasChildren));
+								}
+							}
 			            }
 
 			            //read xref targets:

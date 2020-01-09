@@ -308,7 +308,7 @@ body.printable div.pager.alone {margin-top: 10px;}
 
 div.domains {}
 div.domains.formlike {box-shadow: 0px 0px 5px #333333; border-radius: 4px; position: relative; border: 1px solid #666666; margin: 20px 0px;}
-div.domains.formlike.scrollable {max-height: 500px; overflow-y: auto;}
+div.domains.formlike.scrollable {}
 div.domains.formunlike {margin-top: -25px;}
 div.domains a.domain {display: block; text-decoration: none; padding: 10px; margin: 1px 0; color: #444444; box-sizing: border-box; border-bottom: 1px solid #cccccc; overflow: auto; overflow-x: hidden; position: relative;}
 div.domains a.domain:hover {color: #006699; background-color: #eeeeee;}
@@ -319,17 +319,19 @@ div.domains a.domain span.en {margin-left: 52%;}
 div.domains a.domain span.arrow {position: absolute; top: 9px; right: 10px; font-weight: bold; font-size: 1.5em; color: #eeeeee;}
 div.domains a.domain:hover span.arrow {color: inherit;}
 div.domains a.domain.L0 {}
-div.domains a.domain.L1 span {padding-left: 1em;}
-div.domains a.domain.L2 span {padding-left: 2em;}
-div.domains a.domain.L3 span {padding-left: 3em;}
-div.domains a.domain.L4 span {padding-left: 4em;}
-div.domains a.domain.L5 span {padding-left: 5em;}
-div.domains a.domain.L6 span {padding-left: 6em;}
-div.domains a.domain.L7 span {padding-left: 7em;}
-div.domains a.domain.L8 span {padding-left: 8em;}
-div.domains a.domain.L9 span {padding-left: 9em;}
-div.domains a.domain.L10 span {padding-left: 10em;}
-div.domains a.domain.L11 span {padding-left: 11em;}
+div.domains a.domain.L1 > span {padding-left: 1em;}
+div.domains a.domain.L2 > span {padding-left: 2em;}
+div.domains a.domain.L3 > span {padding-left: 3em;}
+div.domains a.domain.L4 > span {padding-left: 4em;}
+div.domains a.domain.L5 > span {padding-left: 5em;}
+div.domains a.domain.L6 > span {padding-left: 6em;}
+div.domains a.domain.L7 > span {padding-left: 7em;}
+div.domains a.domain.L8 > span {padding-left: 8em;}
+div.domains a.domain.L9 > span {padding-left: 9em;}
+div.domains a.domain.L10 > span {padding-left: 10em;}
+div.domains a.domain.L11 > span {padding-left: 11em;}
+div.domains a.domain span.driller {position: absolute; padding: 0px;}
+div.domains a.domain span.text {margin-left: 2em; display: inline-block;}
 @media (max-width: 800px){
 	div.domains.formlike {margin-top: 35px; }
 	div.domains a.domain span.arrow {display: none;}

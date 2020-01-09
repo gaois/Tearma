@@ -43,26 +43,26 @@
 	<span class="en" lang="en">All domains</span>
 </a>
 <div class="domains formlike scrollable">
-    <a href="~/dom/@Model.domain.id/@Model.lang/" class="domain L0 current selected">
-        <span class="ga" lang="@Model.leftLang()">@Model.domain.name[Model.leftLang()]</span>
-        <span class="en" lang="@Model.rightLang()">@Model.domain.name[Model.rightLang()]</span>
+    @{int level=0;}
+    @foreach(DomainListing domain in Model.parents) {
+        <a href="~/dom/@domain.id/@Model.lang/" class="domain L@(level) current">
+            <span class="ga" lang="@Model.leftLang()">@Html.Raw(domain.getExpandedTitle(Model.leftLang()))</span>
+            <span class="en" lang="@Model.rightLang()">@Html.Raw(domain.getExpandedTitle(Model.rightLang()))</span>
+        </a>
+        level++;
+    }
+    <a href="~/dom/@Model.domain.id/@Model.lang/" class="domain L@(level) current selected">
+        <span class="ga" lang="@Model.leftLang()">@Html.Raw(Model.domain.getExpandedTitle(Model.leftLang()))</span>
+        <span class="en" lang="@Model.rightLang()">@Html.Raw(Model.domain.getExpandedTitle(Model.rightLang()))</span>
     </a>
+    @{level++;}
+    @foreach(DomainListing domain in Model.subdomains) {
+        <a href="~/dom/@domain.id/@Model.lang/" class="domain L@(level)">
+            <span class="ga" lang="@Model.leftLang()">@Html.Raw(domain.getExpandableTitle(Model.leftLang()))</span>
+            <span class="en" lang="@Model.rightLang()">@Html.Raw(domain.getExpandableTitle(Model.rightLang()))</span>
+        </a>
+    }
 </div>
-@if(Model.subdomains.Count>0){
-    <div>
-	    <a class="domainAction shower" href="javascript:void(null)" onclick="$('.domains .domain').slideDown(); $('.domainAction.shower').hide(); $('.domainAction.hider').show()">
-		    <span class="icon fas fa-chevron-down"></span>
-		    <span class="ga" lang="ga">Taispeáin ordlathas</span>
-		    <span class="en" lang="en">Show hierarchy</span>
-	    </a>
-	    <a class="domainAction hider" href="javascript:void(null)" style="display: none;" onclick="$('.domains .domain').not('.current').slideUp(); $('.domainAction.hider').hide(); $('.domainAction.shower').show()">
-		    <span class="icon fas fa-chevron-up"></span>
-		    <span class="ga" lang="ga">Folaigh ordlathas</span>
-		    <span class="en" lang="en">Hide hierarchy</span>
-	    </a>
-    </div>
-    <script type="text/javascript">$('.domains .domain').not('.current').hide();</script>
-}
 
 <a class="kickboxToggler" href="javascript:void(null)" onclick="$('.kickbox').insertAfter($('.kickboxToggler')).slideToggle()">
     <span class="icon fas fa-bars"></span>

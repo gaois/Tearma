@@ -82,7 +82,6 @@ namespace TearmaWeb
 				//Advanced search:
 				routes.MapRoute(name: "", template: "/plus/", defaults: new {controller="Home", action="AdvSearch"});
 				routes.MapRoute(name: "", template: "/plus/{word}/{length:regex(^(al|sw|mw)$)}/{extent:regex(^(al|st|ed|pt|md|ft)$)}/lang{lang}/pos{posLabel:int}/dom{domainID:int}/{page:int?}/", defaults: new {controller="Home", action="AdvSearch", page=1});
-				routes.MapRoute(name: "", template: "/subdoms/{domID:int}.json", defaults: new {controller="Home", action="Subdoms"});
 
 				//Browse by domain:
 				routes.MapRoute(name: "", template: "/dom/{lang:regex(^(ga|en)$)}/", defaults: new {controller="Home", action="Domains"});

@@ -317,10 +317,35 @@ namespace TearmaWeb.Models.Home
 		/// <summary>Human-readable title of the domain in Irish ["ga"] and English ["en"].</summary>
 		public Dictionary<string, string> name=new Dictionary<string, string>();
 
+		public bool hasChildren=false;
+
 		public DomainListing(int id, string nameGA, string nameEN) {
 			this.id=id;
 			this.name.Add("ga", nameGA);
 			this.name.Add("en", nameEN);
+		}
+		public DomainListing(int id, string nameGA, string nameEN, bool hasChildren) {
+			this.id=id;
+			this.name.Add("ga", nameGA);
+			this.name.Add("en", nameEN);
+			this.hasChildren=hasChildren;
+		}
+
+		public string getExpandableTitle(string lang) {
+			string ret="";
+			if(this.name.ContainsKey(lang) && this.name[lang] != "") {
+				if(this.hasChildren) ret+="<span class='driller'>►</span> ";
+				ret+="<span class='text'>"+this.name[lang]+"</span>";
+			}
+			return ret;
+		}
+		public string getExpandedTitle(string lang) {
+			string ret="";
+			if(this.name.ContainsKey(lang) && this.name[lang] != "") {
+				if(this.hasChildren) ret+="<span class='driller'>▼</span> ";
+				ret+="<span class='text'>"+this.name[lang]+"</span>";
+			}
+			return ret;
 		}
 	}
 
@@ -374,9 +399,8 @@ namespace TearmaWeb.Models.Home
 
 		/// <summary>The domain.</summary>
 		public DomainListing domain=null;
-
-		/// <summary>A flattened list of all subdomains.</summary>
-		public List<SubdomainListing> subdomains=new List<SubdomainListing>();
+		public List<DomainListing> parents=new List<DomainListing>();
+		public List<DomainListing> subdomains=new List<DomainListing>();
 
 		/// <summary>The page the user has selected.</summary>
 		public int page=0;

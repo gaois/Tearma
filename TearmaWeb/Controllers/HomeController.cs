@@ -109,12 +109,6 @@ namespace TearmaWeb.Controllers
             }
 		}
 
-		public IActionResult Subdoms(int domID) {
-			//_broker.DoAdvSearch(model);
-			var ret=_broker.GetSubdoms(domID);
-			return Content(ret);
-		}
-
 		public IActionResult Domains(string lang) {
 			if(lang is null) lang="";
             Domains model=new Domains();
