@@ -118,6 +118,19 @@
         <span class="text en" lang="en">Options</span>
     </a>
 
+    @if(Model.matches.Count == 0) {
+        <div class="nojoy">
+            <div class="ga">Níor aimsíodh téarma ar bith.</div>
+            <div class="en">No terms found.</div>
+        </div>
+    } else {
+        <div class="nojoy">
+            <div class="num">@Model.total</div>
+            <div class="ga">Líon torthaí a aimsíodh</div>
+            <div class="en">Number of matches found</div>
+        </div>
+    }
+
     @if(Model.pager.needed) {
         <div class="pager alone">
             @if(Model.pager.prevNum>0){ <a href="@Model.urlByPage(Model.pager.prevNum)" class="left arrow">«</a> }
@@ -132,14 +145,7 @@
         </div>
     }
 
-    @if(Model.matches.Count == 0) {
-        <div class="nojoy">
-            <div class="ga">Níor aimsíodh téarma ar bith.</div>
-            <div class="en">No terms found.</div>
-        </div>
-    } else {
-        @foreach(string s in Model.matches){@Html.Raw(s)}
-    }
+    @foreach(string s in Model.matches){@Html.Raw(s)}
 
     @if(Model.pager.needed) {
         <div class="pager">

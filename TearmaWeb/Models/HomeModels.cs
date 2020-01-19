@@ -277,6 +277,7 @@ namespace TearmaWeb.Models.Home
 
 		/// <summary>Matches in HTML.</summary>
 		public List<string> matches=new List<string>();
+		public int total=0;
 
 		/// <summary>The pager above and below the list of matches.</summary>
 		public Pager pager;
@@ -407,6 +408,7 @@ namespace TearmaWeb.Models.Home
 
 		/// <summary>Matches in HTML.</summary>
 		public List<string> matches=new List<string>();
+		public int total=0;
 
 		/// <summary>The pager above and below the list of matches.</summary>
 		public Pager pager;

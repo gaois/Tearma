@@ -346,6 +346,7 @@ body.printable a.domainAction {display: none;}
 
 div.tbd {margin-top: 1em; background-color: #f6f6f6;}
 div.nojoy {margin: 1em 0; color: #999999; padding: 0px 10px;}
+div.nojoy div.num {float: left; padding-right: 20px; padding-top: 0.5em; font-size: 1.25em;}
 div.unheadedListing {margin: 3em 0;}
 body.printable .unheadedListing {margin: 20px 0px 0px 0px;}
 

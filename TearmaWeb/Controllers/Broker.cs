@@ -174,6 +174,7 @@ namespace TearmaWeb.Controllers
 			        param=new SqlParameter(); param.ParameterName="@pos"; param.SqlDbType=SqlDbType.Int; param.Value=model.posLabel; command.Parameters.Add(param);
 			        param=new SqlParameter(); param.ParameterName="@dom"; param.SqlDbType=SqlDbType.Int; param.Value=model.domainID; command.Parameters.Add(param);
 			        param=new SqlParameter(); param.ParameterName="@page"; param.SqlDbType=SqlDbType.Int; param.Value=model.page; command.Parameters.Add(param);
+					param=new SqlParameter(); param.ParameterName="@total"; param.SqlDbType=SqlDbType.Int; param.Value=model.total; param.Direction=ParameterDirection.InputOutput; command.Parameters.Add(param);
 
                     using (var reader = command.ExecuteReader()) {
                         //read lookups:
@@ -210,6 +211,7 @@ namespace TearmaWeb.Controllers
 				            model.pager=new Pager(currentPage, maxPage);
 			            }
                     }
+					model.total=(int)command.Parameters["@total"].Value;
 			    }
 			}
 		}
@@ -319,6 +321,7 @@ namespace TearmaWeb.Controllers
 			        param=new SqlParameter(); param.ParameterName="@lang"; param.SqlDbType=SqlDbType.NVarChar; param.Value=model.lang; command.Parameters.Add(param);
 			        param=new SqlParameter(); param.ParameterName="@domID"; param.SqlDbType=SqlDbType.Int; param.Value=model.domID; command.Parameters.Add(param);
 			        param=new SqlParameter(); param.ParameterName="@page"; param.SqlDbType=SqlDbType.Int; param.Value=model.page; command.Parameters.Add(param);
+					param=new SqlParameter(); param.ParameterName="@total"; param.SqlDbType=SqlDbType.Int; param.Value=0; param.Direction=ParameterDirection.InputOutput; command.Parameters.Add(param);
                     
                     using (var reader = command.ExecuteReader()) {
                         //read lookups:
@@ -358,6 +361,7 @@ namespace TearmaWeb.Controllers
 				            model.pager=new Pager(currentPage, maxPage);
 			            }
 			        }
+					model.total=(int)command.Parameters["@total"].Value;
                 }
             }
 		}

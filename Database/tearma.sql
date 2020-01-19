@@ -1,4 +1,6 @@
-/****** Object:  UserDefinedFunction [dbo].[characterize]    Script Date: 09/01/2020 17:21:42 ******/
+USE [tearma]
+GO
+/****** Object:  UserDefinedFunction [dbo].[characterize]    Script Date: 19/01/2020 12:44:03 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -27,7 +29,41 @@ begin
 end
 
 GO
-/****** Object:  UserDefinedFunction [dbo].[levenshtein]    Script Date: 09/01/2020 17:21:42 ******/
+/****** Object:  UserDefinedFunction [dbo].[expandDomainID]    Script Date: 19/01/2020 12:44:03 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE function [dbo].[expandDomainID]
+(   
+  @domainID int
+, @level int = 0
+)
+returns @ret table(domainID int) 
+as
+begin
+	insert into @ret(domainID) values(@domainID)
+	if @level<10
+	begin
+		declare @subdomainID int
+		DECLARE crsr CURSOR FOR
+			select m.id
+			from metadata as m
+			where m.type='domain' and m.parentID=@domainID
+		OPEN crsr
+		FETCH NEXT FROM crsr INTO @subdomainID
+		WHILE @@FETCH_STATUS = 0  
+		BEGIN  
+			insert into @ret(domainID) select domainID from dbo.expandDomainID(@subdomainID, @level+1)
+			FETCH NEXT FROM crsr INTO @subdomainID
+		END 
+		CLOSE crsr
+		DEALLOCATE crsr
+	end
+    return 
+end
+GO
+/****** Object:  UserDefinedFunction [dbo].[levenshtein]    Script Date: 19/01/2020 12:44:03 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -121,7 +157,7 @@ RETURN @LD
 END
 
 GO
-/****** Object:  UserDefinedFunction [dbo].[min3]    Script Date: 09/01/2020 17:21:42 ******/
+/****** Object:  UserDefinedFunction [dbo].[min3]    Script Date: 19/01/2020 12:44:03 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -140,7 +176,7 @@ BEGIN
 END
 
 GO
-/****** Object:  UserDefinedFunction [dbo].[substrings]    Script Date: 09/01/2020 17:21:42 ******/
+/****** Object:  UserDefinedFunction [dbo].[substrings]    Script Date: 19/01/2020 12:44:03 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -168,7 +204,7 @@ begin
 end
 
 GO
-/****** Object:  UserDefinedFunction [dbo].[spartanize]    Script Date: 09/01/2020 17:21:42 ******/
+/****** Object:  UserDefinedFunction [dbo].[spartanize]    Script Date: 19/01/2020 12:44:03 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -786,7 +822,7 @@ begin
 end
 
 GO
-/****** Object:  Table [dbo].[aux]    Script Date: 09/01/2020 17:21:42 ******/
+/****** Object:  Table [dbo].[aux]    Script Date: 19/01/2020 12:44:03 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -802,7 +838,7 @@ CREATE TABLE [dbo].[aux](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[chars]    Script Date: 09/01/2020 17:21:42 ******/
+/****** Object:  Table [dbo].[chars]    Script Date: 19/01/2020 12:44:03 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -812,7 +848,7 @@ CREATE TABLE [dbo].[chars](
 	[variant] [nvarchar](1) COLLATE Latin1_General_BIN2 NOT NULL
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[configs]    Script Date: 09/01/2020 17:21:42 ******/
+/****** Object:  Table [dbo].[configs]    Script Date: 19/01/2020 12:44:03 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -826,7 +862,7 @@ PRIMARY KEY CLUSTERED
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[entries]    Script Date: 09/01/2020 17:21:42 ******/
+/****** Object:  Table [dbo].[entries]    Script Date: 19/01/2020 12:44:03 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -846,7 +882,7 @@ CREATE TABLE [dbo].[entries](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[entry_domain]    Script Date: 09/01/2020 17:21:42 ******/
+/****** Object:  Table [dbo].[entry_domain]    Script Date: 19/01/2020 12:44:03 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -856,7 +892,7 @@ CREATE TABLE [dbo].[entry_domain](
 	[superdomain] [int] NULL
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[entry_term]    Script Date: 09/01/2020 17:21:42 ******/
+/****** Object:  Table [dbo].[entry_term]    Script Date: 19/01/2020 12:44:03 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -867,7 +903,7 @@ CREATE TABLE [dbo].[entry_term](
 	[accept] [int] NULL
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[entry_xref]    Script Date: 09/01/2020 17:21:42 ******/
+/****** Object:  Table [dbo].[entry_xref]    Script Date: 19/01/2020 12:44:03 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -877,7 +913,7 @@ CREATE TABLE [dbo].[entry_xref](
 	[target_entry_id] [int] NOT NULL
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[flex]    Script Date: 09/01/2020 17:21:42 ******/
+/****** Object:  Table [dbo].[flex]    Script Date: 19/01/2020 12:44:03 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -889,7 +925,7 @@ CREATE TABLE [dbo].[flex](
 	[token] [nvarchar](255) COLLATE Latin1_General_CI_AS NOT NULL
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[metadata]    Script Date: 09/01/2020 17:21:42 ******/
+/****** Object:  Table [dbo].[metadata]    Script Date: 19/01/2020 12:44:03 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -907,7 +943,7 @@ CREATE TABLE [dbo].[metadata](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[spelling]    Script Date: 09/01/2020 17:21:42 ******/
+/****** Object:  Table [dbo].[spelling]    Script Date: 19/01/2020 12:44:03 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -944,7 +980,7 @@ CREATE TABLE [dbo].[spelling](
 	[length] [int] NOT NULL
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[term_pos]    Script Date: 09/01/2020 17:21:42 ******/
+/****** Object:  Table [dbo].[term_pos]    Script Date: 19/01/2020 12:44:03 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -954,7 +990,7 @@ CREATE TABLE [dbo].[term_pos](
 	[pos_id] [int] NOT NULL
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[terms]    Script Date: 09/01/2020 17:21:42 ******/
+/****** Object:  Table [dbo].[terms]    Script Date: 19/01/2020 12:44:03 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -966,7 +1002,7 @@ CREATE TABLE [dbo].[terms](
 	[wording] [nvarchar](255) COLLATE Latin1_General_CI_AS NULL
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[words]    Script Date: 09/01/2020 17:21:42 ******/
+/****** Object:  Table [dbo].[words]    Script Date: 19/01/2020 12:44:03 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -976,7 +1012,7 @@ CREATE TABLE [dbo].[words](
 	[word] [nvarchar](255) COLLATE Latin1_General_CI_AS NULL
 ) ON [PRIMARY]
 GO
-/****** Object:  Index [IX_entries_dateStamp]    Script Date: 09/01/2020 17:21:42 ******/
+/****** Object:  Index [IX_entries_dateStamp]    Script Date: 19/01/2020 12:44:03 ******/
 CREATE NONCLUSTERED INDEX [IX_entries_dateStamp] ON [dbo].[entries]
 (
 	[dateStamp] ASC
@@ -984,7 +1020,7 @@ CREATE NONCLUSTERED INDEX [IX_entries_dateStamp] ON [dbo].[entries]
 GO
 SET ANSI_PADDING ON
 GO
-/****** Object:  Index [IX_entries_sortkeyEN]    Script Date: 09/01/2020 17:21:42 ******/
+/****** Object:  Index [IX_entries_sortkeyEN]    Script Date: 19/01/2020 12:44:03 ******/
 CREATE NONCLUSTERED INDEX [IX_entries_sortkeyEN] ON [dbo].[entries]
 (
 	[sortkeyEN] ASC
@@ -992,50 +1028,50 @@ CREATE NONCLUSTERED INDEX [IX_entries_sortkeyEN] ON [dbo].[entries]
 GO
 SET ANSI_PADDING ON
 GO
-/****** Object:  Index [IX_entries_sortkeyGA]    Script Date: 09/01/2020 17:21:42 ******/
+/****** Object:  Index [IX_entries_sortkeyGA]    Script Date: 19/01/2020 12:44:03 ******/
 CREATE NONCLUSTERED INDEX [IX_entries_sortkeyGA] ON [dbo].[entries]
 (
 	[sortkeyGA] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 GO
-/****** Object:  Index [IX_entries_tod]    Script Date: 09/01/2020 17:21:42 ******/
+/****** Object:  Index [IX_entries_tod]    Script Date: 19/01/2020 12:44:03 ******/
 CREATE NONCLUSTERED INDEX [IX_entries_tod] ON [dbo].[entries]
 (
 	[tod] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 GO
-/****** Object:  Index [IX_entry_domain]    Script Date: 09/01/2020 17:21:42 ******/
+/****** Object:  Index [IX_entry_domain]    Script Date: 19/01/2020 12:44:03 ******/
 CREATE NONCLUSTERED INDEX [IX_entry_domain] ON [dbo].[entry_domain]
 (
 	[superdomain] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 GO
-/****** Object:  Index [IX_entry_domain_entry_id]    Script Date: 09/01/2020 17:21:42 ******/
+/****** Object:  Index [IX_entry_domain_entry_id]    Script Date: 19/01/2020 12:44:03 ******/
 CREATE NONCLUSTERED INDEX [IX_entry_domain_entry_id] ON [dbo].[entry_domain]
 (
 	[entry_id] ASC
 )
 INCLUDE([superdomain]) WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 GO
-/****** Object:  Index [IX_entry_term_1]    Script Date: 09/01/2020 17:21:42 ******/
+/****** Object:  Index [IX_entry_term_1]    Script Date: 19/01/2020 12:44:03 ******/
 CREATE NONCLUSTERED INDEX [IX_entry_term_1] ON [dbo].[entry_term]
 (
 	[entry_id] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 GO
-/****** Object:  Index [IX_entry_term_2]    Script Date: 09/01/2020 17:21:42 ******/
+/****** Object:  Index [IX_entry_term_2]    Script Date: 19/01/2020 12:44:03 ******/
 CREATE NONCLUSTERED INDEX [IX_entry_term_2] ON [dbo].[entry_term]
 (
 	[term_id] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 GO
-/****** Object:  Index [IX_entry_xref_source]    Script Date: 09/01/2020 17:21:42 ******/
+/****** Object:  Index [IX_entry_xref_source]    Script Date: 19/01/2020 12:44:03 ******/
 CREATE NONCLUSTERED INDEX [IX_entry_xref_source] ON [dbo].[entry_xref]
 (
 	[source_entry_id] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 GO
-/****** Object:  Index [IX_entry_xref_target]    Script Date: 09/01/2020 17:21:42 ******/
+/****** Object:  Index [IX_entry_xref_target]    Script Date: 19/01/2020 12:44:03 ******/
 CREATE NONCLUSTERED INDEX [IX_entry_xref_target] ON [dbo].[entry_xref]
 (
 	[target_entry_id] ASC
@@ -1043,7 +1079,7 @@ CREATE NONCLUSTERED INDEX [IX_entry_xref_target] ON [dbo].[entry_xref]
 GO
 SET ANSI_PADDING ON
 GO
-/****** Object:  Index [IX_flex_lemma]    Script Date: 09/01/2020 17:21:42 ******/
+/****** Object:  Index [IX_flex_lemma]    Script Date: 19/01/2020 12:44:03 ******/
 CREATE NONCLUSTERED INDEX [IX_flex_lemma] ON [dbo].[flex]
 (
 	[lemma] ASC,
@@ -1052,7 +1088,7 @@ CREATE NONCLUSTERED INDEX [IX_flex_lemma] ON [dbo].[flex]
 GO
 SET ANSI_PADDING ON
 GO
-/****** Object:  Index [IX_flex_token]    Script Date: 09/01/2020 17:21:42 ******/
+/****** Object:  Index [IX_flex_token]    Script Date: 19/01/2020 12:44:03 ******/
 CREATE NONCLUSTERED INDEX [IX_flex_token] ON [dbo].[flex]
 (
 	[token] ASC,
@@ -1061,7 +1097,7 @@ CREATE NONCLUSTERED INDEX [IX_flex_token] ON [dbo].[flex]
 GO
 SET ANSI_PADDING ON
 GO
-/****** Object:  Index [IX_spelling_length]    Script Date: 09/01/2020 17:21:42 ******/
+/****** Object:  Index [IX_spelling_length]    Script Date: 19/01/2020 12:44:03 ******/
 CREATE NONCLUSTERED INDEX [IX_spelling_length] ON [dbo].[spelling]
 (
 	[length] ASC,
@@ -1094,13 +1130,13 @@ CREATE NONCLUSTERED INDEX [IX_spelling_length] ON [dbo].[spelling]
 	[Z] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 GO
-/****** Object:  Index [IX_term_pos_pos_id]    Script Date: 09/01/2020 17:21:42 ******/
+/****** Object:  Index [IX_term_pos_pos_id]    Script Date: 19/01/2020 12:44:03 ******/
 CREATE NONCLUSTERED INDEX [IX_term_pos_pos_id] ON [dbo].[term_pos]
 (
 	[pos_id] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 GO
-/****** Object:  Index [IX_term_pos_term_id]    Script Date: 09/01/2020 17:21:42 ******/
+/****** Object:  Index [IX_term_pos_term_id]    Script Date: 19/01/2020 12:44:03 ******/
 CREATE NONCLUSTERED INDEX [IX_term_pos_term_id] ON [dbo].[term_pos]
 (
 	[term_id] ASC
@@ -1108,7 +1144,7 @@ CREATE NONCLUSTERED INDEX [IX_term_pos_term_id] ON [dbo].[term_pos]
 GO
 SET ANSI_PADDING ON
 GO
-/****** Object:  Index [IX_terms_1]    Script Date: 09/01/2020 17:21:42 ******/
+/****** Object:  Index [IX_terms_1]    Script Date: 19/01/2020 12:44:03 ******/
 CREATE NONCLUSTERED INDEX [IX_terms_1] ON [dbo].[terms]
 (
 	[id] ASC,
@@ -1117,14 +1153,14 @@ CREATE NONCLUSTERED INDEX [IX_terms_1] ON [dbo].[terms]
 GO
 SET ANSI_PADDING ON
 GO
-/****** Object:  Index [IX_terms_2]    Script Date: 09/01/2020 17:21:42 ******/
+/****** Object:  Index [IX_terms_2]    Script Date: 19/01/2020 12:44:03 ******/
 CREATE NONCLUSTERED INDEX [IX_terms_2] ON [dbo].[terms]
 (
 	[wording] ASC,
 	[lang] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 GO
-/****** Object:  Index [IX_words_1]    Script Date: 09/01/2020 17:21:42 ******/
+/****** Object:  Index [IX_words_1]    Script Date: 19/01/2020 12:44:03 ******/
 CREATE NONCLUSTERED INDEX [IX_words_1] ON [dbo].[words]
 (
 	[term_id] ASC
@@ -1132,7 +1168,7 @@ CREATE NONCLUSTERED INDEX [IX_words_1] ON [dbo].[words]
 GO
 SET ANSI_PADDING ON
 GO
-/****** Object:  Index [IX_words_2]    Script Date: 09/01/2020 17:21:42 ******/
+/****** Object:  Index [IX_words_2]    Script Date: 19/01/2020 12:44:03 ******/
 CREATE NONCLUSTERED INDEX [IX_words_2] ON [dbo].[words]
 (
 	[word] ASC
@@ -1140,7 +1176,7 @@ CREATE NONCLUSTERED INDEX [IX_words_2] ON [dbo].[words]
 GO
 ALTER TABLE [dbo].[metadata] ADD  CONSTRAINT [DF_metadata_parentID]  DEFAULT (NULL) FOR [parentID]
 GO
-/****** Object:  StoredProcedure [dbo].[propag_deleteEntry]    Script Date: 09/01/2020 17:21:42 ******/
+/****** Object:  StoredProcedure [dbo].[propag_deleteEntry]    Script Date: 19/01/2020 12:44:03 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -1168,7 +1204,7 @@ delete from spelling where term_id in (select id from @orphs)
 
 end
 GO
-/****** Object:  StoredProcedure [dbo].[propag_deleteMetadatum]    Script Date: 09/01/2020 17:21:42 ******/
+/****** Object:  StoredProcedure [dbo].[propag_deleteMetadatum]    Script Date: 19/01/2020 12:44:03 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -1182,7 +1218,7 @@ delete from metadata where id=@id
 
 end
 GO
-/****** Object:  StoredProcedure [dbo].[propag_saveConfig]    Script Date: 09/01/2020 17:21:42 ******/
+/****** Object:  StoredProcedure [dbo].[propag_saveConfig]    Script Date: 19/01/2020 12:44:03 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -1204,7 +1240,7 @@ end
 
 end
 GO
-/****** Object:  StoredProcedure [dbo].[propag_saveEntry]    Script Date: 09/01/2020 17:21:42 ******/
+/****** Object:  StoredProcedure [dbo].[propag_saveEntry]    Script Date: 19/01/2020 12:44:03 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -1334,7 +1370,7 @@ begin
 end
 end
 GO
-/****** Object:  StoredProcedure [dbo].[propag_saveMetadatum]    Script Date: 09/01/2020 17:21:42 ******/
+/****** Object:  StoredProcedure [dbo].[propag_saveMetadatum]    Script Date: 19/01/2020 12:44:03 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -1363,7 +1399,7 @@ where id=@id
 
 end
 GO
-/****** Object:  StoredProcedure [dbo].[pub_advsearch]    Script Date: 09/01/2020 17:21:42 ******/
+/****** Object:  StoredProcedure [dbo].[pub_advsearch]    Script Date: 19/01/2020 12:44:03 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -1405,7 +1441,7 @@ begin
 		left outer join entry_domain as ed on ed.entry_id=e.id
 		where (@lang='' or @lang=t.lang)
 		and (@pos=0 or tp.pos_id=@pos)
-		and (@dom=0 or ed.superdomain=@dom)
+		and (@dom=0 or ed.superdomain in (select domainID from [dbo].[expandDomainID](@dom, default)))
 		and e.pStatus=1
 		and (
 			   (@length='sw' and t.wording not like '% %')
@@ -1471,7 +1507,7 @@ begin
 			inner join words as w on w.term_id=t.id and w.word in (select token collate Latin1_General_CI_AS from @tokens)
 			inner join @tokens as tok on tok.token=w.word collate Latin1_General_CI_AS and (tok.lang=t.lang or tok.lang='')
 			where (@lang='' or @lang=t.lang) and exists( select * from @temp as temp where temp.term_id=t.id and temp.entry_id=e.id )
-end
+	end
 	--return:
 	insert into @matches(entry_id, rownum)
 	select distinct ret.id, ROW_NUMBER() over(order by case when @lang='en' then ret.sortkeyEN else ret.sortkeyGA end)
@@ -1484,7 +1520,7 @@ end
 		left outer join entry_domain as ed on ed.entry_id=ids.entry_id
 
 		where (@pos=0 or tp.pos_id=@pos)
-		and (@dom=0 or ed.superdomain=@dom)
+		and (@dom=0 or ed.superdomain in (select domainID from [dbo].[expandDomainID](@dom, default)))
 	) as ret
 end
 
@@ -1511,7 +1547,7 @@ select @page as [currentPage], @maxPage as [maxPage]
 
 end
 GO
-/****** Object:  StoredProcedure [dbo].[pub_advsearch_prepare]    Script Date: 09/01/2020 17:21:42 ******/
+/****** Object:  StoredProcedure [dbo].[pub_advsearch_prepare]    Script Date: 19/01/2020 12:44:03 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -1533,7 +1569,7 @@ order by sortkeyGA
 
 end
 GO
-/****** Object:  StoredProcedure [dbo].[pub_domain]    Script Date: 09/01/2020 17:21:42 ******/
+/****** Object:  StoredProcedure [dbo].[pub_domain]    Script Date: 19/01/2020 12:44:03 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -1573,7 +1609,7 @@ insert into @matches(entry_id, rownum)
 	select distinct e.id, ROW_NUMBER() over(order by case when @lang='en' then e.sortkeyEN else e.sortkeyGA end)
 	from entries as e
 	inner join entry_domain as ed on ed.entry_id=e.id
-	where ed.superdomain=@domID and e.pStatus=1
+	where ed.superdomain in (select domainID from [dbo].[expandDomainID](@domID, default)) and e.pStatus=1
 
 --compute paging data:
 declare @lastRow int; select @lastRow=count(*) from @matches
@@ -1598,7 +1634,7 @@ select @page as [currentPage], @maxPage as [maxPage]
 
 end
 GO
-/****** Object:  StoredProcedure [dbo].[pub_domains]    Script Date: 09/01/2020 17:21:42 ******/
+/****** Object:  StoredProcedure [dbo].[pub_domains]    Script Date: 19/01/2020 12:44:03 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -1630,7 +1666,7 @@ else if @lang='en'
 
 end
 GO
-/****** Object:  StoredProcedure [dbo].[pub_entry]    Script Date: 09/01/2020 17:21:42 ******/
+/****** Object:  StoredProcedure [dbo].[pub_entry]    Script Date: 19/01/2020 12:44:03 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -1654,7 +1690,7 @@ select * from entries where pStatus=1 and id=@id
 
 end
 GO
-/****** Object:  StoredProcedure [dbo].[pub_index]    Script Date: 09/01/2020 17:21:42 ******/
+/****** Object:  StoredProcedure [dbo].[pub_index]    Script Date: 19/01/2020 12:44:03 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -1688,7 +1724,7 @@ and (JSON_VALUE(json, '$.till.time')='' or convert(time, JSON_VALUE(json, '$.til
 
 end
 GO
-/****** Object:  StoredProcedure [dbo].[pub_quicksearch]    Script Date: 09/01/2020 17:21:42 ******/
+/****** Object:  StoredProcedure [dbo].[pub_quicksearch]    Script Date: 19/01/2020 12:44:03 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -1865,7 +1901,7 @@ if @super=1
 
 end
 GO
-/****** Object:  StoredProcedure [dbo].[pub_subdoms]    Script Date: 09/01/2020 17:21:42 ******/
+/****** Object:  StoredProcedure [dbo].[pub_subdoms]    Script Date: 19/01/2020 12:44:03 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -1881,7 +1917,7 @@ select *, 0 as hasChildren from metadata where type='domain' and id=@domID
 
 end
 GO
-/****** Object:  StoredProcedure [dbo].[pub_tod]    Script Date: 09/01/2020 17:21:42 ******/
+/****** Object:  StoredProcedure [dbo].[pub_tod]    Script Date: 19/01/2020 12:44:03 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
