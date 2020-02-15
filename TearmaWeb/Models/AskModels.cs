@@ -21,6 +21,9 @@ namespace TearmaWeb.Models.Ask {
 		public string name="";
 		public string email="";
 		public string phone="";
+
+		//Captcha transcription submitted by the user:
+		public string CaptchaCode { get; set; }
 	}
 
 

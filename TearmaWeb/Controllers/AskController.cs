@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using BotDetect.Web.Mvc;
 
 namespace TearmaWeb.Controllers
 {
@@ -31,20 +32,26 @@ namespace TearmaWeb.Controllers
 			model.email=email;
 			model.phone=phone;
 			if(termEN != null && context != null && def != null && name != null && (email != null || phone != null)) {
-				model.mode="thanks";
-				string subject="Fiosrú téarmaíochta ó tearma.ie";
-				string html="";
-				if(termEN!="") html+="AN TÉARMA BÉARLA:<br/>"+termEN+"<br/><br/>";
-				if(termXX!="") html+="AN TÉARMA I DTEANGA(CHA) EILE:<br/>"+termXX+"<br/><br/>";
-				if(context!="") html+="COMHTHÉACS:<br/>"+context+"<br/><br/>";
-				if(def!="") html+="SAINMHÍNIÚ:<br/>"+def+"<br/><br/>";
-				if(example!="") html+="SAMPLA ÚSÁIDE:<br/>"+example+"<br/><br/>";
-				if(other!="") html+="AON EOLAS EILE:<br/>"+other+"<br/><br/>";
-				if(termGA!="") html+="MOLADH DON TÉARMA GAEILGE:<br/>"+termGA+"<br/><br/>";
-				if(name!="") html+="AINM:<br/>"+name+"<br/><br/>";
-				if(email!="") html+="SEOLADH RÍOMHPHOIST:<br/>"+email+"<br/><br/>";
-				if(phone!="") html+="UIMHIR GHUTHÁIN:<br/>"+phone+"<br/><br/>";
-                SendEmail("tearmai@forasnagaeilge.ie", subject, html);
+
+				MvcCaptcha mvcCaptcha = new MvcCaptcha("AskCaptcha");
+				if(mvcCaptcha.Validate(HttpContext.Request.Form["CaptchaCode"])){
+					model.mode="thanks";
+					string subject = "Fiosrú téarmaíochta ó tearma.ie";
+					string html = "";
+					if(termEN != "") html += "AN TÉARMA BÉARLA:<br/>" + termEN + "<br/><br/>";
+					if(termXX != "") html += "AN TÉARMA I DTEANGA(CHA) EILE:<br/>" + termXX + "<br/><br/>";
+					if(context != "") html += "COMHTHÉACS:<br/>" + context + "<br/><br/>";
+					if(def != "") html += "SAINMHÍNIÚ:<br/>" + def + "<br/><br/>";
+					if(example != "") html += "SAMPLA ÚSÁIDE:<br/>" + example + "<br/><br/>";
+					if(other != "") html += "AON EOLAS EILE:<br/>" + other + "<br/><br/>";
+					if(termGA != "") html += "MOLADH DON TÉARMA GAEILGE:<br/>" + termGA + "<br/><br/>";
+					if(name != "") html += "AINM:<br/>" + name + "<br/><br/>";
+					if(email != "") html += "SEOLADH RÍOMHPHOIST:<br/>" + email + "<br/><br/>";
+					if(phone != "") html += "UIMHIR GHUTHÁIN:<br/>" + phone + "<br/><br/>";
+					SendEmail("tearmai@forasnagaeilge.ie", subject, html);
+				} else {
+					model.mode="captchaError";
+				}
 			} else {
 				model.mode="error";
             }

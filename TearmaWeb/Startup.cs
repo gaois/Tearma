@@ -6,6 +6,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Rewrite;
 using System;
 using TearmaWeb.Rules;
+using BotDetect.Web;
+using Microsoft.AspNetCore.Http;
 
 namespace TearmaWeb
 {
@@ -20,7 +22,15 @@ namespace TearmaWeb
         }
 
         public void ConfigureServices(IServiceCollection services) {
+            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>(); //needed by Captcha
+
 			services.AddMvc();
+
+            // Add Session services. Needed by Captcha.
+            services.AddSession(options => {
+              options.IdleTimeout = TimeSpan.FromMinutes(20);
+              options.Cookie.IsEssential = true;
+            });
 
             services.AddMiniProfiler();
             services.AddExceptional(_configuration.GetSection("Exceptional"));
@@ -44,6 +54,12 @@ namespace TearmaWeb
                 app.UseStatusCodePagesWithReExecute("/error/{0}");
                 app.UseExceptional();
             }
+
+            // configures Session middleware
+            app.UseSession();
+            // configure your application pipeline to use Captcha middleware
+            // Important! UseCaptcha(...) must be called after the UseSession() call
+            app.UseCaptcha(_configuration);
 
             var options=new RewriteOptions();
 			options.Rules.Add(new RedirectToWwwRule(_environment));

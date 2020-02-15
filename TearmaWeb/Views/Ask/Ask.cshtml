@@ -47,7 +47,19 @@
     </div>
 }
 
-@if(Model.mode=="empty" || Model.mode == "error") {
+@if(Model.mode=="captchaError") {
+    <div class="parallel error">
+        <div class="ga" lang="ga">
+            <p>Níl an cheist shábáilteacha athscríofa i gceart agat.</p>
+        </div>
+        <div class="en" lang="en">
+            <p>Your security question is incorrect.</p>
+        </div>
+        <div class="clear"></div>
+    </div>
+}
+
+@if(Model.mode=="empty" || Model.mode=="error" || Model.mode=="captchaError") {
     <form method="post" class="ask">
 				<p class="navod">
 					<strong>Leagan Béarla den téarma atá uait.</strong>
@@ -134,6 +146,23 @@
 					<span class="sc"><span class="scga">D'uimhir ghutháin:</span><br /><span class="scen" lang="en">Your telephone number:</span></span>
 					<span class="sf"><input class="txbx" id="phone" name="phone" size="30" value="@Model.phone" /></span>
 				</p>
+				
+				<p class="navod">
+					<strong>Athscríobh an téacs seo, le do thoil, le cinntiú gur duine atá ionat seachas róbat.</strong>
+					&#149; Please transcribe this text to confirm that you are a human and not a robot.
+				</p>
+				<p class="sbx">
+					<span class="sc"><span class="scga">Ceist shábháilteachta:</span><br /><span class="scen" lang="en">Security question:</span></span>
+					<span class="star">*</span>
+					<span class="sf">
+						<input class="txbx" size="30" style="width: 250px" asp-for="CaptchaCode"/>
+					</span>
+				</p>
+				<div class="sbx" style="margin-top: 10px">
+					<div class="sf">
+						<captcha id="AskCaptcha" user-input-id="CaptchaCode" sound-enabled="false" />
+					</div>
+				</div>
 				
 				<p class="sbmt">
 					<input class="sbmt" type="submit" value="Seol &#149; Send">

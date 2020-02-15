@@ -32,7 +32,7 @@
     <meta property="og:image" content="@ViewData["SiteUrl"]/furniture/og.png" />
     <meta name="twitter:image" content="@ViewData["SiteUrl"]/furniture/og.png" />
 
-    <link type="text/css" rel="stylesheet" href="~/furniture/furniture.css" />
+    <link type="text/css" rel="stylesheet" href="~/furniture/furniture.css?2020-02-15" />
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css"
           integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU"
           crossorigin="anonymous" />
@@ -50,6 +50,8 @@
         })(window,document,'script','dataLayer','GTM-TDGLM9');</script>
         <!-- End Google Tag Manager -->
     </environment>
+
+    <link href="@BotDetect.Web.CaptchaUrls.Absolute.LayoutStyleSheetUrl" rel="stylesheet" type="text/css" />
 </head>
 <body>
     <environment exclude="Production">

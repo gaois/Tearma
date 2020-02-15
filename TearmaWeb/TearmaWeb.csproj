@@ -6,6 +6,7 @@
 
   <ItemGroup>
     <PackageReference Include="Ansa.Extensions" Version="0.2.6" />
+    <PackageReference Include="Captcha" Version="4.4.2" />
     <PackageReference Include="Gaois.QueryLogger.AspNetCore" Version="0.7.7-alpha" />
     <PackageReference Include="LigerShark.WebOptimizer.Core" Version="1.0.236" />
     <PackageReference Include="Microsoft.AspNetCore.App" />
