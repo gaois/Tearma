@@ -188,7 +188,7 @@ namespace TearmaWeb.Models.Home
 		public string advSearchUrl() {
 			string ret="/plus/"+Uri.EscapeDataString(Tools.SlashEncode(this.word))+"/al/ft/";
 			if(this.lang!="") ret+="lang"+this.lang+"/"; else ret+="lang0/";
-			ret+="pos0/dom0/sub0/";
+			ret+="pos0/dom0/";
 			return ret;
 		}
 
