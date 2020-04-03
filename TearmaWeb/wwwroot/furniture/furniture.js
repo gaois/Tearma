@@ -190,7 +190,7 @@ function advDomTitles(select) {
 };
 function getDomain (id) {
     var ret = null;
-    allDomains.map(datum => { if (!ret && datum.id == id) ret = datum; });
+    allDomains.map(function(datum){ if (!ret && datum.id == id) ret = datum; });
     return ret;
 };
 function domLongTitle(domain) {
@@ -205,11 +205,11 @@ function advDomRefill(selectedDomainID) {
     domains = [];
     var selectedDomain = getDomain(selectedDomainID);
     if (!selectedDomain) { //if no domain is selected:
-        allDomains.map(domain => { if (!domain.parentID) { domain.expanded = false; domains.push(domain); } });
+        allDomains.map(function(domain){ if (!domain.parentID) { domain.expanded = false; domains.push(domain); } });
     } else {
         selectedDomain.expanded = true;
         domains.push(selectedDomain);
-        allDomains.map(domain => { if (domain.parentID == selectedDomainID) { domain.expanded = false; domains.push(domain); } });
+        allDomains.map(function(domain){ if (domain.parentID == selectedDomainID) { domain.expanded = false; domains.push(domain); } });
         //add all parents to the front of the list:
         var parentID = selectedDomain.parentID;
         while (parentID) {
@@ -224,12 +224,12 @@ function advDomRefill(selectedDomainID) {
     }
     var $select = $("select#dom").html("");
     var level = 0;
-    $select.append(`<option value="0">réimse ar bith &middot; any domain</option>`);
+    $select.append('<option value="0">réimse ar bith &middot; any domain</option>');
     if (selectedDomain) {
         var level = 1;
     }
     var prevDomainID = 0;
-    domains.map(domain => {
+    domains.map(function(domain){
         if (domain.parentID == prevDomainID) level++;
         var padding = ""; for (var i = 0; i < level; i++) padding += "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
         var driller = "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
@@ -237,9 +237,9 @@ function advDomRefill(selectedDomainID) {
             if (domain.expanded) driller = "▼&nbsp;";
             else driller = "►&nbsp;";
         }
-        var shortTitle = `${padding}${driller}${domain.title}`;
+        var shortTitle = padding+driller+domain.title;
         var longTitle = domLongTitle(domain);
-        var $option = $(`<option value="${domain.id}">${longTitle}</option>`);
+        var $option = $('<option value="'+domain.id+'">'+longTitle+'</option>');
         $option.data("shortTitle", shortTitle);
         $option.data("longTitle", longTitle);
         $select.append($option);
