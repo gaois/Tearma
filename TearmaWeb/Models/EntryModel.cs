@@ -9,7 +9,7 @@ namespace TearmaWeb.Models.Data {
 	
 	public class Entry {
 		public string dStatus;
-		public List<int> domains;
+		public List<int?> domains;
 		public List<Desig> desigs;
 		public Dictionary<string, string> intros;
 		public List<Definition> definitions;

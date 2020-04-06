@@ -54,7 +54,7 @@ namespace TearmaWeb.Controllers
 			ret +="<a class='permalink' href='/id/"+id+"/'>#</a>";
 
 			//domains:
-			foreach(int obj in entry.domains) ret+=Prettify.DomainAssig(obj, leftLang, rightLang);
+			foreach(int? obj in entry.domains) ret+=Prettify.DomainAssig(obj, leftLang, rightLang);
 
 			//draft status:
 			if(entry.dStatus=="0") {
@@ -261,27 +261,29 @@ namespace TearmaWeb.Controllers
 			return ret;
 		}
 
-		public static string DomainAssig(int domID, string leftLang, string rightLang) {
-			Models.Home.Metadatum domain = Prettify.Lookups.domainsById[domID];
-			string stepsLeft = "";
-			string stepsRight = "";
-			int recursionCounter=0;
-			while(domain != null) {
-				if(stepsLeft!="") stepsLeft=""+" » "+stepsLeft;
-				if(stepsRight!="") stepsRight=""+" » "+stepsRight;
-
-				stepsLeft  = (domain.name.ContainsKey(leftLang) ? domain.name[leftLang] : domain.name["ga"])   + stepsLeft;
-				stepsRight = (domain.name.ContainsKey(rightLang) ? domain.name[rightLang] : domain.name["en"]) + stepsRight;
-
-				recursionCounter++;
-				domain = (domain.parentID>0 && recursionCounter<10) ? Prettify.Lookups.domainsById[domain.parentID] : null;
-			}
+		public static string DomainAssig(int? domID, string leftLang, string rightLang) {
 			string ret = "";
-            ret += "<div class='prettyDomain'>";
-			ret += "<div class='left'><a href='/dom/"+domID+"/"+leftLang+"/'>" + stepsLeft + "</a></div>";
-			ret += "<div class='right'><a href='/dom/"+domID+"/"+rightLang+"/'>" + stepsRight + "</a></div>";
-			ret += "<div class='clear'></div>";
-			ret += "</div>"; //.prettyDomain
+			if(domID != null) {
+				Models.Home.Metadatum domain = Prettify.Lookups.domainsById[(int)domID];
+				string stepsLeft = "";
+				string stepsRight = "";
+				int recursionCounter=0;
+				while(domain != null) {
+					if(stepsLeft!="") stepsLeft=""+" » "+stepsLeft;
+					if(stepsRight!="") stepsRight=""+" » "+stepsRight;
+
+					stepsLeft  = (domain.name.ContainsKey(leftLang) ? domain.name[leftLang] : domain.name["ga"])   + stepsLeft;
+					stepsRight = (domain.name.ContainsKey(rightLang) ? domain.name[rightLang] : domain.name["en"]) + stepsRight;
+
+					recursionCounter++;
+					domain = (domain.parentID>0 && recursionCounter<10) ? Prettify.Lookups.domainsById[domain.parentID] : null;
+				}
+				ret += "<div class='prettyDomain'>";
+				ret += "<div class='left'><a href='/dom/"+domID+"/"+leftLang+"/'>" + stepsLeft + "</a></div>";
+				ret += "<div class='right'><a href='/dom/"+domID+"/"+rightLang+"/'>" + stepsRight + "</a></div>";
+				ret += "<div class='clear'></div>";
+				ret += "</div>"; //.prettyDomain
+			}
 			return ret;
 		}
 
