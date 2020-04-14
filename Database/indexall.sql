@@ -42,7 +42,7 @@ select distinct id, lang, wording from(
 	  convert(int, json_value(ext.value, '$.term.id')) as id
 	--, json_query(ext.value, '$.term') as json
 	, json_value(ext.value, '$.term.lang') as lang
-	, json_value(ext.value, '$.term.wording') as wording
+	, substring(json_value(ext.value, '$.term.wording'), 1, 255) as wording
 	from entries as e
 	cross apply openjson(e.json, '$.desigs') as ext
 ) as t
@@ -69,15 +69,15 @@ select distinct term_id, pos_id from(
 	where json_value(annot.value, '$.label.type')='posLabel'
 ) as t
 
---truncate table spelling
---insert into spelling(term_id, word, [A],[B],[C],[D],[E],[F],[G],[H],[I],[J],[K],[L],[M],[N],[O],[P],[Q],[R],[S],[T],[U],[V],[W],[X],[Y],[Z], [length])
---select t.id, t.wording, [A],[B],[C],[D],[E],[F],[G],[H],[I],[J],[K],[L],[M],[N],[O],[P],[Q],[R],[S],[T],[U],[V],[W],[X],[Y],[Z], LEN(t.wording)
---from terms as t
---cross apply (
---	select [A],[B],[C],[D],[E],[F],[G],[H],[I],[J],[K],[L],[M],[N],[O],[P],[Q],[R],[S],[T],[U],[V],[W],[X],[Y],[Z]
---	from dbo.characterize(t.wording)
---) as c
-----where len(t.wording)<=10
+truncate table spelling
+insert into spelling(term_id, word, [A],[B],[C],[D],[E],[F],[G],[H],[I],[J],[K],[L],[M],[N],[O],[P],[Q],[R],[S],[T],[U],[V],[W],[X],[Y],[Z], [length])
+select t.id, t.wording, [A],[B],[C],[D],[E],[F],[G],[H],[I],[J],[K],[L],[M],[N],[O],[P],[Q],[R],[S],[T],[U],[V],[W],[X],[Y],[Z], LEN(t.wording)
+from terms as t
+cross apply (
+	select [A],[B],[C],[D],[E],[F],[G],[H],[I],[J],[K],[L],[M],[N],[O],[P],[Q],[R],[S],[T],[U],[V],[W],[X],[Y],[Z]
+	from dbo.characterize(t.wording)
+) as c
+where len(t.wording)<=10
 
 update entries set sortkeyGA=null, sortkeyEN=null
 declare @temp table(entry_id int, sortkey nvarchar(max), listingOrder int)
@@ -86,7 +86,7 @@ insert into @temp(entry_id, sortkey, listingOrder)
 	from entries as e
 	cross apply openjson(e.json, '$.desigs') as pj
 	where JSON_VALUE(pj.value, '$.term.lang')='ga'
-	update e set e.sortkeyGA=t.sortkey
+	update e set e.sortkeyGA=substring(t.sortkey, 1, 255)
 		from entries as e
 		inner join @temp as t on t.entry_id=e.id
 		where e.sortkeyGA is null
@@ -96,7 +96,7 @@ insert into @temp(entry_id, sortkey, listingOrder)
 	from entries as e
 	cross apply openjson(e.json, '$.desigs') as pj
 	where JSON_VALUE(pj.value, '$.term.lang')='en'
-	update e set e.sortkeyEN=t.sortkey
+	update e set e.sortkeyEN=substring(t.sortkey, 1, 255)
 		from entries as e
 		inner join @temp as t on t.entry_id=e.id
 		where e.sortkeyEN is null
