@@ -1,19 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Text.Encodings.Web;
-using Newtonsoft.Json.Linq;
+﻿using System.Collections.Generic;
 
-namespace TearmaWeb.Models.Info {
+namespace TearmaWeb.Models.Info
+{
 
 	/// <summary>Represents the contents of the download page.</summary>
-	public class Download {
-	}
+	public class Download {}
 
 	/// <summary>Represents the contents of the widgets page.</summary>
-	public class Widgets {
-	}
+	public class Widgets {}
 
 	/// <summary>Represents the contents of one info page.</summary>
 	public class Topic {
@@ -56,5 +50,4 @@ namespace TearmaWeb.Models.Info {
             return toc;
 		}
 	}
-
 }

@@ -1,12 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Text.Encodings.Web;
-using Newtonsoft.Json.Linq;
-
-namespace TearmaWeb.Models.Ask {
-
+﻿namespace TearmaWeb.Models.Ask
+{
 	public class Ask {
 		public string mode="empty"; //empty|error|thanks
 
@@ -25,6 +18,4 @@ namespace TearmaWeb.Models.Ask {
 		//Captcha transcription submitted by the user:
 		public string CaptchaCode { get; set; }
 	}
-
-
 }

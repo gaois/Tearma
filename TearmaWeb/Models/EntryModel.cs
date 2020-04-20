@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
-namespace TearmaWeb.Models.Data {
-	
+namespace TearmaWeb.Models.Data
+{
 	public class Entry {
 		public string dStatus;
 		public List<int?> domains;
@@ -48,8 +44,8 @@ namespace TearmaWeb.Models.Data {
 	}
 
 	public class Annot {
-		[JsonConverter(typeof(TearmaWeb.Controllers.IntegerJsonConverter))] public int start;
-		[JsonConverter(typeof(TearmaWeb.Controllers.IntegerJsonConverter))] public int stop;
+		[JsonConverter(typeof(Controllers.IntegerJsonConverter))] public int start;
+		[JsonConverter(typeof(Controllers.IntegerJsonConverter))] public int stop;
 		public AnnotLabel label;
 	}
 
@@ -62,5 +58,4 @@ namespace TearmaWeb.Models.Data {
 		public int label;
 		public string text;
 	}
-
 }

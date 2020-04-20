@@ -1,12 +1,11 @@
-﻿using System.Collections.Generic;
-using System.Text.Encodings.Web;
-using Newtonsoft.Json.Linq;
+﻿using Newtonsoft.Json.Linq;
 using Newtonsoft.Json;
+using System.Collections.Generic;
 using System;
 
 namespace TearmaWeb.Models.Home
 {
-    public class Tools {
+	public class Tools {
 		public static string SlashEncode(string text) {
 			text=text.Replace(@"%", "%25");
 			text=text.Replace(@"\", "$backslash;");
@@ -97,8 +96,8 @@ namespace TearmaWeb.Models.Home
 			this.abbr=(string)jo.Property("abbr")?.Value ?? "";
 			this.name.Add("ga", (string)((JObject)jo.Property("title").Value).Property("ga").Value);
 			this.name.Add("en", (string)((JObject)jo.Property("title").Value).Property("en").Value);
-			this.level=(int?)jo.Property("level")?.Value ?? 0;
-			this.parentID=(int?)jo.Property("parentID")?.Value ?? 0;
+			if (int.TryParse((string)jo.Property("level")?.Value, out int level)) this.level=level;
+			if (int.TryParse((string)jo.Property("parentID")?.Value, out int parentID)) this.parentID=parentID;
 		}
 
 		public Metadatum(int id, JObject jo, bool hasChildren, List<Language> langs) {
@@ -108,8 +107,8 @@ namespace TearmaWeb.Models.Home
 			this.abbr=(string)jo.Property("abbr")?.Value ?? "";
 			this.name.Add("ga", (string)((JObject)jo.Property("title").Value).Property("ga").Value);
 			this.name.Add("en", (string)((JObject)jo.Property("title").Value).Property("en").Value);
-			this.level=(int?)jo.Property("level")?.Value ?? 0;
-			this.parentID=(int?)jo.Property("parentID")?.Value ?? 0;
+			if (int.TryParse((string)jo.Property("level")?.Value, out int level)) this.level = level;
+			if (int.TryParse((string)jo.Property("parentID")?.Value, out int parentID)) this.parentID = parentID;
 
 			JArray jarr=(JArray)jo.Property("isfor").Value;
 			IEnumerable<string> enu=jarr.Values<string>();
