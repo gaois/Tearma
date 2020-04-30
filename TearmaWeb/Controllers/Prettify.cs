@@ -85,7 +85,8 @@ namespace TearmaWeb.Controllers
 			{
 				string html=""; bool withLangLabel=true;
 				foreach(Models.Data.Desig desig in entry.desigs) {if(desig.term.lang==rightLang) {html+=Prettify.Desig(desig, withLangLabel); withLangLabel=false;}}
-				if(entry.intros[rightLang]!="") html+="<div class='intro'><span>("+entry.intros[rightLang]+")</span></div>";
+				if(entry.intros.ContainsKey(rightLang) && entry.intros[rightLang]!="")
+					html+="<div class='intro'><span>("+entry.intros[rightLang]+")</span></div>";
 				ret+="<div class='desigBlock right'>"+html+"</div>";
 			}
 			foreach(Models.Home.Language language in Prettify.Lookups.languages) {
@@ -126,7 +127,7 @@ namespace TearmaWeb.Controllers
 
 		public static string Desig(Models.Data.Desig desig, bool withLangLabel) {
 			string grey="";
-			if(desig.accept!=null && desig.accept > 0) {
+			if(desig.accept!=null && desig.accept > 0 && Lookups.acceptLabelsById.ContainsKey((int)desig.accept)) {
 				Models.Home.Metadatum md=Lookups.acceptLabelsById[(int)desig.accept];
 				if(md.level<0) grey=" grey";
 			}
@@ -147,7 +148,6 @@ namespace TearmaWeb.Controllers
 				}
 				ret+="</div>"; //.inflects
 			}
-			//ret+=JsonConvert.SerializeObject(desig);
 			ret+="</div>";
 			return ret;
 		}
@@ -207,7 +207,6 @@ namespace TearmaWeb.Controllers
 				index++;
 			}
 			string s=""; foreach(Char c in chars) {
-				//if(c.labelsAfter!="") c.labelsAfter=" "+c.labelsAfter;
 				s +=c.markupBefore+c.character+c.markupAfter+c.labelsAfter;
 			}
 			return "<a class='prettyWording' href='/q/"+Uri.EscapeDataString(wording)+"/"+lang+"/'>"+s+"</a>";
@@ -246,24 +245,26 @@ namespace TearmaWeb.Controllers
 		}
 
 		public static string Clarif(string s) {
-			string ret="";
-			ret="<span class='clarif'>";
+			string ret="<span class='clarif'>";
 			ret+="("+s+")";
 			ret+="</span>";
 			return ret;
 		}
 
 		public static string Lang(string abbr) {
-			Models.Home.Language language=Lookups.languagesByAbbr[abbr];
-			string ret="<span class='prettyLang hintable' title='"+language.name["ga"]+"/"+language.name["en"]+"'>";
-			ret+=abbr.ToUpper();
-			ret+="</span>";
+			string ret="";
+			if(Lookups.languagesByAbbr.ContainsKey(abbr)){
+				Models.Home.Language language=Lookups.languagesByAbbr[abbr];
+				ret="<span class='prettyLang hintable' title='"+language.name["ga"]+"/"+language.name["en"]+"'>";
+				ret+=abbr.ToUpper();
+				ret+="</span>";
+			}
 			return ret;
 		}
 
 		public static string DomainAssig(int? domID, string leftLang, string rightLang) {
 			string ret = "";
-			if(domID != null) {
+			if(domID != null && Prettify.Lookups.domainsById.ContainsKey((int)domID)) {
 				Models.Home.Metadatum domain = Prettify.Lookups.domainsById[(int)domID];
 				string stepsLeft = "";
 				string stepsRight = "";
@@ -287,20 +288,22 @@ namespace TearmaWeb.Controllers
 			return ret;
 		}
 
-		public static string DomainAssig(int domID, string lang) {
-			Models.Home.Metadatum domain = Prettify.Lookups.domainsById[domID];
-			string steps = "";
-			int recursionCounter=0;
-			while(domain != null) {
-				if(steps!="") steps=""+" » "+steps;
-				steps = (domain.name.ContainsKey(lang) ? domain.name[lang] : domain.name["ga"]) + steps;
-				recursionCounter++;
-				domain = (domain.parentID>0 && recursionCounter<10) ? Prettify.Lookups.domainsById[domain.parentID] : null;
-			}
+		public static string DomainAssig(int? domID, string lang) {
 			string ret = "";
-			ret += "<span class='prettyDomainInline'>";
-			ret += "<a href='/dom/"+domID+"/"+lang+"/'>" + steps + "</a>";
-			ret += "</span>"; //.prettyDomainInline
+			if(domID != null & Prettify.Lookups.domainsById.ContainsKey((int)domID)) {
+				Models.Home.Metadatum domain = Prettify.Lookups.domainsById[(int)domID];
+				string steps = "";
+				int recursionCounter=0;
+				while(domain != null) {
+					if(steps!="") steps=""+" » "+steps;
+					steps = (domain.name.ContainsKey(lang) ? domain.name[lang] : domain.name["ga"]) + steps;
+					recursionCounter++;
+					domain = (domain.parentID>0 && recursionCounter<10) ? Prettify.Lookups.domainsById[domain.parentID] : null;
+				}
+				ret += "<span class='prettyDomainInline'>";
+				ret += "<a href='/dom/"+domID+"/"+lang+"/'>" + steps + "</a>";
+				ret += "</span>"; //.prettyDomainInline
+			}
 			return ret;
 		}
 
@@ -331,7 +334,8 @@ namespace TearmaWeb.Controllers
 				    foreach(string text in ex.texts[leftLang]) ret += "<div class='text'>"+text+"</div>";
 			ret += "</div>";
 			ret += "<div class='right'>";
-				foreach(string text in ex.texts[rightLang]) ret += "<div class='text'>"+text+"</div>";
+                if (ex.texts.ContainsKey(rightLang))
+					foreach(string text in ex.texts[rightLang]) ret += "<div class='text'>"+text+"</div>";
 			ret += "</div>";
 			ret += "<div class='clear'></div>";
 			ret += "</div>"; //.prettyExample
