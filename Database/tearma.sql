@@ -1101,7 +1101,6 @@ GO
 CREATE NONCLUSTERED INDEX [IX_spelling_length] ON [dbo].[spelling]
 (
 	[length] ASC,
-	[word] ASC,
 	[A] ASC,
 	[B] ASC,
 	[C] ASC,
@@ -1127,7 +1126,8 @@ CREATE NONCLUSTERED INDEX [IX_spelling_length] ON [dbo].[spelling]
 	[W] ASC,
 	[X] ASC,
 	[Y] ASC,
-	[Z] ASC
+	[Z] ASC,
+	[word] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 GO
 /****** Object:  Index [IX_term_pos_pos_id]    Script Date: 19/01/2020 12:44:03 ******/
