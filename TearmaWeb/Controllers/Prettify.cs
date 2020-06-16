@@ -312,12 +312,12 @@ namespace TearmaWeb.Controllers
 			string nonessential=(def.nonessential==1 ? " nonessential" : "");
 			ret += "<div class='prettyDefinition"+nonessential+"'>";
 			ret += "<div class='left'>";
-				foreach(int da in def.domains) ret+=DomainAssig(da, leftLang)+" ";
+				foreach(int? da in def.domains) if(da!=null) ret+=DomainAssig(da, leftLang)+" ";
                 if (def.texts.ContainsKey(leftLang))
 				    ret += def.texts[leftLang];
 			ret += "</div>";
 			ret += "<div class='right'>";
-				foreach(int da in def.domains) ret+=DomainAssig(da, rightLang)+" ";
+				foreach(int? da in def.domains) if(da!=null) ret+=DomainAssig(da, rightLang)+" ";
 				ret += def.texts[rightLang];
 			ret += "</div>";
 			ret += "<div class='clear'></div>";
