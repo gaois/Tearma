@@ -325,11 +325,11 @@ namespace TearmaWeb.Controllers
                     
                     using (var reader = command.ExecuteReader()) {
                         //read lookups:
-                        Lookups lookups =ReadLookups(reader);
+                        Lookups lookups=ReadLookups(reader);
 			            if(lookups.domainsById.ContainsKey(model.domID)){
                             Metadatum md=lookups.domainsById[model.domID];
 				            model.domain=new DomainListing(md.id, md.name["ga"], md.name["en"], md.hasChildren);
-							while(md.parentID != 0) {
+							while(lookups.domainsById.ContainsKey(md.parentID) && md.parentID != 0) {
 								md=lookups.domainsById[md.parentID];
 								if(md!=null) model.parents.Add(new DomainListing(md.id, md.name["ga"], md.name["en"], md.hasChildren));
 							}

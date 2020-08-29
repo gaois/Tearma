@@ -264,8 +264,8 @@ namespace TearmaWeb.Controllers
 
 		public static string DomainAssig(int? domID, string leftLang, string rightLang) {
 			string ret = "";
-			if(domID != null && Prettify.Lookups.domainsById.ContainsKey((int)domID)) {
-				Models.Home.Metadatum domain = Prettify.Lookups.domainsById[(int)domID];
+			if(domID != null && Lookups.domainsById.ContainsKey((int)domID)) {
+				Models.Home.Metadatum domain = Lookups.domainsById[(int)domID];
 				string stepsLeft = "";
 				string stepsRight = "";
 				int recursionCounter=0;
@@ -277,7 +277,8 @@ namespace TearmaWeb.Controllers
 					stepsRight = (domain.name.ContainsKey(rightLang) ? domain.name[rightLang] : domain.name["en"]) + stepsRight;
 
 					recursionCounter++;
-					domain = (domain.parentID>0 && recursionCounter<10) ? Prettify.Lookups.domainsById[domain.parentID] : null;
+					domain = Lookups.domainsById.ContainsKey(domain.parentID) && domain.parentID>0 && recursionCounter<10 
+						? Lookups.domainsById[domain.parentID] : null;
 				}
 				ret += "<div class='prettyDomain'>";
 				ret += "<div class='left'><a href='/dom/"+domID+"/"+leftLang+"/'>" + stepsLeft + "</a></div>";
