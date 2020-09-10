@@ -1012,11 +1012,17 @@ CREATE TABLE [dbo].[words](
 	[word] [nvarchar](255) COLLATE Latin1_General_CI_AS NULL
 ) ON [PRIMARY]
 GO
-/****** Object:  Index [IX_entries_dateStamp]    Script Date: 19/01/2020 12:44:03 ******/
+SET ANSI_PADDING ON
+GO
+/****** Object:  Index [IX_entries_dateStamp]    Script Date: 10/09/2020 14:39:08 ******/
 CREATE NONCLUSTERED INDEX [IX_entries_dateStamp] ON [dbo].[entries]
 (
 	[dateStamp] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+)
+INCLUDE (
+	[pStatus],
+	[json]
+) WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 GO
 SET ANSI_PADDING ON
 GO
@@ -1034,14 +1040,28 @@ CREATE NONCLUSTERED INDEX [IX_entries_sortkeyGA] ON [dbo].[entries]
 	[sortkeyGA] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 GO
-/****** Object:  Index [IX_entries_tod]    Script Date: 19/01/2020 12:44:03 ******/
+SET ANSI_PADDING ON
+GO
+/****** Object:  Index [IX_entries_tod]    Script Date: 10/09/2020 14:22:02 ******/
 CREATE NONCLUSTERED INDEX [IX_entries_tod] ON [dbo].[entries]
 (
 	[tod] ASC
+)
+INCLUDE (
+	[dateStamp],
+	[pStatus],
+	[json]
+) WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+GO
+/****** Object:  Index [IX_entry_domain]    Script Date: 10/09/2020 14:12:18 ******/
+CREATE CLUSTERED INDEX [IX_entry_domain] ON [dbo].[entry_domain]
+(
+	[entry_id] ASC,
+	[superdomain] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 GO
-/****** Object:  Index [IX_entry_domain]    Script Date: 19/01/2020 12:44:03 ******/
-CREATE NONCLUSTERED INDEX [IX_entry_domain] ON [dbo].[entry_domain]
+/****** Object:  Index [IX_entry_domain_superdomain]    Script Date: 10/09/2020 14:12:18 ******/
+CREATE NONCLUSTERED INDEX [IX_entry_domain_superdomain] ON [dbo].[entry_domain]
 (
 	[superdomain] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
@@ -1794,10 +1814,10 @@ select * from configs where id='lingo'
 select *, 0 as hasChildren from metadata where type in ('acceptLabel', 'inflectLabel', 'posLabel', 'domain') order by sortkeyGA
 
 --return entry of the day:
-select top 1 * from entries where pStatus=1 and tod=convert(date, getdate()) order by dateStamp desc, ID desc
+select top 1 id, [json] from entries where pStatus=1 and tod=convert(date, getdate()) order by dateStamp desc, ID desc
 
 --return recently changed entries:
-select top 20 * from entries where pStatus=1 and dateStamp>'1900-01-01' order by dateStamp desc
+select top 20 id, [json] from entries where pStatus=1 and dateStamp>'1900-01-01' order by dateStamp desc
 
 --return announcement:
 declare @now datetime
@@ -2021,7 +2041,7 @@ select * from configs where id='lingo'
 select *, 0 as hasChildren from metadata where type in ('acceptLabel', 'inflectLabel', 'posLabel', 'domain') order by sortkeyGA
 
 --return entry of the day:
-select top 1 * from entries where pStatus=1 and tod=convert(date, getdate()) order by dateStamp desc, ID desc
+select top 1 id, [json] from entries where pStatus=1 and tod=convert(date, getdate()) order by dateStamp desc, ID desc
 
 end
 GO
