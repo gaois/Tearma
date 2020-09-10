@@ -1053,6 +1053,13 @@ CREATE NONCLUSTERED INDEX [IX_entry_domain_entry_id] ON [dbo].[entry_domain]
 )
 INCLUDE([superdomain]) WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 GO
+/****** Object:  Index [IX_entry_term]    Script Date: 10/09/2020 12:01:35 ******/
+CREATE CLUSTERED INDEX [IX_entry_term] ON [dbo].[entry_term]
+(
+	[entry_id] ASC,
+	[term_id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+GO
 /****** Object:  Index [IX_entry_term_1]    Script Date: 19/01/2020 12:44:03 ******/
 CREATE NONCLUSTERED INDEX [IX_entry_term_1] ON [dbo].[entry_term]
 (
@@ -1063,6 +1070,13 @@ GO
 CREATE NONCLUSTERED INDEX [IX_entry_term_2] ON [dbo].[entry_term]
 (
 	[term_id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+GO
+/****** Object:  Index [IX_entry_xref]    Script Date: 10/09/2020 12:12:28 ******/
+CREATE CLUSTERED INDEX [IX_entry_xref] ON [dbo].[entry_xref]
+(
+	[source_entry_id] ASC,
+	[target_entry_id] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 GO
 /****** Object:  Index [IX_entry_xref_source]    Script Date: 19/01/2020 12:44:03 ******/
@@ -1087,6 +1101,14 @@ CREATE NONCLUSTERED INDEX [IX_flex_lemma] ON [dbo].[flex]
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 GO
 SET ANSI_PADDING ON
+GO
+/****** Object:  Index [IX_flex_lemma_INC_token_lang]    Script Date: 10/09/2020 12:13:48 ******/
+CREATE NONCLUSTERED INDEX [IX_flex_lemma_INC_token_lang] ON [dbo].[flex]
+(
+	[lemma] ASC
+)
+INCLUDE ( 	[token],
+	[lang]) WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 GO
 /****** Object:  Index [IX_flex_token]    Script Date: 19/01/2020 12:44:03 ******/
 CREATE NONCLUSTERED INDEX [IX_flex_token] ON [dbo].[flex]
@@ -1130,6 +1152,50 @@ CREATE NONCLUSTERED INDEX [IX_spelling_length] ON [dbo].[spelling]
 	[word] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 GO
+SET ANSI_PADDING ON
+GO
+/****** Object:  Index [IX_spelling_word_length]    Script Date: 10/09/2020 12:16:56 ******/
+CREATE NONCLUSTERED INDEX [IX_spelling_word_length] ON [dbo].[spelling]
+(
+	[word] ASC,
+	[length] ASC
+)
+INCLUDE (
+	[A],
+	[B],
+	[C],
+	[D],
+	[E],
+	[F],
+	[G],
+	[H],
+	[I],
+	[J],
+	[K],
+	[L],
+	[M],
+	[N],
+	[O],
+	[P],
+	[Q],
+	[R],
+	[S],
+	[T],
+	[U],
+	[V],
+	[W],
+	[X],
+	[Y],
+	[Z]
+) WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+GO
+/****** Object:  Index [IX_term_pos]    Script Date: 10/09/2020 12:18:42 ******/
+CREATE CLUSTERED INDEX [IX_term_pos] ON [dbo].[term_pos]
+(
+	[term_id] ASC,
+	[pos_id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+GO
 /****** Object:  Index [IX_term_pos_pos_id]    Script Date: 19/01/2020 12:44:03 ******/
 CREATE NONCLUSTERED INDEX [IX_term_pos_pos_id] ON [dbo].[term_pos]
 (
@@ -1143,6 +1209,12 @@ CREATE NONCLUSTERED INDEX [IX_term_pos_term_id] ON [dbo].[term_pos]
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 GO
 SET ANSI_PADDING ON
+GO
+/****** Object:  Index [IX_terms]    Script Date: 10/09/2020 12:19:42 ******/
+CREATE CLUSTERED INDEX [IX_terms] ON [dbo].[terms]
+(
+	[id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 GO
 /****** Object:  Index [IX_terms_1]    Script Date: 19/01/2020 12:44:03 ******/
 CREATE NONCLUSTERED INDEX [IX_terms_1] ON [dbo].[terms]
@@ -1158,6 +1230,15 @@ CREATE NONCLUSTERED INDEX [IX_terms_2] ON [dbo].[terms]
 (
 	[wording] ASC,
 	[lang] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+GO
+SET ANSI_PADDING ON
+GO
+/****** Object:  Index [IX_words]    Script Date: 10/09/2020 12:20:28 ******/
+CREATE CLUSTERED INDEX [IX_words] ON [dbo].[words]
+(
+	[term_id] ASC,
+	[word] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 GO
 /****** Object:  Index [IX_words_1]    Script Date: 19/01/2020 12:44:03 ******/
