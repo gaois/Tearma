@@ -1689,12 +1689,17 @@ else if @lang='en'
 
 
 --get all matching entry IDs:
+declare @domainIDs table(domainID int)
+insert into @domainIDs(domainID)
+	select domainID from [dbo].[expandDomainID](@domID, default)
+	
 declare @matches table(entry_id int, rownum int)
 insert into @matches(entry_id, rownum)
 	select distinct e.id, ROW_NUMBER() over(order by case when @lang='en' then e.sortkeyEN else e.sortkeyGA end)
 	from entries as e
 	inner join entry_domain as ed on ed.entry_id=e.id
-	where ed.superdomain in (select domainID from [dbo].[expandDomainID](@domID, default)) and e.pStatus=1
+	inner join @domainIDs as di on di.domainID=ed.superdomain
+	where e.pStatus=1
 
 --compute paging data:
 declare @lastRow int; select @lastRow=count(*) from @matches
