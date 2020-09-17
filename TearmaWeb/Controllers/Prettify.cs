@@ -209,7 +209,7 @@ namespace TearmaWeb.Controllers
 			string s=""; foreach(Char c in chars) {
 				s +=c.markupBefore+c.character+c.markupAfter+c.labelsAfter;
 			}
-			return "<a class='prettyWording' href='/q/"+Uri.EscapeDataString(wording)+"/"+lang+"/'>"+s+"</a>";
+			return "<a class='prettyWording' href='/q/"+Uri.EscapeDataString(wording.Replace("/", "$forwardslash;").Replace("\\", "$backslash;"))+"/"+lang+"/'>"+s+"</a>";
 		}
 		private class Char {
 			public string character="";
