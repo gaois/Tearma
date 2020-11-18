@@ -28,8 +28,8 @@ namespace TearmaWeb
 
             // Add Session services. Needed by Captcha.
             services.AddSession(options => {
-              options.IdleTimeout = TimeSpan.FromMinutes(20);
-              options.Cookie.IsEssential = true;
+                options.IdleTimeout = TimeSpan.FromMinutes(20);
+                options.Cookie.IsEssential = true;
             });
 
             services.AddMiniProfiler();
