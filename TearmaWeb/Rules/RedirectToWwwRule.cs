@@ -24,7 +24,8 @@ namespace TearmaWeb.Rules
             //Redirect to www:
             var domain = request.Host.Host;
 
-			if (_environment.IsProduction() && domain != "www.tearma.ie" && domain != "super.tearma.ie") {
+			if (_environment.IsProduction()
+                && domain != "www.tearma.ie" && domain != "super.tearma.ie" && domain != "test.tearma.ie") {
                 var urlEncodedPath = string.Join("/", path.Split("/").Select(s => UrlEncoder.Default.Encode(s)));
 				response.StatusCode = 301;
 				response.Headers[HeaderNames.Location] = string.Concat("https://www.tearma.ie", urlEncodedPath);
@@ -36,7 +37,8 @@ namespace TearmaWeb.Rules
                 var urlEncodedPath = string.Join("/", path.Split("/").Select(s => UrlEncoder.Default.Encode(s)));
                 response.StatusCode = 301;
 				if(domain == "www.tearma.ie") response.Headers[HeaderNames.Location] = string.Concat("https://www.tearma.ie", urlEncodedPath);
-				if(domain == "super.tearma.ie") response.Headers[HeaderNames.Location] = string.Concat("https://super.tearma.ie", urlEncodedPath);
+                if (domain == "test.tearma.ie") response.Headers[HeaderNames.Location] = string.Concat("https://test.tearma.ie", urlEncodedPath);
+                if (domain == "super.tearma.ie") response.Headers[HeaderNames.Location] = string.Concat("https://super.tearma.ie", urlEncodedPath);
                 context.Result = RuleResult.EndResponse;
             }
 
