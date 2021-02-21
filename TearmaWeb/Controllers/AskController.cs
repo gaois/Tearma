@@ -1,38 +1,62 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using BotDetect.Web.Mvc;
+using Microsoft.Extensions.Configuration;
+using Microsoft.AspNetCore.Http;
+using TearmaWeb.Models.Ask;
+using System.Net.Mail;
+using System.Net;
 
 namespace TearmaWeb.Controllers
 {
     public class AskController : Controller {
-		private bool isSuper(Microsoft.AspNetCore.Http.HttpRequest request) {
-			return request.Host.Host=="super.tearma.ie";
+		private readonly IConfiguration _configuration;
+
+		private bool isSuper(HttpRequest request) => request.Host.Host == "super.tearma.ie";
+
+		public AskController(IConfiguration configuration)
+		{
+			_configuration = configuration;
 		}
 
 		[HttpGet]
 		public IActionResult Ask() {
-			Models.Ask.Ask model=new Models.Ask.Ask();
-			model.mode="empty";
-            ViewData["PageTitle"] = "Fiosruithe · Queries";
+			Ask model = new Ask
+			{
+				mode = "empty"
+			};
+			ViewData["PageTitle"] = "Fiosruithe · Queries";
             IActionResult ret=View("Ask", model);
-			ViewData["IsSuper"]=this.isSuper(Request);	
+			ViewData["IsSuper"]=isSuper(Request);	
 			return ret;
 		}
 
 		[HttpPost]
-		public IActionResult Ask(string termEN, string termXX, string context, string def, string example, string other, string termGA, string name, string email, string phone) {
-			Models.Ask.Ask model=new Models.Ask.Ask();
-			model.termEN=termEN;
-			model.termXX=termXX;
-			model.context=context;
-			model.def=def;
-			model.example=example;
-			model.other=other;
-			model.termGA=termGA;
-			model.name=name;
-			model.email=email;
-			model.phone=phone;
-			if(termEN != null && context != null && def != null && name != null && (email != null || phone != null)) {
+		public IActionResult Ask(
+			string termEN,
+			string termXX,
+			string context,
+			string def,
+			string example,
+			string other,
+			string termGA,
+			string name,
+			string email,
+			string phone) {
+			Ask model = new Ask
+			{
+				termEN = termEN,
+				termXX = termXX,
+				context = context,
+				def = def,
+				example = example,
+				other = other,
+				termGA = termGA,
+				name = name,
+				email = email,
+				phone = phone
+			};
 
+			if (termEN != null && context != null && def != null && name != null && (email != null || phone != null)) {
 				MvcCaptcha mvcCaptcha = new MvcCaptcha("AskCaptcha");
 				if(mvcCaptcha.Validate(HttpContext.Request.Form["CaptchaCode"])){
 					model.mode="thanks";
@@ -48,7 +72,20 @@ namespace TearmaWeb.Controllers
 					if(name != "") html += "AINM:<br/>" + name + "<br/><br/>";
 					if(email != "") html += "SEOLADH RÍOMHPHOIST:<br/>" + email + "<br/><br/>";
 					if(phone != "") html += "UIMHIR GHUTHÁIN:<br/>" + phone + "<br/><br/>";
-					SendEmail("tearmai@forasnagaeilge.ie", subject, html);
+
+					using (var message = new MailMessage())
+					using (var client = GetClient())
+					{
+						message.To.Add(new MailAddress("tearmai@forasnagaeilge.ie"));
+						message.Bcc.Add(new MailAddress("tearma@dcu.ie"));
+						message.From = new MailAddress("noreply@tearma.ie", "Téarma");
+						message.Subject = subject;
+						message.Body = html;
+						message.BodyEncoding = System.Text.Encoding.UTF8;
+						message.IsBodyHtml = true;
+
+						client.Send(message);
+					}
 				} else {
 					model.mode="captchaError";
 				}
@@ -57,19 +94,30 @@ namespace TearmaWeb.Controllers
             }
             ViewData["PageTitle"] = "Fiosruithe · Queries";
             IActionResult ret=View("Ask", model);
-			ViewData["IsSuper"]=this.isSuper(Request);	
+			ViewData["IsSuper"]=isSuper(Request);	
 			return ret;
 		}
 
-		public static void SendEmail(string to, string subject, string body)
+		private SmtpClient GetClient()
 		{
-			//System.Net.Mail.MailMessage msg=new System.Net.Mail.MailMessage("noreply@tearma.ie", to, subject, body);
-			System.Net.Mail.MailMessage msg=new System.Net.Mail.MailMessage("noreply@tearma.ie", to, subject, body);
-			msg.IsBodyHtml=true;
-			msg.Bcc.Add("tearma@dcu.ie");
-			msg.BodyEncoding=System.Text.Encoding.UTF8;
-			System.Net.Mail.SmtpClient client=new System.Net.Mail.SmtpClient("localhost");
-			client.Send(msg);
+			SmtpClient client = new SmtpClient();
+
+			if (_configuration["Smtp:UserName"] != null && _configuration["Smtp:Password"] != null)
+			{
+				client.UseDefaultCredentials = false;
+				client.Credentials = new NetworkCredential(_configuration["Smtp:UserName"], _configuration["Smtp:Password"]);
+			}
+
+			if (!string.IsNullOrWhiteSpace(_configuration["Smtp:Host"]))
+				client.Host = _configuration["Smtp:Host"];
+
+			if (int.TryParse(_configuration["Smtp:Port"], out int port))
+				client.Port = port;
+
+			if (bool.TryParse(_configuration["Smtp:EnableSSL"], out bool enableSSL))
+				client.EnableSsl = enableSSL;
+
+			return client;
 		}
 	}
 }
