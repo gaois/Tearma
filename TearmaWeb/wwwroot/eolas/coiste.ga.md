@@ -23,7 +23,7 @@ Is féidir teagmháil dhíreach a dhéanamh le foireann an Choiste Téarmaíocht
 - Dr Éamonn Ó hÓgáin
 - Eibhlín Nic Gearailt (ex officio: CCEA)
 - Dr Eithne Ní Ghallchobhair
-- Dr Gearóid Ó Cleircín (ex officio: Fiontar & Scoil na Gaeilge, DCU)
+- Dr Gearóid Ó Cleircín (ex officio: Gaois, Fiontar & Scoil na Gaeilge, DCU)
 - Helen Hegarty
 - Labhrás Ó Finneadha/Dr Fionnuala de Barra-Cusack (ex officio: Parlaimint na hEorpa)
 - Máire Feiritéar
