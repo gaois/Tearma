@@ -24,7 +24,7 @@ Thairis sin, tá roinnt foclóirí a thiomsaigh eagarthóirí seachtracha a d’
 
 I gcásanna eile, tiomsaíodh liostaí téarmaíochta bainteach le hábhair faoi leith agus rinneadh iad a scaipeadh ar chigirí agus ar mhúinteoirí sna hábhair sin. Cuirtear cóipeanna ar fáil do bhaill den phobal ar iarratas. Cuid de na liostaí seo, is saothair idir lámha iad a dhéantar a nuashonrú ó am go chéile i dtreo tionscadal éagsúil atá beartaithe, m.sh. Téarmaí Matamaitice, Téarmaí Seandálaíochta, Téarmaí Spóirt, Téarmaí Staire. Cuimsíodh cuid eile de na liostaí i sainfhoclóirí de réir mar a bhídís á n-ullmhú, m.sh. foilsíodh na liostaí san Adhmadóireacht, sa Líníocht Theicniúil agus sa Mhiotalóireacht in *Foclóir Ceirdeanna agus Teicneolaíochta*, foilsíodh *Téarmaí Oifige* agus *Cuntasaíocht agus Eagrú Gnó* in *Foclóir Staidéir Ghnó*, agus foilsíodh bunleagan den liosta Matamaitice in *Foclóir Eolaíochta*.
 
-Liostaí eile fós, tiomsaíodh iad i gcomhar le heagraíochtaí seachtracha a bhí i mbun lámhleabhar, gluais téarmaíochta nó táirgí bogearra a ullmhú ina sainréimse féin. Bhí an Coiste Téarmaíochta páirteach i 15 fhoilseachán den chineál seo, agus i roinnt táirgí bogearra. Ina measc tá saothair a d’fhoilsigh An Garda Síochána, An Roinn Comhshaoil agus Údarás Áitiúil, Birdwatch Ireland, Garraithe Náisiúnta na Lusanna, Óglaigh na hÉireann, RTÉ, Sherkin Island Marine Station, Telecom Éireann (Eir anois), Microsoft Corporation agus Sony Corporation.
+Liostaí eile fós, tiomsaíodh iad i gcomhar le heagraíochtaí seachtracha a bhí i mbun lámhleabhar, gluais téarmaíochta nó táirgí bogearra a ullmhú ina sainréimse féin. Bhí an Coiste Téarmaíochta páirteach i 15 fhoilseachán den chineál seo, agus i roinnt táirgí bogearra. Ina measc tá saothair a d’fhoilsigh An Garda Síochána, An Roinn Comhshaoil agus Údarás Áitiúil, Birdwatch Ireland, Garraithe Náisiúnta na Lus, Óglaigh na hÉireann, RTÉ, Sherkin Island Marine Station, Telecom Éireann (Eir anois), Microsoft Corporation agus Sony Corporation.
 
 ### Téarmaíocht ilghnéitheach
 
@@ -48,7 +48,7 @@ Is iad na cineálacha ceisteanna is mó atá ag teacht chun cinn ná:
 
 ### Modhanna Eagarthóireachta
 
-Le déileáil leis na ceisteanna thuasluaite, tá na tascanna seo idir lámha ag baill foirne in oifig an Choiste agus in Fiontar & Scoil na Gaeilge, de réir chomhairle an Choiste Téarmaíochta:
+Le déileáil leis na ceisteanna thuasluaite, tá na tascanna seo idir lámha ag baill foirne in oifig an Choiste agus in oifigí Gaois, de réir chomhairle an Choiste Téarmaíochta:
 
 - noda imdhealaithe a chur le coincheapa éagsúla a bhfuil an téarma céanna luaite leo;
 - roghnú idir théarmaí éagsúla a bailíodh faoin gcoincheap céanna ar bhonn cruinnis, coitiantachta, sothuigtheachta, comhordaithe, aois an bhailiúcháin ina bhfuarthas iad - cuirtear an nod 'dímholta' leis na cinn eile;
