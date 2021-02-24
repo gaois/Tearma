@@ -23,7 +23,7 @@ The Terminology Committee staff can be contacted by emailing <tearmai@forasnagae
 - Dr Éamonn Ó hÓgáin
 - Eibhlín Nic Gearailt (ex officio: CCEA)
 - Dr Eithne Ní Ghallchobhair
-- Dr Gearóid Ó Cleircín (ex officio: Fiontar & Scoil na Gaeilge, DCU)
+- Dr Gearóid Ó Cleircín (ex officio: Gaois, Fiontar & Scoil na Gaeilge, DCU)
 - Helen Hegarty
 - Labhrás Ó Finneadha/Dr Fionnuala de Barra-Cusack (ex officio: European Parliament)
 - Máire Feiritéar
