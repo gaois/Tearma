@@ -2,7 +2,7 @@
 
 To search for a term, enter it in the search box. You don’t need to specify a language. The search is not case-sensitive i.e. it doesn’t matter if you write **term** or **TERM** (or even **TeRm**), you will get the same results.
 
-When you search for a term, 'Exact matches' will be listed first and underneath those you will see 'Related matches' - that is every multi-word term in the database which contains the term you entered. The search related terms works on the word level. For example, if you search **verse**, you will find **free verse** and **verse dialogue** among the 'Related matches', but you won’t find **adverse** or **overseas**.
+When you search for a term, 'Exact matches' will be listed first and underneath those you will see 'Related matches' - that is every multi-word term in the database which contains the term you entered. The search related terms work on the word level. For example, if you search **verse**, you will find **free verse** and **verse dialogue** among the 'Related matches', but you won’t find **adverse** or **overseas**.
 
 ## Similar words
 
@@ -12,7 +12,7 @@ When you search for a word, you will see a short list of similarly spelt words d
 
 ## Inflected forms
 
-Inflected forms of terms are stored in the database and it uses this information to find related terms in every search. For example, if you search for the term ***monarcha***, under 'Related matches' will be listed every term which contains the word ***monarcha***, or any of its inflected forms (***monarchan***, ***monarchana***), with or without lenition (*séimhiú*): ***limistéar monarchana***, ***feirmeoireacht mhonarchan***, and so on.
+Inflected forms of terms are stored in the database and it uses this information to find related terms in every search. For example, if you search for the term ***monarcha***, under 'Related matches' you will see every term which contains the word ***monarcha*** or any of its inflected forms (***monarchan***, ***monarchana***), with or without lenition (*séimhiú*): ***limistéar monarchana***, ***feirmeoireacht mhonarchan***, and so on.
 
 ## Punctuation
 
