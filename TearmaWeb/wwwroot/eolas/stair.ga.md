@@ -18,10 +18,12 @@ Faoi Chéim III (2008-11) cuireadh tuilleadh ábhair leis an mbunachar, ainmneac
 
 I rith Chéim IV (2011-14), ceanglaíodh an bunachar le Nua-Chorpas na hÉireann agus cuireadh ordlathas nua réimsí eolais i bhfeidhm tríd síos. Chomh maith leis sin, rinneadh taighde ar mhórbhailiúchán téarmaí ealaíon agus críochnaíodh an taighde ar an bhfoclóir spóirt. Foilsíodh leagan den bhunachar ar CD-ROM agus forbraíodh leagan do ghléasanna móibíleacha, m.téarma.ie.
 
-I rith Chéim V (2014-17), forbraíodh cnuasach nua téarmaí teicneolaíochta faisnéise. Athraíodh seoladh idirlín an Bhunachair Náisiúnta Téarmaíochta don Ghaeilge ó *focal.ie* go *téarma.ie* ar an 1 Márta 2015.
+I rith Chéim V (2014-17), forbraíodh cnuasach nua téarmaí teicneolaíochta faisnéise. Athraíodh seoladh an Bhunachair Náisiúnta Téarmaíochta don Ghaeilge ó *focal.ie* go *téarma.ie* ar an 1 Márta 2015.
 
 ![téarma.ie V3](tearmaV3.jpg)
 
-Táthar anois i mbun chéim VI den tionscadal agus mar chuid den obair, seoladh **suíomh nua agus córas úrnua eagarthóireachta** ar an 13 Márta 2019. Tá an córas seo bunaithe ar **Terminologue**, ardán foinse oscailte a d’fhorbair Fiontar & Scoil na Gaeilge don Bhunachar Náisiúnta Téarmaíochta. Is féidir tuilleadh a fháil amach faoi Terminologue [anseo](http://www.terminologue.org/). 
+Faoi Chéim VI (2017-20), seoladh suíomh nua agus córas úrnua eagarthóireachta ar an 14 Márta 2019. Tá an córas seo bunaithe ar Terminologue, ardán foinse oscailte a d’fhorbair Gaois, Fiontar & Scoil na Gaeilge (Fiontar mar a bhí) don Bhunachar Náisiúnta Téarmaíochta. Is féidir tuilleadh a fháil amach faoi Terminologue [anseo](http://www.terminologue.org/). 
 
 ![téarma.ie V4](tearmaV4.jpg)
+
+Táthar anois i mbun Chéim VII (2021-23).
