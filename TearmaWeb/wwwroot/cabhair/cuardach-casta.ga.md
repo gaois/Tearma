@@ -10,7 +10,7 @@ Is féidir do thorthaí cuardaigh a theorannú do théarmaí aonfhoclacha amhái
 
 ## Fairsinge
 
-Is féidir do thorthaí cuardaigh a theorannú do théarmaí dar tús, dar críoch nó do théarmaí a chuimsíonn focal no sraith carachtar áirithe. 
+Is féidir do thorthaí cuardaigh a theorannú do théarmaí dar tús, dar críoch nó do théarmaí a chuimsíonn focal nó sraith carachtar áirithe. 
 
 ## Teanga
 
@@ -30,7 +30,7 @@ Is féidir teaglaim ar bith de chritéir a roghnú agus cuardach á dhéanamh ag
 
 Más rud é nach bhfaigheann tú aon torthaí ar do chuardach, seans go bhfuil critéir róchúnga roghnaithe agat. Sa chás sin, is fiú féachaint siar ar na critéir agus iad a leathnú amach ar bhealach éigin.
 
-# Saoróga sa Cuardach Casta
+# Saoróga sa Chuardach Casta
 
 Bealach cliste chun solúbthacht a chur leis an gCuardach Casta is ea saoróga a úsáid sa bhosca 'Foclaíocht/Wording'. Is éard is saoróg ann siombail a sheasann do charachtar (nó sraith carachtar) neamhshonraithe eile. Seo iad na saoróga is féidir a úsáid:
 
