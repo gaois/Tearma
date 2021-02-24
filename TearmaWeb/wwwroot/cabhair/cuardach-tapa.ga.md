@@ -20,7 +20,7 @@ Déanann an próiseas cuardaigh neamhaird de chomharthaí poncaíochta ar nós a
 
 ## Comhfhocail
 
-Tá roinnt focal sa Bhéarla ar féidir iad a scríobh mar chomhfhocail nó mar théarmaí ilfhoclacha, le fleiscín nó gan fleiscín. Cuir i gcás rain ***forest/rainforest***, ***toothpick/tooth-pick***. Aithníonn an Cuardach Tapa gur mar seo atá. Má scríobhann tú ceachtar foirm, déanfaidh an t-inneall cuardaigh na foirmeacha eile a thairiscint duit comh maith, más ann dóibh sa bhunachar. Mar shampla, má chuardaíonn tú ***tooth-pick***, ní bhfaighidh tú é mar níl a leithéid de théarma sa bhunachar, ach gheobhaidh tú an comhfhocal ***toothpick***. Oibríonn sé seo sa treo eile chomh maith: má chuardaíonn tú an comhfhocal ***rainforest***, gheobhaidh tú ***rain forest***.
+Tá roinnt focal sa Bhéarla ar féidir iad a scríobh mar chomhfhocail nó mar théarmaí ilfhoclacha, le fleiscín nó gan fleiscín. Cuir i gcás ***rain forest/rainforest***, ***toothpick/tooth-pick***. Aithníonn an Cuardach Tapa gur mar seo atá. Má scríobhann tú ceachtar foirm, déanfaidh an t-inneall cuardaigh na foirmeacha eile a thairiscint duit comh maith, más ann dóibh sa bhunachar. Mar shampla, má chuardaíonn tú ***tooth-pick***, ní bhfaighidh tú é mar níl a leithéid de théarma sa bhunachar, ach gheobhaidh tú an comhfhocal ***toothpick***. Oibríonn sé seo sa treo eile chomh maith: má chuardaíonn tú an comhfhocal ***rainforest***, gheobhaidh tú ***rain forest***.
 
 ## Focail atá sa dá theanga
 
