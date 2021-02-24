@@ -8,7 +8,7 @@ Liosta coincheap (nó iontrálacha) a bhíonn sna torthaí cuardaigh. Is éard i
 
 Bíonn gach iontráil luaite le réimse. Bíonn an réimse (nó na réimsí) liostaithe ar dtús, os cionn fhearann na dtéarmaí. Bíonn eolas breise i dtaobh bhrí an choincheapa (mar shampla sainmhíniú agus sampla úsáide) liostaithe faoi bhun fhearann na dtéarmaí.
 
-Bíonn hais ar thaobh na láimhe clé ag barr gach iontráil. Má chliceálann tú ar ar an hais seo tógfar chuig URL uathúil na hiontrála tú.
+Bíonn hais ar thaobh na láimhe clé ag barr gach iontráil. Má chliceálann tú ar an hais seo tógfar chuig URL uathúil na hiontrála tú.
 
 ## Breis mionsonraí
 
