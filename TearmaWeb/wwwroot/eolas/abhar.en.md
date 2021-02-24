@@ -22,17 +22,17 @@ Some dictionaries compiled by external editors and published by Foras na Gaeilge
 
 ### Domain-specific lists
 
-In some cases, terminology lists relating to certain subjects were compiled and disseminated to inspectors and teachers of those subjects, and copies are supplied to the public on demand. Some of these lists are works in progress which are updated from time to time with a view to publishing them as a result of new projects in planning, e.g. Archaeology Terms, History Terms, Mathematics Terms, Sports Terms. Other lists were incorporated into terminology dictionaries being compiled for publication, e.g. Metalwork, Technical Drawing, and Woodwork lists were incorporated into the *Dictionary of Trades and Technology*, *Accounting and Business Management Terms* and *Office Terms* were incorporated into *Dictionary of Business Studies*, and the original Mathematics list was included in *Dictionary of Science*.
+In some cases, terminology lists relating to certain subjects were compiled and disseminated to inspectors and teachers of those subjects. Copies are supplied to the public on demand. Some of these lists are works in progress which are updated from time to time with a view to publishing them as a result of new projects in planning, e.g. Archaeology Terms, History Terms, Mathematics Terms, Sports Terms. Other lists were incorporated into terminology dictionaries being compiled for publication, e.g. Metalwork, Technical Drawing and Woodwork lists were incorporated into the *Dictionary of Trades and Technology*, *Accounting and Business Management Terms* and *Office Terms* were incorporated into *Dictionary of Business Studies*, and the original Mathematics list was included in *Dictionary of Science*.
 
 Further domain-specific lists were compiled in collaboration with external organizations who were preparing handbooks or terminology glossaries or software products in their specific domains. The Terminology Committee participated in 15 such publications and in some software products, including works published by An Garda Síochána, Birdwatch Ireland, RTÉ, Sherkin Island Marine Station, Óglaigh na hÉireann, Telecom Éireann (now Eir), The National Botanical Gardens, Microsoft Corporation, Sony Corporation.
 
 ### Miscellaneous terminology
 
-Terminology resulting from enquiries received from the public over the years was compiled in the form of miscellaneous lists. Two substantial collections of miscellaneous terminology based on the periods 1985-2000 and 2000-2005 were compiled and published on the Internet (www.acmhainn.ie). This and subsequent miscellaneous terminology is input into the téarma.ie database.
+Terminology resulting from enquiries received from the public over the years was compiled in the form of miscellaneous lists. Two substantial collections of miscellaneous terminology based on the periods 1985-2000 and 2000-2005 were compiled and published online (www.acmhainn.ie). This and subsequent miscellaneous terminology is input into the téarma.ie database.
 
 ### The establishment of a national terminology database
 
-The database focal.ie/téarma.ie was developed in order to manage and present the terminology stock accumulated by the Terminology Committee. Firstly, the terminology sources already available in electronic format were input. Other sources were scanned and input. Thus, a significant number of sources, published and unpublished, were compiled in one central resource, constituting a major benefit to the public and to staff members in having ready access to the complete terminology stock. This achievement, however, generated various streams of questions which the Terminology Committee and staff at Fiontar & Scoil na Gaeilge have been working to address.
+The database focal.ie/téarma.ie was developed in order to manage and present the terminology stock accumulated by the Terminology Committee. Firstly, the terminology sources already available in electronic format were input. Other sources were scanned and input. Thus, a significant number of sources, published and unpublished, were compiled in one central resource, constituting a major benefit to the public and to staff members in having ready access to the complete terminology stock. This achievement, however, generated various streams of questions which the Terminology Committee and Gaois staff have been working to address.
 
 ### The main kinds of questions being generated are
 
@@ -48,7 +48,7 @@ The database focal.ie/téarma.ie was developed in order to manage and present th
 
 ### Editorial methods
 
-In order to address the questions above, the following tasks are being carried out by Terminology Committee staff and by staff at Fiontar & Scoil na Gaeilge, and on advice from the Terminology Committee:
+In order to address the questions above, the following tasks are being carried out by Terminology Committee staff and by Gaois staff on advice from the Terminology Committee:
 
 - disambiguation tags are assigned to different concepts to which the same term has been designated;
 - choices are made between different terms designated to the same concept on the basis of accuracy, popularity of usage, transparency, co-ordination, age of the collection in which each term is found – the other terms are tagged 'superseded';
