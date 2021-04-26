@@ -13,16 +13,15 @@ Is féidir teagmháil dhíreach a dhéanamh le foireann an Choiste Téarmaíocht
 - Áine Ní Chiaráin
 - Andreas Vogel
 - Antain Mag Shamhráin
-- Austin Ó Duibh/Treasa Ní Lochlainn (ex officio: An Coimisiún Eorpach)
+- Colmcille Ó Monacháin/Donal Foley (ex officio: An Coimisiún Eorpach)
 - Caitríona Ní Chathail
 - Cathal Mac Coille
-- Cathal Mac Gabhann/Michael Greene/Éanna Ó Ceallaigh (ex officio: Ardrúnaíocht Chomhairle na nAirí)
+- Ciarán Mac Raghnaill (ex officio: Rannóg an Aistriúcháin)
+- Róisín Ní Dhuibhir/Michael Greene/Éanna Ó Ceallaigh/PJ Mac Gabhann (ex officio: Ardrúnaíocht Chomhairle na nAirí)
 - Dr Dónal Ó Muirthuile
 - Dr Dónall Ó Baoill
-- Dr Donncha Ó Mathúna
 - Dr Éamonn Ó hÓgáin
 - Eibhlín Nic Gearailt (ex officio: CCEA)
-- Dr Eithne Ní Ghallchobhair
 - Dr Gearóid Ó Cleircín (ex officio: Gaois, Fiontar & Scoil na Gaeilge, DCU)
 - Helen Hegarty
 - Labhrás Ó Finneadha/Dr Fionnuala de Barra-Cusack (ex officio: Parlaimint na hEorpa)
@@ -34,4 +33,3 @@ Is féidir teagmháil dhíreach a dhéanamh le foireann an Choiste Téarmaíocht
 - Pádraig Ó Gaora
 - Dr Pádraig Ó Mianáin (ex officio: FNBG, Foras na Gaeilge)
 - Seosamh Ó Murchú (ex officio: An Gúm, Foras na Gaeilge)
-- Siobhan Ní Shíthigh
