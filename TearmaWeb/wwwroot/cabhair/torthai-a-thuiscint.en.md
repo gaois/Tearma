@@ -50,7 +50,7 @@ As you look through the list of results, you can click any term, in any language
 
 ![](torthai-a-thuiscint-05.jpg)
 
-A downward arrow is displayed at the end of each English and Irish term - see the figure below for example. If you click on this arrow, you will be presented with a list of links to search the term in other Irish language resources. These links are displayed even if the term is not available in the these resources. Above these links there is a version of the term that can easily be copied and pasted.
+A downward arrow is displayed at the end of each English and Irish term - see the figure above for example. If you click on this arrow, you will be presented with a list of links to search the term in other Irish language resources. These links are displayed even if the term is not available in the these resources. Above these links there is a version of the term that can easily be copied and pasted.
 
 If you click on the arrow next to an English term, you will be presented with links to the lexicographical websites [foclóir.ie](https://www.focloir.ie/en/) and [teanglann.ie](https://www.teanglann.ie/en/) as well as to the corpus and terminology resources at [gaois.ie](https://www.gaois.ie/en/).
 
