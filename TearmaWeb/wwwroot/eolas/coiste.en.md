@@ -10,21 +10,20 @@ The Terminology Committee staff can be contacted by emailing <tearmai@forasnagae
 
 - Fidelma Ní Ghallchobhair, Chair
 - Donla uí Bhraonáin, Vice-chair
-- Áine Ní Chiaráin
 - Andreas Vogel
 - Antain Mag Shamhráin
-- Colmcille Ó Monacháin/Donal Foley (ex officio: European Commission)
+- Colmcille Ó Monacháin/Donal Foley/Helen Hegarty (ex officio: European Commission)
 - Caitríona Ní Chathail
 - Cathal Mac Coille
+- Cathal Mac Gabhann/Éanna Ó Ceallaigh/Gráinne Aylward/Michael Greene/PJ Mac Gabhann (ex officio: General Secretariat of the Council of Ministers)
 - Ciarán Mac Raghnaill (ex officio: Rannóg an Aistriúcháin)
-- Róisín Ní Dhuibhir/Michael Greene/Éanna Ó Ceallaigh/PJ Mac Gabhann (ex officio: General Secretariat of the Council of Ministers)
+- Darragh Murphy
 - Dr Dónal Ó Muirthuile
 - Dr Dónall Ó Baoill
 - Dr Éamonn Ó hÓgáin
 - Eibhlín Nic Gearailt (ex officio: CCEA)
+- Dr Fionnuala de Barra-Cusack (ex officio: European Parliament)
 - Dr Gearóid Ó Cleircín (ex officio: Gaois, Fiontar & Scoil na Gaeilge, DCU)
-- Helen Hegarty
-- Labhrás Ó Finneadha/Dr Fionnuala de Barra-Cusack (ex officio: European Parliament)
 - Máire Feiritéar
 - Matt Hussey
 - Micheál Ó Sé
