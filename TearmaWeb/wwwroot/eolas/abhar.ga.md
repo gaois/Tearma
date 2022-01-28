@@ -2,7 +2,7 @@
 
 ## Foilseacháin an Choiste Téarmaíochta
 
-Ba chóir a thabhairt faoi deara go bhfuil eagarthóireacht á déanamh ar an mbunachar go seasta agus más ea nach bhfuil sonraí na bhfoclóirí seo ar aon dul leis na leaganacha foilsithe i gcónaí.
+Ba chóir a thabhairt faoi deara go bhfuil eagarthóireacht á déanamh ar an mbunachar go seasta agus más ea, nach bhfuil sonraí na bhfoclóirí seo ar aon dul leis na leaganacha foilsithe i gcónaí.
 
 ## Stoc Téarmaíochta an Choiste Téarmaíochta
 
@@ -18,11 +18,11 @@ Rinneadh formhór na hoibre seo trí fhochoistí saineolaithe sna réimsí eolai
 
 Le blianta beaga anuas, is go leictreonach a fhoilsítear torthaí obair na bhfochoistí, ar téarma.ie. Na bailiúcháin is déanaí a foilsíodh ná *Téarmaí Teicneolaíocht Faisnéise, Téarmaí Ealaíon* agus *an Foclóir Nua Spóirt*.  
 
-Thairis sin, tá roinnt foclóirí a thiomsaigh eagarthóirí seachtracha a d’fhoilsigh Foras na Gaeilge nó a bhfuarthas cead ó na heagarthóirí ina leith cuimsithe sa stoc téarmaíochta seo, m.sh. *An Tobar* [lámhleabhar téarmaíocht don earnáil phoiblí], *Foclóir Parlaiminte, Foclóir Fealsaimh, Foclóir Reiligiúin, Foclóir FIONTAR, Gluais de Théarmaí Teileachumarsáide, Lámhleabhar Bia agus Dí, Lámhleabhar Miondíola*.
+Thairis sin, tá roinnt foclóirí a thiomsaigh eagarthóirí seachtracha a d’fhoilsigh Foras na Gaeilge, nó a bhfuarthas cead ó na heagarthóirí ina leith, cuimsithe sa stoc téarmaíochta seo, m.sh. *An Tobar* [lámhleabhar téarmaíocht don earnáil phoiblí], *Foclóir Parlaiminte, Foclóir Fealsaimh, Foclóir Reiligiúin, Foclóir FIONTAR, Gluais de Théarmaí Teileachumarsáide, Lámhleabhar Bia agus Dí, Lámhleabhar Miondíola*.
 
 ### Liostaí sainréimse
 
-I gcásanna eile, tiomsaíodh liostaí téarmaíochta bainteach le hábhair faoi leith agus rinneadh iad a scaipeadh ar chigirí agus ar mhúinteoirí sna hábhair sin. Cuirtear cóipeanna ar fáil do bhaill den phobal ar iarratas. Cuid de na liostaí seo, is saothair idir lámha iad a dhéantar a nuashonrú ó am go chéile i dtreo tionscadal éagsúil atá beartaithe, m.sh. Téarmaí Matamaitice, Téarmaí Seandálaíochta, Téarmaí Spóirt, Téarmaí Staire. Cuimsíodh cuid eile de na liostaí i sainfhoclóirí de réir mar a bhídís á n-ullmhú, m.sh. foilsíodh na liostaí san Adhmadóireacht, sa Líníocht Theicniúil agus sa Mhiotalóireacht in *Foclóir Ceirdeanna agus Teicneolaíochta*, foilsíodh *Téarmaí Oifige* agus *Cuntasaíocht agus Eagrú Gnó* in *Foclóir Staidéir Ghnó*, agus foilsíodh bunleagan den liosta Matamaitice in *Foclóir Eolaíochta*.
+I gcásanna eile, tiomsaíodh liostaí téarmaíochta bainteach le hábhair faoi leith agus rinneadh iad a scaipeadh ar chigirí agus ar mhúinteoirí sna hábhair sin. Cuirtear cóipeanna ar fáil do bhaill den phobal ar iarratas. Cuid de na liostaí seo, is saothair idir lámha iad a dhéantar a nuashonrú ó am go chéile i dtreo tionscadal éagsúil atá beartaithe, m.sh. Téarmaí Matamaitice, Téarmaí Seandálaíochta, Téarmaí Spóirt, Téarmaí Staire. Cuimsíodh cuid eile de na liostaí i sainfhoclóirí de réir mar a bhídís á n-ullmhú, m.sh. foilsíodh na liostaí san Adhmadóireacht, sa Líníocht Theicniúil agus sa Mhiotalóireacht in *Foclóir Ceirdeanna agus Teicneolaíochta*, foilsíodh Téarmaí Oifige agus Cuntasaíocht agus Eagrú Gnó in *Foclóir Staidéir Ghnó*, agus foilsíodh bunleagan den liosta Matamaitice in *Foclóir Eolaíochta*.
 
 Liostaí eile fós, tiomsaíodh iad i gcomhar le heagraíochtaí seachtracha a bhí i mbun lámhleabhar, gluais téarmaíochta nó táirgí bogearra a ullmhú ina sainréimse féin. Bhí an Coiste Téarmaíochta páirteach i 15 fhoilseachán den chineál seo, agus i roinnt táirgí bogearra. Ina measc tá saothair a d’fhoilsigh An Garda Síochána, An Roinn Comhshaoil agus Údarás Áitiúil, Birdwatch Ireland, Garraithe Náisiúnta na Lus, Óglaigh na hÉireann, RTÉ, Sherkin Island Marine Station, Telecom Éireann (Eir anois), Microsoft Corporation agus Sony Corporation.
 
@@ -32,7 +32,7 @@ Bailíodh na téarmaí a d’eascair as fiosrúcháin ón bpobal a fuarthas in i
 
 ### Bunachar náisiúnta téarmaíochta á bhunú
 
-Beartaíodh bunachar téarmaíochta focal.ie/téarma.ie a fhorbairt chun bainistiú agus léiriú a dhéanamh ar iomlán an ábhair a bhí bailithe ag an gCoiste Téarmaíochta. Mar chéad chéim, ionchuireadh an líon foinsí a bhí ar fáil cheana féin i bhfoirm leictreonach. Rinneadh foinsí eile a scanadh agus a ionchur. D’fhág sin go raibh iliomad foinsí, idir ábhar foilsithe agus ábhar neamhfhoilsithe, tiomsaithe le chéile in aon mhórfhoinse amháin. Buntáiste an-mhór ab ea é seo ó thaobh rochtain a bheith ag an bpobal agus ag an bhfoireann ar an stoc téarmaíochta go réidh. Gineadh sraitheanna éagsúla ceisteanna as an obair thiomsúcháin seo, áfach, agus tá obair leanúnach ar bun chun dul i ngleic leis na ceisteanna seo.
+Beartaíodh bunachar téarmaíochta focal.ie/téarma.ie a fhorbairt chun bainistiú agus léiriú a dhéanamh ar iomlán an ábhair a bhí bailithe ag an gCoiste Téarmaíochta. Mar chéad chéim, ionchuireadh an líon foinsí a bhí ar fáil cheana féin i bhfoirm leictreonach. Ansin, rinneadh foinsí eile a scanadh agus a ionchur. D’fhág sin go raibh iliomad foinsí, idir ábhar foilsithe agus ábhar neamhfhoilsithe, tiomsaithe le chéile in aon mhórfhoinse amháin. Buntáiste an-mhór ab ea é seo ó thaobh rochtain a bheith ag an bpobal agus ag an bhfoireann ar an stoc téarmaíochta go réidh. Gineadh sraitheanna éagsúla ceisteanna as an obair thiomsúcháin seo, áfach, agus tá obair leanúnach ar bun chun dul i ngleic leis na ceisteanna seo.
 
 Is iad na cineálacha ceisteanna is mó atá ag teacht chun cinn ná:
 
