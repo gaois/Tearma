@@ -50,7 +50,7 @@ Agus tú ag féachaint trí liosta na dtorthaí, is féidir leat cliceáil ar th
 
 ![](torthai-a-thuiscint-05.jpg)
 
-Taispeántar saighead anuas i ndiaidh gach téarma Béarla agus Gaeilge - féach an léaráid thíos mar shampla. Má chliceáiltear ar an tsaighead seo, taispeánfar liosta nasc ónar féidir an téarma a chuardach i bhfoinsí eile Gaeilge. Bíonn na naisc seo ann fiú mura bhfuil fáil ar aon eolas faoin téarma sna foinsí sin. Os cionn na nasc úd, tugtar leagan den téarma ar féidir é a chóipeáil agus a ghreamú go furasta.
+Taispeántar saighead anuas i ndiaidh gach téarma Béarla agus Gaeilge - féach an léaráid thuas mar shampla. Má chliceáiltear ar an tsaighead seo, taispeánfar liosta nasc ónar féidir an téarma a chuardach i bhfoinsí eile Gaeilge. Bíonn na naisc seo ann fiú mura bhfuil fáil ar aon eolas faoin téarma sna foinsí sin. Os cionn na nasc úd, tugtar leagan den téarma ar féidir é a chóipeáil agus a ghreamú go furasta.
 
 Má chliceáiltear ar an tsaighead in aice le téarma Béarla, gheofar naisc chuig na suíomhanna foclóireachta [foclóir.ie](https://www.focloir.ie/ga/) agus [teanglann.ie](https://www.teanglann.ie/ga/) chomh maith leis na hacmhainní corpais agus téarmaíochta atá ar [gaois.ie](https://www.gaois.ie/ga/).
 
