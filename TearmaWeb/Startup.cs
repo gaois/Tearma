@@ -8,6 +8,7 @@ using System;
 using TearmaWeb.Rules;
 using BotDetect.Web;
 using Microsoft.AspNetCore.Http;
+using System.Collections.Generic;
 
 namespace TearmaWeb
 {
@@ -33,7 +34,12 @@ namespace TearmaWeb
             });
 
             services.AddMiniProfiler();
-            services.AddExceptional(_configuration.GetSection("Exceptional"));
+            services.AddExceptional(_configuration.GetSection("Exceptional"), settings => {
+                settings.Ignore.Types = new HashSet<string>() {
+                    "System.InvalidOperationException",
+                    "Microsoft.AspNetCore.Connections.ConnectionResetException"
+                };
+            });
             services.AddWebOptimizer(pipeline =>
             {
                 pipeline.MinifyCssFiles("furniture/**/*.css");
