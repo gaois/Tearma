@@ -51,8 +51,12 @@ namespace TearmaWeb
             services.AddScoped<Controllers.Broker>();
         }
 
-		public void Configure(IApplicationBuilder app) {
-			if (_environment.IsDevelopment()) {
+		public void Configure(IApplicationBuilder app, Microsoft.AspNetCore.Hosting.IHostingEnvironment env) {
+
+            //important so that Prettify knows where to look for sound files:
+            Controllers.Prettify.ContentPath=env.ContentRootPath;
+
+            if (_environment.IsDevelopment()) {
 				app.UseDeveloperExceptionPage();
 				app.UseStatusCodePages();
             } else {

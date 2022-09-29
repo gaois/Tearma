@@ -54,9 +54,53 @@ function hoff(label, i) {
 $(document).ready(function () { //hide term menu on click-off
     $(document).on("click", function (e) {
         var $clicked = $(e.target);
-        if ($clicked.closest("#termMenu").length == 0 && $clicked.closest(".clickme").length == 0)  $("#termMenu").fadeOut("fast");
+        if ($clicked.closest("#termMenu").length == 0 && $clicked.closest(".clickme").length == 0 && $clicked.closest(".playme").length == 0)  $("#termMenu").fadeOut("fast");
     });
 });
+function playerMenuClick(clicker) {
+    var $clicker = $(clicker);
+
+    $("#termMenu").remove();
+    var $menu = $("<div id='termMenu'></div>");
+
+    if ($clicker.attr("data-U")!="") {
+        var $item = $("<div class='soundItem'></div>");
+        $item.append("<button data-filename='" + $clicker.attr("data-U") + "'><i class='fas fa-volume-up'></i></button>");
+        $item.append("<span class='title ga' lang='ga'>Cúige Uladh</span>");
+        $item.append("<span class='title en' lang='en'>Ulster dialect</span>");
+        $item.appendTo($menu);
+    }
+    if ($clicker.attr("data-C")!="") {
+        var $item = $("<div class='soundItem'></div>");
+        $item.append("<button data-filename='" + $clicker.attr("data-C") + "'><i class='fas fa-volume-up'></i></button>");
+        $item.append("<span class='title ga' lang='ga'>Cúige Chonnacht</span>");
+        $item.append("<span class='title en' lang='en'>Connacht dialect</span>");
+        $item.appendTo($menu);
+    }
+    if ($clicker.attr("data-M")!="") {
+        var $item = $("<div class='soundItem'></div>");
+        $item.append("<button data-filename='" + $clicker.attr("data-M") + "'><i class='fas fa-volume-up'></i></button>");
+        $item.append("<span class='title ga' lang='ga'>Cúige Mumhan</span>");
+        $item.append("<span class='title en' lang='en'>Munster dialect</span>");
+        $item.appendTo($menu);
+    }
+
+    var $item = $("<div class='instructions'></div>");
+    $item.append("<div class='ga' lang='ga'>Gineadh na comhaid fuaime seo le córas fóinéimithe agus sintéisithe <em>Abair</em> (TCD). Má tá aiseolas agat ina dtaobh, ní mór é a chur go díreach chuig foireann <em>Abair</em> ag <a href='mailto:abair.tcd@gmail.com'>abair.tcd@gmail.com</a>. Déanfar na comhaid ar <em>Téarma</em> a athghiniúint go tráthrialta.</div>");
+    //$item.append("<div class='en' lang='en'>Bla bla</div>");
+    $item.appendTo($menu);
+
+    $menu.find("button").on("click", play);
+    $menu.hide().insertAfter($clicker).slideDown("fast");
+}
+function play(e) {
+    var $player = $(e.delegateTarget);
+    var url = $player.attr("data-filename");
+    $player.find("audio").remove();
+    $player.append("<audio><source src=\""+url+"\" type=\"audio/wav\"></audio>");
+    //$player.append("<audio><source src=\"" + url + "\" type=\"audio/mp3\"></audio>");
+    $player.find("audio").toArray()[0].play();
+}
 function termMenuClick(clicker) {
     var $clicker = $(clicker);
     var $desig = $clicker.closest(".prettyDesig");

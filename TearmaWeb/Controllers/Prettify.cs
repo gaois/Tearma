@@ -4,11 +4,30 @@ using System;
 using System.Collections.Generic;
 using System.Text.Encodings.Web;
 using System.Text.RegularExpressions;
+using System.IO;
 
 namespace TearmaWeb.Controllers
 {
     public class Prettify {
+		public static string ContentPath=""; //set by Startup.cs; this tells me where to look for sound files
 		private static Models.Home.Lookups Lookups;
+
+		//Get the paths of all soundfiles (if any) for this term:
+		private static Dictionary<string, string> GetSounds(string lang, string wording) {
+			Dictionary<string, string> ret = new Dictionary<string, string>();
+			if (lang == "ga") {
+				string dirPath = Path.Combine(ContentPath, "wwwroot\\sounds");
+				wording = string.Concat(wording.Split(Path.GetInvalidFileNameChars())); //remove invalid filename characters
+                string pattern = "*__" + wording.Replace(" ", "_") + ".wav";
+				foreach (string filePath in System.IO.Directory.GetFiles(dirPath, pattern, SearchOption.AllDirectories))
+				{
+					string webFilePath="/sounds"+filePath.Substring(dirPath.Length).Replace("\\", "/");
+					string dialectAbbr = Path.GetFileName(filePath).Substring(0, 1);
+					if(!ret.ContainsKey(dialectAbbr)) ret.Add(dialectAbbr, webFilePath);
+				}
+			}
+			return ret;
+        }
         
 		public static string EntryLink(int id, string json, string primLang) {
 			Models.Data.Entry entry=JsonConvert.DeserializeObject<Models.Data.Entry>(json);
@@ -134,6 +153,17 @@ namespace TearmaWeb.Controllers
 			string nonessential=(desig.nonessential==1 ? " nonessential" : "");
 			string ret="<div class='prettyDesig"+grey+nonessential+"' data-lang='"+desig.term.lang+"' data-wording='"+HtmlEncoder.Default.Encode(desig.term.wording)+"'>";
 			if(withLangLabel) ret+=Prettify.Lang(desig.term.lang);
+			
+			Dictionary<string,string> sounds=GetSounds(desig.term.lang, desig.term.wording);
+			if (sounds.Count > 0) {
+				ret += "<span class='playme' onclick='playerMenuClick(this)'";
+				foreach(string dialectKey in sounds.Keys)
+				{
+					ret += " data-"+dialectKey+"='"+sounds[dialectKey]+"'";
+				}
+				ret += "><i class=\"fas fa-volume-up\"></i></span> ";
+			}
+
 			ret+=Prettify.Wording(desig.term.lang, desig.term.wording, desig.term.annots);
 			ret+="<span class='clickme' onclick='termMenuClick(this)'>▼</span>";
 			if(desig.accept!=null && desig.accept>0) ret+=" "+Prettify.Accept(desig.accept ?? 0);

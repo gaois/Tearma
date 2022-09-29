@@ -53,7 +53,7 @@
 
     <link href="@BotDetect.Web.CaptchaUrls.Absolute.LayoutStyleSheetUrl" rel="stylesheet" type="text/css" />
 </head>
-<body>
+<body class="@((bool)ViewData["IsSuper"] ? "super" : "")">
     <environment exclude="Production">
         <mini-profiler />
     </environment>
