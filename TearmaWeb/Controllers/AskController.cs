@@ -62,23 +62,23 @@ namespace TearmaWeb.Controllers
 					model.mode="thanks";
 					string subject = "Fiosrú téarmaíochta ó tearma.ie";
 					string html = "";
-					if(termEN != "") html += "AN TÉARMA BÉARLA:<br/>" + termEN + "<br/><br/>";
-					if(termXX != "") html += "AN TÉARMA I DTEANGA(CHA) EILE:<br/>" + termXX + "<br/><br/>";
-					if(context != "") html += "COMHTHÉACS:<br/>" + context + "<br/><br/>";
-					if(def != "") html += "SAINMHÍNIÚ:<br/>" + def + "<br/><br/>";
-					if(example != "") html += "SAMPLA ÚSÁIDE:<br/>" + example + "<br/><br/>";
-					if(other != "") html += "AON EOLAS EILE:<br/>" + other + "<br/><br/>";
-					if(termGA != "") html += "MOLADH DON TÉARMA GAEILGE:<br/>" + termGA + "<br/><br/>";
-					if(name != "") html += "AINM:<br/>" + name + "<br/><br/>";
-					if(email != "") html += "SEOLADH RÍOMHPHOIST:<br/>" + email + "<br/><br/>";
-					if(phone != "") html += "UIMHIR GHUTHÁIN:<br/>" + phone + "<br/><br/>";
+					if(termEN != "") html += "AN TÉARMA BÉARLA:<br/>" + sanitiseHtml(termEN) + "<br/><br/>";
+					if(termXX != "") html += "AN TÉARMA I DTEANGA(CHA) EILE:<br/>" + sanitiseHtml(termXX) + "<br/><br/>";
+					if(context != "") html += "COMHTHÉACS:<br/>" + sanitiseHtml(context) + "<br/><br/>";
+					if(def != "") html += "SAINMHÍNIÚ:<br/>" + sanitiseHtml(def) + "<br/><br/>";
+					if(example != "") html += "SAMPLA ÚSÁIDE:<br/>" + sanitiseHtml(example) + "<br/><br/>";
+					if(other != "") html += "AON EOLAS EILE:<br/>" + sanitiseHtml(other) + "<br/><br/>";
+					if(termGA != "") html += "MOLADH DON TÉARMA GAEILGE:<br/>" + sanitiseHtml(termGA) + "<br/><br/>";
+					if(name != "") html += "AINM:<br/>" + sanitiseHtml(name) + "<br/><br/>";
+					if(email != "") html += "SEOLADH RÍOMHPHOIST:<br/>" + sanitiseHtml(email) + "<br/><br/>";
+					if(phone != "") html += "UIMHIR GHUTHÁIN:<br/>" + (phone) + "<br/><br/>";
 
 					using (var message = new MailMessage())
 					using (var client = GetClient())
 					{
-						message.To.Add(new MailAddress("tearmai@forasnagaeilge.ie"));
-						message.Bcc.Add(new MailAddress("tearma@dcu.ie"));
-						message.From = new MailAddress("noreply@tearma.ie", "Téarma");
+                        message.To.Add(new MailAddress("tearmai@forasnagaeilge.ie"));
+                        message.Bcc.Add(new MailAddress("tearma@dcu.ie"));
+                        message.From = new MailAddress("noreply@tearma.ie", "Téarma");
 						message.Subject = subject;
 						message.Body = html;
 						message.BodyEncoding = System.Text.Encoding.UTF8;
@@ -96,6 +96,10 @@ namespace TearmaWeb.Controllers
             IActionResult ret=View("Ask", model);
 			ViewData["IsSuper"]=isSuper(Request);	
 			return ret;
+		}
+
+		private string sanitiseHtml(string s) {
+			return s.Replace("<", "&lt;");
 		}
 
 		private SmtpClient GetClient()
