@@ -99,6 +99,7 @@ namespace TearmaWeb.Controllers
 		}
 
 		private string sanitiseHtml(string s) {
+			if (s is null) s = "";
 			return s.Replace("<", "&lt;");
 		}
 
