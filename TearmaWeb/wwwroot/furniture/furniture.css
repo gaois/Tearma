@@ -365,8 +365,12 @@ div.prettyEntry > a.permalink:hover {color: #999999;}
 body.printable div.prettyEntry > a.permalink {display: none;}
 
 div.prettyEntry .nonessential {display: none;}
-div.prettyEntry > .icon {text-decoration: none; color: #777777; border: 8px solid #eaedc8; border-radius: 20px; margin: -3px 0px 10px 10px; float: right; box-sizing: border-box; position: relative; z-index: 1; font-size: 16px;}
-div.prettyEntry > .icon:hover {color: #006699;}
+div.prettyEntry > a.detailsIcon { text-decoration: none; color: #999999; display: inline-block; margin-top: 10px; padding: 0px 0px 0px 2.65em; position: relative; text-align: left; background-color: #ffffff;}
+div.prettyEntry > a.detailsIcon:hover {color: #666666;}
+div.prettyEntry > a.detailsIcon > span.icon {text-decoration: none; color: #777777; border: 1px solid #e66c6c; border-radius: 20px; padding: 4px 7px; box-sizing: border-box; font-size: 16px; position: absolute; left: 5px; top: -3px;}
+div.prettyEntry > a.detailsIcon:hover > span.icon {color: #006699;}
+div.prettyEntry > a.detailsIcon > span.en { }
+div.prettyEntry > a.detailsIcon > span.ga { }
 
 div.prettyDomain {position: relative; background: linear-gradient(to right, #eeeeee 0%, transparent 85%); padding: 5px 5px; margin: 0px 0px 5px 0px; border-radius: 4px; color: #666666; box-sizing: border-box;}
 div.prettyDomain div.left {float: left; width: 49%; font-weight: bold; box-sizing: border-box;}

@@ -66,8 +66,6 @@ namespace TearmaWeb.Controllers
 			string rightLang="en"; if(primLang=="en") rightLang="ga";
 
 			string ret="<div class='prettyEntry'>";
-			ret+="<a class='showDetails icon fas fa-plus-square' style='display: none' href='javascript:void(null)' onclick='showDetails(this)' title='Taispeáin breis mionsonraí &middot; Show more details'></a>";
-			ret+="<a class='hideDetails icon fas fa-minus-square' style='display: none' href='javascript:void(null)' onclick='hideDetails(this)' title='Folaigh mionsonraí breise &middot; Hide details'></a>";
 
 			//permalink:
 			ret +="<a class='permalink' href='/id/"+id+"/'>#</a>";
@@ -139,7 +137,11 @@ namespace TearmaWeb.Controllers
 				if(count>0) ret+=subret;
 			}
 
-			ret +="<div class='clear'></div>";
+            ret += "<div class='clear'></div>";
+            
+            ret += "<a class='detailsIcon showDetails' style='display: none' href='javascript:void(null)' onclick='showDetails(this)'><span class='icon fas fa-angle-down'></span> <span class='ga'>Taispeáin breis sonraí</span> &middot; <span class='en'>Show more details</span></a>";
+            ret += "<a class='detailsIcon hideDetails' style='display: none' href='javascript:void(null)' onclick='hideDetails(this)'><span class='icon fas fa-angle-up'></span> <span class='ga'>Folaigh sonraí breise</span> &middot; <span class='en'>Hide details</span></a>";
+
 			ret+="</div>"; //.prettyEntry
 			return ret;
 		}
