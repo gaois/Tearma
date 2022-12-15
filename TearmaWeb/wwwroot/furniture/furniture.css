@@ -39,7 +39,8 @@ footer.footer div.icons {margin-top: 1.5em;}
 footer.footer div.icons a {font-size: 30px; text-decoration: none; margin-right: 0.5em; }
 footer.footer div.icons a.facebook {color: rgb(66, 103, 178);}
 footer.footer div.icons a.twitter {color: rgb(29, 161, 242);}
-footer.footer div.icons a.instagram {color: #666666; margin-left: -0.25em;}
+footer.footer div.icons a.youtube {color: rgb(255, 0, 0); margin-left: -0.125em;}
+footer.footer div.icons a.instagram {color: #666666; margin-left: -0.075em;}
 footer.footer div.icons a:hover {position: relative; top: -1px;}
 footer.footer div.icons a.email {font-size: 1rem; text-decoration: none; color: #006699; position: relative; top: -5px !important;}
 footer.footer div.icons a.email:hover {color: #2288bb;}
@@ -97,7 +98,8 @@ header.logobox div.icons {margin: 20px 0px 0px 0px;}
 header.logobox div.icons a {font-size: 30px; text-decoration: none; margin-right: 0.5em; }
 header.logobox div.icons a.facebook {color: rgb(66, 103, 178);}
 header.logobox div.icons a.twitter {color: rgb(29, 161, 242);}
-header.logobox div.icons a.instagram {color: #666666; margin-left: -0.25em;}
+header.logobox div.icons a.youtube {color: rgb(255, 0, 0); margin-left: -0.125em;}
+header.logobox div.icons a.instagram {color: #666666; margin-left: -0.075em;}
 header.logobox div.icons a:hover {position: relative; top: -1px;}
 @media (max-width: 1200px){
   header.logobox {padding: 0px 10px;}
