@@ -49,7 +49,7 @@ select distinct id, lang, wording from(
 
 truncate table words
 insert into words(term_id, word)
-select t.id, w.display_term
+select t.id, dbo.spartanize(w.display_term)
 from terms as t
 cross apply (
 	select display_term

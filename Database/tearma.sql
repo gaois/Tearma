@@ -1,4 +1,3 @@
-/****** Object:  UserDefinedFunction [dbo].[characterize]    Script Date: 14/09/2020 16:11:38 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -25,13 +24,12 @@ begin
 
 	return
 end
-
 GO
-/****** Object:  UserDefinedFunction [dbo].[expandDomainID]    Script Date: 14/09/2020 16:11:38 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
+
 CREATE function [dbo].[expandDomainID]
 (   
   @domainID int
@@ -61,7 +59,6 @@ begin
     return 
 end
 GO
-/****** Object:  UserDefinedFunction [dbo].[levenshtein]    Script Date: 14/09/2020 16:11:38 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -153,9 +150,7 @@ RETURN @LD
 --	END
 --print dbo.wrap(@z,3*(@n+1))
 END
-
 GO
-/****** Object:  UserDefinedFunction [dbo].[min3]    Script Date: 14/09/2020 16:11:38 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -172,9 +167,7 @@ BEGIN
     
     RETURN @m
 END
-
 GO
-/****** Object:  UserDefinedFunction [dbo].[substrings]    Script Date: 14/09/2020 16:11:38 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -200,18 +193,21 @@ begin
     end
     return 
 end
-
 GO
-/****** Object:  UserDefinedFunction [dbo].[spartanize]    Script Date: 14/09/2020 16:11:38 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-create function [dbo].[spartanize](@text nvarchar(255))
+CREATE function [dbo].[spartanize](@text nvarchar(255))
 returns nvarchar(255)
 with schemabinding
 begin
 	set @text=LOWER(@text);
+
+	set @text=TRIM(REPLACE(@text+' ', 'ize ', 'ise '))
+	set @text=TRIM(REPLACE(@text+' ', 'izing ', 'ising '))
+	set @text=TRIM(REPLACE(@text+' ', 'izes ', 'ises '))
+	set @text=TRIM(REPLACE(@text+' ', 'ized ', 'ised '))
 
 	set @text=REPLACE(@text, NCHAR(0x005F), '' collate Latin1_General_BIN2)
 	set @text=REPLACE(@text, NCHAR(0x203F), '' collate Latin1_General_BIN2)
@@ -818,17 +814,32 @@ begin
 	
 	return @text
 end
-
 GO
-/****** Object:  Table [dbo].[aux]    Script Date: 14/09/2020 16:11:38 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[terms](
+	[id] [int] NOT NULL,
+	[json] [nvarchar](max) COLLATE Latin1_General_CI_AI NULL,
+	[lang] [nvarchar](10) COLLATE Latin1_General_CI_AI NULL,
+	[wording] [nvarchar](255) COLLATE Latin1_General_CI_AS NULL,
+	[wordingSpartanized]  AS ([dbo].[spartanize]([wording])) PERSISTED
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
+CREATE CLUSTERED INDEX [IX_terms] ON [dbo].[terms]
+(
+	[id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+GO
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
 CREATE TABLE [dbo].[aux](
-	[coll] [nchar](10) NOT NULL,
-	[en] [nvarchar](max) NOT NULL,
-	[ga] [nvarchar](max) NOT NULL,
+	[coll] [nchar](10) COLLATE Latin1_General_CI_AI NOT NULL,
+	[en] [nvarchar](max) COLLATE Latin1_General_CI_AI NOT NULL,
+	[ga] [nvarchar](max) COLLATE Latin1_General_CI_AI NOT NULL,
 	[id] [int] IDENTITY(1,1) NOT NULL,
  CONSTRAINT [PK_aux] PRIMARY KEY CLUSTERED 
 (
@@ -836,51 +847,47 @@ CREATE TABLE [dbo].[aux](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[chars]    Script Date: 14/09/2020 16:11:38 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
 CREATE TABLE [dbo].[chars](
-	[base] [nvarchar](1) NOT NULL,
-	[variant] [nvarchar](1) NOT NULL
+	[base] [nvarchar](1) COLLATE Latin1_General_BIN2 NOT NULL,
+	[variant] [nvarchar](1) COLLATE Latin1_General_BIN2 NOT NULL
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[configs]    Script Date: 14/09/2020 16:11:38 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
 CREATE TABLE [dbo].[configs](
-	[id] [nvarchar](255) NOT NULL,
-	[json] [nvarchar](max) NULL,
+	[id] [nvarchar](255) COLLATE Latin1_General_CI_AI NOT NULL,
+	[json] [nvarchar](max) COLLATE Latin1_General_CI_AI NULL,
 PRIMARY KEY CLUSTERED 
 (
 	[id] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[entries]    Script Date: 14/09/2020 16:11:38 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
 CREATE TABLE [dbo].[entries](
 	[id] [int] NOT NULL,
-	[json] [nvarchar](max) NULL,
+	[json] [nvarchar](max) COLLATE Latin1_General_CI_AI NULL,
 	[cStatus] [int] NULL,
 	[pStatus] [int] NULL,
 	[dateStamp] [date] NULL,
 	[tod] [date] NULL,
-	[sortkeyGA] [nvarchar](255) NULL,
-	[sortkeyEN] [nvarchar](255) NULL,
+	[sortkeyGA] [nvarchar](255) COLLATE Latin1_General_CI_AS NULL,
+	[sortkeyEN] [nvarchar](255) COLLATE Latin1_General_CI_AS NULL,
  CONSTRAINT [PK__entries__3213E83FB84A5A39] PRIMARY KEY CLUSTERED 
 (
 	[id] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[entry_domain]    Script Date: 14/09/2020 16:11:38 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -890,7 +897,12 @@ CREATE TABLE [dbo].[entry_domain](
 	[superdomain] [int] NULL
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[entry_term]    Script Date: 14/09/2020 16:11:38 ******/
+CREATE CLUSTERED INDEX [IX_entry_domain] ON [dbo].[entry_domain]
+(
+	[entry_id] ASC,
+	[superdomain] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+GO
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -901,7 +913,12 @@ CREATE TABLE [dbo].[entry_term](
 	[accept] [int] NULL
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[entry_xref]    Script Date: 14/09/2020 16:11:38 ******/
+CREATE CLUSTERED INDEX [IX_entry_term] ON [dbo].[entry_term]
+(
+	[entry_id] ASC,
+	[term_id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+GO
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -911,29 +928,33 @@ CREATE TABLE [dbo].[entry_xref](
 	[target_entry_id] [int] NOT NULL
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[flex]    Script Date: 14/09/2020 16:11:38 ******/
+CREATE CLUSTERED INDEX [IX_entry_xref] ON [dbo].[entry_xref]
+(
+	[source_entry_id] ASC,
+	[target_entry_id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+GO
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
 CREATE TABLE [dbo].[flex](
 	[term_id] [int] NULL,
-	[lang] [nvarchar](10) NOT NULL,
-	[lemma] [nvarchar](255) NOT NULL,
-	[token] [nvarchar](255) NOT NULL
+	[lang] [nvarchar](10) COLLATE Latin1_General_CI_AI NOT NULL,
+	[lemma] [nvarchar](255) COLLATE Latin1_General_CI_AS NOT NULL,
+	[token] [nvarchar](255) COLLATE Latin1_General_CI_AS NOT NULL
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[metadata]    Script Date: 14/09/2020 16:11:38 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
 CREATE TABLE [dbo].[metadata](
 	[id] [int] NOT NULL,
-	[type] [varchar](255) NULL,
-	[json] [nvarchar](max) NULL,
-	[sortkeyGA] [nvarchar](max) NULL,
-	[sortkeyEN] [nvarchar](max) NULL,
+	[type] [varchar](255) COLLATE Latin1_General_CI_AI NULL,
+	[json] [nvarchar](max) COLLATE Latin1_General_CI_AI NULL,
+	[sortkeyGA] [nvarchar](max) COLLATE Latin1_General_CI_AS NULL,
+	[sortkeyEN] [nvarchar](max) COLLATE Latin1_General_CI_AS NULL,
 	[parentID] [int] NULL,
  CONSTRAINT [PK__metadata__3213E83FD56CDBC2] PRIMARY KEY CLUSTERED 
 (
@@ -941,14 +962,13 @@ CREATE TABLE [dbo].[metadata](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[spelling]    Script Date: 14/09/2020 16:11:38 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
 CREATE TABLE [dbo].[spelling](
 	[term_id] [int] NOT NULL,
-	[word] [nvarchar](255) NOT NULL,
+	[word] [nvarchar](255) COLLATE Latin1_General_CI_AS NOT NULL,
 	[A] [int] NOT NULL,
 	[B] [int] NOT NULL,
 	[C] [int] NOT NULL,
@@ -978,7 +998,6 @@ CREATE TABLE [dbo].[spelling](
 	[length] [int] NOT NULL
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[term_pos]    Script Date: 14/09/2020 16:11:38 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -988,37 +1007,37 @@ CREATE TABLE [dbo].[term_pos](
 	[pos_id] [int] NOT NULL
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[terms]    Script Date: 14/09/2020 16:11:38 ******/
-SET ANSI_NULLS ON
+CREATE CLUSTERED INDEX [IX_term_pos] ON [dbo].[term_pos]
+(
+	[term_id] ASC,
+	[pos_id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE TABLE [dbo].[terms](
-	[id] [int] NOT NULL,
-	[json] [nvarchar](max) NULL,
-	[lang] [nvarchar](10) NULL,
-	[wording] [nvarchar](255) NULL
-) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
-GO
-/****** Object:  Table [dbo].[words]    Script Date: 14/09/2020 16:11:38 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
 CREATE TABLE [dbo].[words](
 	[term_id] [int] NULL,
-	[word] [nvarchar](255) NULL
+	[word] [nvarchar](255) COLLATE Latin1_General_CI_AS NULL
 ) ON [PRIMARY]
-GO
-/****** Object:  Index [IX_entries_dateStamp]    Script Date: 14/09/2020 16:11:38 ******/
-CREATE NONCLUSTERED INDEX [IX_entries_dateStamp] ON [dbo].[entries]
-(
-	[dateStamp] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 GO
 SET ANSI_PADDING ON
 GO
-/****** Object:  Index [IX_entries_sortkeyEN]    Script Date: 14/09/2020 16:11:38 ******/
+CREATE CLUSTERED INDEX [IX_words] ON [dbo].[words]
+(
+	[term_id] ASC,
+	[word] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+GO
+CREATE NONCLUSTERED INDEX [IX_entries_dateStamp] ON [dbo].[entries]
+(
+	[dateStamp] ASC
+)
+INCLUDE([pStatus],[json]) WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+GO
+SET ANSI_PADDING ON
+GO
 CREATE NONCLUSTERED INDEX [IX_entries_sortkeyEN] ON [dbo].[entries]
 (
 	[sortkeyEN] ASC
@@ -1026,50 +1045,43 @@ CREATE NONCLUSTERED INDEX [IX_entries_sortkeyEN] ON [dbo].[entries]
 GO
 SET ANSI_PADDING ON
 GO
-/****** Object:  Index [IX_entries_sortkeyGA]    Script Date: 14/09/2020 16:11:38 ******/
 CREATE NONCLUSTERED INDEX [IX_entries_sortkeyGA] ON [dbo].[entries]
 (
 	[sortkeyGA] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 GO
-/****** Object:  Index [IX_entries_tod]    Script Date: 14/09/2020 16:11:38 ******/
 CREATE NONCLUSTERED INDEX [IX_entries_tod] ON [dbo].[entries]
 (
 	[tod] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+)
+INCLUDE([dateStamp],[pStatus],[json]) WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 GO
-/****** Object:  Index [IX_entry_domain]    Script Date: 14/09/2020 16:11:38 ******/
-CREATE NONCLUSTERED INDEX [IX_entry_domain] ON [dbo].[entry_domain]
-(
-	[superdomain] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
-GO
-/****** Object:  Index [IX_entry_domain_entry_id]    Script Date: 14/09/2020 16:11:38 ******/
 CREATE NONCLUSTERED INDEX [IX_entry_domain_entry_id] ON [dbo].[entry_domain]
 (
 	[entry_id] ASC
 )
 INCLUDE([superdomain]) WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 GO
-/****** Object:  Index [IX_entry_term_1]    Script Date: 14/09/2020 16:11:38 ******/
+CREATE NONCLUSTERED INDEX [IX_entry_domain_superdomain] ON [dbo].[entry_domain]
+(
+	[superdomain] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+GO
 CREATE NONCLUSTERED INDEX [IX_entry_term_1] ON [dbo].[entry_term]
 (
 	[entry_id] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 GO
-/****** Object:  Index [IX_entry_term_2]    Script Date: 14/09/2020 16:11:38 ******/
 CREATE NONCLUSTERED INDEX [IX_entry_term_2] ON [dbo].[entry_term]
 (
 	[term_id] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 GO
-/****** Object:  Index [IX_entry_xref_source]    Script Date: 14/09/2020 16:11:38 ******/
 CREATE NONCLUSTERED INDEX [IX_entry_xref_source] ON [dbo].[entry_xref]
 (
 	[source_entry_id] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 GO
-/****** Object:  Index [IX_entry_xref_target]    Script Date: 14/09/2020 16:11:38 ******/
 CREATE NONCLUSTERED INDEX [IX_entry_xref_target] ON [dbo].[entry_xref]
 (
 	[target_entry_id] ASC
@@ -1077,7 +1089,6 @@ CREATE NONCLUSTERED INDEX [IX_entry_xref_target] ON [dbo].[entry_xref]
 GO
 SET ANSI_PADDING ON
 GO
-/****** Object:  Index [IX_flex_lemma]    Script Date: 14/09/2020 16:11:38 ******/
 CREATE NONCLUSTERED INDEX [IX_flex_lemma] ON [dbo].[flex]
 (
 	[lemma] ASC,
@@ -1086,14 +1097,28 @@ CREATE NONCLUSTERED INDEX [IX_flex_lemma] ON [dbo].[flex]
 GO
 SET ANSI_PADDING ON
 GO
-/****** Object:  Index [IX_flex_token]    Script Date: 14/09/2020 16:11:38 ******/
+CREATE NONCLUSTERED INDEX [IX_flex_lemma_INC_token_lang] ON [dbo].[flex]
+(
+	[lemma] ASC
+)
+INCLUDE([token],[lang]) WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+GO
+SET ANSI_PADDING ON
+GO
 CREATE NONCLUSTERED INDEX [IX_flex_token] ON [dbo].[flex]
 (
 	[token] ASC,
 	[lang] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 GO
-/****** Object:  Index [IX_metadata_parentID]    Script Date: 14/09/2020 16:11:38 ******/
+SET ANSI_PADDING ON
+GO
+CREATE NONCLUSTERED INDEX [IX_flex_token_INC_lemma_lang] ON [dbo].[flex]
+(
+	[token] ASC
+)
+INCLUDE([lemma],[lang]) WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+GO
 CREATE NONCLUSTERED INDEX [IX_metadata_parentID] ON [dbo].[metadata]
 (
 	[parentID] ASC
@@ -1101,11 +1126,17 @@ CREATE NONCLUSTERED INDEX [IX_metadata_parentID] ON [dbo].[metadata]
 GO
 SET ANSI_PADDING ON
 GO
-/****** Object:  Index [IX_spelling_length]    Script Date: 14/09/2020 16:11:38 ******/
+CREATE NONCLUSTERED INDEX [IX_metadata_parentID_type] ON [dbo].[metadata]
+(
+	[parentID] ASC,
+	[type] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+GO
+SET ANSI_PADDING ON
+GO
 CREATE NONCLUSTERED INDEX [IX_spelling_length] ON [dbo].[spelling]
 (
 	[length] ASC,
-	[word] ASC,
 	[A] ASC,
 	[B] ASC,
 	[C] ASC,
@@ -1131,16 +1162,24 @@ CREATE NONCLUSTERED INDEX [IX_spelling_length] ON [dbo].[spelling]
 	[W] ASC,
 	[X] ASC,
 	[Y] ASC,
-	[Z] ASC
+	[Z] ASC,
+	[word] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 GO
-/****** Object:  Index [IX_term_pos_pos_id]    Script Date: 14/09/2020 16:11:38 ******/
+SET ANSI_PADDING ON
+GO
+CREATE NONCLUSTERED INDEX [IX_spelling_word_length] ON [dbo].[spelling]
+(
+	[word] ASC,
+	[length] ASC
+)
+INCLUDE([A],[B],[C],[D],[W],[X],[Y],[Z],[Q],[R],[S],[T],[U],[V],[K],[L],[M],[N],[O],[P],[E],[F],[G],[H],[I],[J]) WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+GO
 CREATE NONCLUSTERED INDEX [IX_term_pos_pos_id] ON [dbo].[term_pos]
 (
 	[pos_id] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 GO
-/****** Object:  Index [IX_term_pos_term_id]    Script Date: 14/09/2020 16:11:38 ******/
 CREATE NONCLUSTERED INDEX [IX_term_pos_term_id] ON [dbo].[term_pos]
 (
 	[term_id] ASC
@@ -1148,7 +1187,6 @@ CREATE NONCLUSTERED INDEX [IX_term_pos_term_id] ON [dbo].[term_pos]
 GO
 SET ANSI_PADDING ON
 GO
-/****** Object:  Index [IX_terms_1]    Script Date: 14/09/2020 16:11:38 ******/
 CREATE NONCLUSTERED INDEX [IX_terms_1] ON [dbo].[terms]
 (
 	[id] ASC,
@@ -1157,14 +1195,26 @@ CREATE NONCLUSTERED INDEX [IX_terms_1] ON [dbo].[terms]
 GO
 SET ANSI_PADDING ON
 GO
-/****** Object:  Index [IX_terms_2]    Script Date: 14/09/2020 16:11:38 ******/
 CREATE NONCLUSTERED INDEX [IX_terms_2] ON [dbo].[terms]
 (
 	[wording] ASC,
 	[lang] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 GO
-/****** Object:  Index [IX_words_1]    Script Date: 14/09/2020 16:11:38 ******/
+SET ARITHABORT ON
+SET CONCAT_NULL_YIELDS_NULL ON
+SET QUOTED_IDENTIFIER ON
+SET ANSI_NULLS ON
+SET ANSI_PADDING ON
+SET ANSI_WARNINGS ON
+SET NUMERIC_ROUNDABORT OFF
+GO
+CREATE NONCLUSTERED INDEX [IX_terms_3] ON [dbo].[terms]
+(
+	[wordingSpartanized] ASC,
+	[lang] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+GO
 CREATE NONCLUSTERED INDEX [IX_words_1] ON [dbo].[words]
 (
 	[term_id] ASC
@@ -1172,19 +1222,16 @@ CREATE NONCLUSTERED INDEX [IX_words_1] ON [dbo].[words]
 GO
 SET ANSI_PADDING ON
 GO
-/****** Object:  Index [IX_words_2]    Script Date: 14/09/2020 16:11:38 ******/
 CREATE NONCLUSTERED INDEX [IX_words_2] ON [dbo].[words]
 (
 	[word] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 GO
-ALTER TABLE [dbo].[metadata] ADD  CONSTRAINT [DF_metadata_parentID]  DEFAULT (NULL) FOR [parentID]
-GO
-/****** Object:  StoredProcedure [dbo].[propag_deleteEntry]    Script Date: 14/09/2020 16:11:38 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
+
 CREATE procedure [dbo].[propag_deleteEntry]
   @entryID int
 , @collection nvarchar(10) = ''
@@ -1209,11 +1256,11 @@ delete from spelling where term_id in (select id from @orphs)
 
 end
 GO
-/****** Object:  StoredProcedure [dbo].[propag_deleteMetadatum]    Script Date: 14/09/2020 16:11:38 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
+
 CREATE procedure [dbo].[propag_deleteMetadatum]
   @id int
 , @collection nvarchar(10) = ''
@@ -1224,11 +1271,11 @@ delete from metadata where id=@id
 
 end
 GO
-/****** Object:  StoredProcedure [dbo].[propag_saveConfig]    Script Date: 14/09/2020 16:11:38 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
+
 CREATE procedure [dbo].[propag_saveConfig]
   @id varchar(255)
 , @json nvarchar(max)
@@ -1247,11 +1294,11 @@ end
 
 end
 GO
-/****** Object:  StoredProcedure [dbo].[propag_saveEntry]    Script Date: 14/09/2020 16:11:38 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
+
 CREATE procedure [dbo].[propag_saveEntry]
   @entryID int
 , @json nvarchar(max)
@@ -1333,7 +1380,7 @@ begin
 
 	delete from words where term_id in (select id from @termIDs)
 	insert into words(term_id, word)
-	select t.id, w.display_term
+	select t.id, dbo.spartanize(w.display_term)
 	from terms as t
 	cross apply (
 		select display_term
@@ -1378,11 +1425,11 @@ begin
 end
 end
 GO
-/****** Object:  StoredProcedure [dbo].[propag_saveMetadatum]    Script Date: 14/09/2020 16:11:38 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
+
 CREATE procedure [dbo].[propag_saveMetadatum]
   @id int
 , @type varchar(255)
@@ -1408,7 +1455,6 @@ where id=@id
 
 end
 GO
-/****** Object:  StoredProcedure [dbo].[pub_advsearch]    Script Date: 14/09/2020 16:11:38 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -1558,7 +1604,6 @@ select @page as [currentPage], @maxPage as [maxPage]
 
 end
 GO
-/****** Object:  StoredProcedure [dbo].[pub_advsearch_prepare]    Script Date: 14/09/2020 16:11:38 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -1580,7 +1625,6 @@ order by sortkeyGA
 
 end
 GO
-/****** Object:  StoredProcedure [dbo].[pub_domain]    Script Date: 14/09/2020 16:11:38 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -1616,12 +1660,17 @@ else if @lang='en'
 
 
 --get all matching entry IDs:
+declare @domainIDs table(domainID int)
+insert into @domainIDs(domainID)
+	select domainID from [dbo].[expandDomainID](@domID, default)
+	
 declare @matches table(entry_id int, rownum int)
 insert into @matches(entry_id, rownum)
 	select distinct e.id, ROW_NUMBER() over(order by case when @lang='en' then e.sortkeyEN else e.sortkeyGA end)
 	from entries as e
 	inner join entry_domain as ed on ed.entry_id=e.id
-	where ed.superdomain in (select domainID from [dbo].[expandDomainID](@domID, default)) and e.pStatus=1
+	inner join @domainIDs as di on di.domainID=ed.superdomain
+	where e.pStatus=1
 
 --compute paging data:
 declare @lastRow int; select @lastRow=count(*) from @matches
@@ -1647,7 +1696,6 @@ select @page as [currentPage], @maxPage as [maxPage]
 
 end
 GO
-/****** Object:  StoredProcedure [dbo].[pub_domains]    Script Date: 14/09/2020 16:11:38 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -1679,7 +1727,6 @@ else if @lang='en'
 
 end
 GO
-/****** Object:  StoredProcedure [dbo].[pub_entry]    Script Date: 14/09/2020 16:11:38 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -1703,7 +1750,6 @@ select * from entries where pStatus=1 and id=@id
 
 end
 GO
-/****** Object:  StoredProcedure [dbo].[pub_index]    Script Date: 14/09/2020 16:11:38 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -1717,10 +1763,10 @@ select * from configs where id='lingo'
 select *, 0 as hasChildren from metadata where type in ('acceptLabel', 'inflectLabel', 'posLabel', 'domain') order by sortkeyGA
 
 --return entry of the day:
-select top 1 * from entries where pStatus=1 and tod=convert(date, getdate()) order by dateStamp desc, ID desc
+select top 1 id, json from entries where pStatus=1 and tod=convert(date, getdate()) order by dateStamp desc, ID desc
 
 --return recently changed entries:
-select top 20 * from entries where pStatus=1 and dateStamp>'1900-01-01' order by dateStamp desc
+select top 20 id, json from entries where pStatus=1 and dateStamp>'1900-01-01' order by dateStamp desc
 
 --return announcement:
 declare @now datetime
@@ -1737,7 +1783,6 @@ and (JSON_VALUE(json, '$.till.time')='' or convert(time, JSON_VALUE(json, '$.til
 
 end
 GO
-/****** Object:  StoredProcedure [dbo].[pub_quicksearch]    Script Date: 14/09/2020 16:11:38 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -1748,6 +1793,9 @@ CREATE procedure [dbo].[pub_quicksearch]
 , @super bit = 0 --superuser mode (with auxilliary glossary etc.)
 as
 begin
+
+declare @wordSpartanized nvarchar(255)
+set @wordSpartanized=dbo.spartanize(@word)
 
 --return lingo and metadata:
 select * from configs where id='lingo'
@@ -1820,12 +1868,13 @@ declare @exacts table(entry_id int, lang nvarchar(10))
 insert into @exacts(entry_id, lang) select e.id, t.lang from entries as e
 	inner join entry_term as et on et.entry_id=e.id
 	inner join terms as t on t.id=et.term_id
-	where t.wording=@word and e.pStatus=1
+	--where t.wording=@word and e.pStatus=1
+	where t.wordingSpartanized=@wordSpartanized and e.pStatus=1
 
 --find related matches:
 declare @words table(word nvarchar(max))
-insert into @words(word) select display_term
-	from sys.dm_fts_parser(N'"'+replace(@word, '"', ' ')+'"', 0, null, 1)
+insert into @words(word) select dbo.spartanize(display_term)
+	from sys.dm_fts_parser(N'"'+replace(replace(@word, '-', ' '), '"', ' ')+'"', 0, null, 1)
 	where special_term in ('Noise Word', 'Exact Match')
 	order by len(display_term) desc
 declare @relateds table(entry_id int, lang nvarchar(10), term_id int)
@@ -1833,7 +1882,7 @@ declare @temp table(entry_id int, term_id int)
 declare @tokens table(token nvarchar(255), lang nvarchar(10))
 --first word:
 declare @word1 nvarchar(max); select top 1 @word1=word from @words;
-delete from @tokens; insert into @tokens(token, lang) values(@word1, ''); insert into @tokens(token, lang) select token, lang from flex where lemma=@word1
+delete from @tokens; insert into @tokens(token, lang) values(@word1, ''); insert into @tokens(token, lang) select token, lang from flex where lemma=@word1; insert into @tokens(token, lang) select lemma, lang from flex where token=@word1
 insert into @relateds(entry_id, lang, term_id) select distinct e.id, t.lang, t.id from entries as e
 	inner join entry_term as et on et.entry_id=e.id
 	inner join terms as t on t.id=et.term_id
@@ -1844,7 +1893,7 @@ declare @word2 nvarchar(max); select top 2 @word2=word from @words
 if(@word2<>@word1)
 begin
 	delete from @temp; insert into @temp(entry_id, term_id) select entry_id, term_id from @relateds; delete from @relateds
-	delete from @tokens; insert into @tokens(token, lang) values(@word2, ''); insert into @tokens(token, lang) select token, lang from flex where lemma=@word2
+	delete from @tokens; insert into @tokens(token, lang) values(@word2, ''); insert into @tokens(token, lang) select token, lang from flex where lemma=@word2; insert into @tokens(token, lang) select lemma, lang from flex where token=@word2
 	insert into @relateds(entry_id, lang, term_id) select distinct e.id, t.lang, t.id from entries as e
 		inner join @temp as temp on temp.entry_id=e.id and temp.entry_id=e.id
 		inner join entry_term as et on et.entry_id=e.id
@@ -1857,7 +1906,7 @@ declare @word3 nvarchar(max); select top 3 @word3=word from @words
 if(@word3<>@word2 and @word3<>@word1)
 begin
 	delete from @temp; insert into @temp(entry_id, term_id) select entry_id, term_id from @relateds; delete from @relateds
-	delete from @tokens; insert into @tokens(token, lang) values(@word3, ''); insert into @tokens(token, lang) select token, lang from flex where lemma=@word3
+	delete from @tokens; insert into @tokens(token, lang) values(@word3, ''); insert into @tokens(token, lang) select token, lang from flex where lemma=@word3; insert into @tokens(token, lang) select lemma, lang from flex where token=@word3
 	insert into @relateds(entry_id, lang, term_id) select distinct e.id, t.lang, t.id from entries as e
 		inner join @temp as temp on temp.entry_id=e.id and temp.entry_id=e.id
 		inner join entry_term as et on et.entry_id=e.id
@@ -1914,7 +1963,6 @@ if @super=1
 
 end
 GO
-/****** Object:  StoredProcedure [dbo].[pub_subdoms]    Script Date: 14/09/2020 16:11:38 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -1930,7 +1978,6 @@ select *, 0 as hasChildren from metadata where type='domain' and id=@domID
 
 end
 GO
-/****** Object:  StoredProcedure [dbo].[pub_tod]    Script Date: 14/09/2020 16:11:38 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -1944,7 +1991,7 @@ select * from configs where id='lingo'
 select *, 0 as hasChildren from metadata where type in ('acceptLabel', 'inflectLabel', 'posLabel', 'domain') order by sortkeyGA
 
 --return entry of the day:
-select top 1 * from entries where pStatus=1 and tod=convert(date, getdate()) order by dateStamp desc, ID desc
+select top 1 id, json from entries where pStatus=1 and tod=convert(date, getdate()) order by dateStamp desc, ID desc
 
 end
 GO
