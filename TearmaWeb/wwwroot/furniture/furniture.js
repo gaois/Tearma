@@ -112,11 +112,11 @@ function termMenuClick(clicker) {
     var $menu = $("<div id='termMenu'></div>");
     $menu.css("min-width", ($wording.width() + 30) + "px");
 
-    var $item = $("<div class='copypaste'><input/></div>");
-    $item.append("<div class='instruction ga' lang='ga'>Brúigh Ctrl + C le cóipeáil</div>");
-    $item.append("<div class='instruction en' lang='en'>Press Ctrl + C to copy</div>");
-    $item.find("input").val(wording);
-    $item.appendTo($menu);
+    // var $item = $("<div class='copypaste'><input/></div>");
+    // $item.append("<div class='instruction ga' lang='ga'>Brúigh Ctrl + C le cóipeáil</div>");
+    // $item.append("<div class='instruction en' lang='en'>Press Ctrl + C to copy</div>");
+    // $item.find("input").val(wording);
+    // $item.appendTo($menu);
 
     if (lang == "ga" || lang == "en") {
         var $item = $("<a class='icon neid' target='_blank' href='https://www.focloir.ie/ga/search/ei/direct/?q=" + encodeURIComponent(wording) + "'></a>");
@@ -296,3 +296,40 @@ function advDomRefill(selectedDomainID) {
     if (typeof (selectedDomainID) == "number" || typeof (selectedDomainID) == "string") $select.val(selectedDomainID.toString());
     else $select.val(0);
 };
+
+function copyClick(clicker){
+    var $clicker = $(clicker);
+    var $desig = $clicker.closest(".prettyDesig");
+    var $wording = $desig.find(".prettyWording");
+    var wording = $desig.attr("data-wording");
+    copyTextToClipboard(wording);
+    window.setTimeout(function(){
+        $clicker.addClass("justClicked");
+        window.setTimeout(function(){
+            $clicker.removeClass("justClicked");
+        }, 500);
+    }, 100);
+}
+function copyTextToClipboard(text) {
+    if (!navigator.clipboard) {
+        fallbackCopyTextToClipboard(text);
+        return;
+    }
+    navigator.clipboard.writeText(text).catch(err => { console.error("Async copy: Could not copy to clipboard: ", err); });
+  }
+  function fallbackCopyTextToClipboard(text) {
+    var textArea = document.createElement("textarea");
+    textArea.value = text;
+    textArea.style.top = "0";
+    textArea.style.left = "0";
+    textArea.style.position = "fixed";
+    document.body.appendChild(textArea);
+    textArea.focus();
+    textArea.select();
+    try {
+      document.execCommand("copy");
+    } catch (err) {
+      console.error("Fallback: Cound not copy to clipboard", err);
+    }
+    document.body.removeChild(textArea);
+  }

@@ -438,6 +438,37 @@ div.prettyDesig span.clickme {font-size: 0.8rem; margin: 0 0.4em 0 0.6em; paddin
 div.prettyDesig span.clickme:hover {background-color: #eaedc8; color: #666666; }
 body.printable span.clickme {display: none;}
 
+div.prettyDesig span.copyme {
+  font-size: 1.25em;
+  margin: 0 0.2em 0 0.2em;
+  color: #999999;
+  cursor: pointer;
+  position: relative;
+  display: inline-block;
+  min-width: 1.1em;
+  text-align: center;
+}
+div.prettyDesig span.copyme i.fa-check {
+  display: none;
+}
+div.prettyDesig span.copyme:hover {
+  color: #666666;
+}
+div.prettyDesig span.copyme:active {
+  top: 1px;
+  left: 1px;
+}
+div.prettyDesig span.copyme.justClicked {
+  color: #999999;
+}
+div.prettyDesig span.copyme.justClicked i.fa-copy {
+  display: none;
+}
+div.prettyDesig span.copyme.justClicked i.fa-check {
+  font-size: 0.7em;
+  display: inline;
+}
+
 div.prettyDesig span.playme {display: none; border: 1px solid #999999; font-size: 0.8rem; margin: 0 0.4em 0 0; padding: 6px 6px 6px 6px; color: #336699; background-color: #eeeeee; box-shadow: 1px 1px 0px #dddddd; border-radius: 40px; position: relative; top: -2px; cursor: pointer;}
 body.super div.prettyDesig span.playme {display: inline;}
 div.prettyDesig span.playme:hover {color: #666666; }

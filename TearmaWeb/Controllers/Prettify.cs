@@ -167,7 +167,8 @@ namespace TearmaWeb.Controllers
 			}
 
 			ret+=Prettify.Wording(desig.term.lang, desig.term.wording, desig.term.annots);
-			ret+="<span class='clickme' onclick='termMenuClick(this)'>▼</span>";
+			if(desig.term.lang=="ga" || desig.term.lang=="en") ret+="<span class='clickme' onclick='termMenuClick(this)'>▼</span>";
+			ret+="<span class='copyme' onclick='copyClick(this)' title='Cóipeáil &middot; Copy'><i class='far fa-copy'></i><i class='fas fa-check'></i></span>";
 			if(desig.accept!=null && desig.accept>0) ret+=" "+Prettify.Accept(desig.accept ?? 0);
 			if(desig.clarif!=null && desig.clarif!="") ret+=" "+Prettify.Clarif(desig.clarif);
 			if(desig.term.inflects.Count>0){
