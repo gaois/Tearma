@@ -209,6 +209,7 @@ begin
 	set @text=TRIM(REPLACE(@text+' ', 'izes ', 'ises '))
 	set @text=TRIM(REPLACE(@text+' ', 'ized ', 'ised '))
 	set @text=TRIM(REPLACE(@text+' ', 'izer ', 'iser '))
+	set @text=TRIM(REPLACE(@text+' ', 'ization ', 'isation '))
 
 	set @text=REPLACE(@text, NCHAR(0x005F), '' collate Latin1_General_BIN2)
 	set @text=REPLACE(@text, NCHAR(0x203F), '' collate Latin1_General_BIN2)
