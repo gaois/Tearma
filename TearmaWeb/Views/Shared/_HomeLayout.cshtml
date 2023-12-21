@@ -42,7 +42,19 @@
     <script type="text/javascript" src="~/furniture/furniture.js"></script>
 
     <environment include="Production">
-        <script defer data-domain="tearma.ie" src="https://plausible.io/js/script.js"></script>
+        <script
+            defer
+            data-domain="tearma.ie"
+            event-search_text="@ViewData["SearchText"]"
+            event-search_category="@ViewData["SearchCategory"]"
+            event-target_language="@ViewData["TargetLanguage"]"
+            event-sort_language="@ViewData["SortLanguage"]"
+            event-result_count="@ViewData["ResultCount"]"
+            event-related_count="@ViewData["RelatedCount"]"
+            event-similar_count="@ViewData["SimilarCount"]"
+            file-types="7z,csv,docx,pdf,ppt,mp3,mp4,rar,tbx,txt,xlsx,zip"
+            src="https://plausible.io/js/script.pageview-props.file-downloads.js"
+        ></script>
 
         <!-- Google Tag Manager -->
         <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':

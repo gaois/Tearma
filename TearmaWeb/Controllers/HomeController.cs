@@ -71,6 +71,14 @@ namespace TearmaWeb.Controllers
                 _queryLogger.Log(query);
                 ViewData["PageTitle"] = $"\"{model.word}\"";
 				ViewData["IsSuper"]=this.isSuper(Request);
+                // data for Plausible analytics
+                ViewData["SearchText"] = model.word;
+                ViewData["SearchCategory"] = "quick";
+                ViewData["TargetLanguage"] = model.lang;
+                ViewData["SortLanguage"] = model.sortlang;
+                ViewData["ResultCount"] = model.exacts.Count;
+                ViewData["RelatedCount"] = model.relateds.Count;
+                ViewData["SimilarCount"] = model.similars.Count;
                 return View("QuickSearch", model);
             }
 		}
@@ -104,7 +112,12 @@ namespace TearmaWeb.Controllers
                     ViewData["PageTitle"] = $"\"{model.word}\" | Cuardach casta · Advanced search";
                 }
 
-				ViewData["IsSuper"]=this.isSuper(Request);	
+				ViewData["IsSuper"]=this.isSuper(Request);
+                // data for Plausible analytics
+                ViewData["SearchText"] = model.word;
+                ViewData["SearchCategory"] = "advanced";
+                ViewData["SortLanguage"] = model.sortlang;
+                ViewData["ResultCount"] = model.total;
                 return View("AdvSearch", model);
             }
 		}
