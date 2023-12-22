@@ -72,13 +72,11 @@ namespace TearmaWeb.Controllers
                 ViewData["PageTitle"] = $"\"{model.word}\"";
 				ViewData["IsSuper"]=this.isSuper(Request);
                 // data for Plausible analytics
-                ViewData["SearchText"] = model.word;
-                ViewData["SearchCategory"] = "quick";
-                ViewData["TargetLanguage"] = model.lang;
-                ViewData["SortLanguage"] = model.sortlang;
-                ViewData["ResultCount"] = model.exacts.Count;
-                ViewData["RelatedCount"] = model.relateds.Count;
-                ViewData["SimilarCount"] = model.similars.Count;
+                ViewData["IsTextSearch"] = "true";
+                ViewData["IsTextSearchResultful"] = (model.exacts.Count>0 || model.relateds.Count>0 ? "true" : "false");
+                ViewData["SearchText00"] = (model.exacts.Count==0 && model.relateds.Count==0 ? model.word : "");
+                ViewData["SearchText01"] = (model.exacts.Count==0 && model.relateds.Count>0 ? model.word : "");
+                ViewData["SearchText1X"] = (model.exacts.Count>0 ? model.word : "");
                 return View("QuickSearch", model);
             }
 		}
@@ -110,14 +108,12 @@ namespace TearmaWeb.Controllers
                     };
                     _queryLogger.Log(query);
                     ViewData["PageTitle"] = $"\"{model.word}\" | Cuardach casta · Advanced search";
+                    // data for Plausible analytics
+                    ViewData["IsTextSearch"] = "true";
+                    ViewData["IsTextSearchResultful"] = (model.matches.Count>0 ? "true" : "false");
                 }
 
-				ViewData["IsSuper"]=this.isSuper(Request);
-                // data for Plausible analytics
-                ViewData["SearchText"] = model.word;
-                ViewData["SearchCategory"] = "advanced";
-                ViewData["SortLanguage"] = model.sortlang;
-                ViewData["ResultCount"] = model.total;
+                ViewData["IsSuper"]=this.isSuper(Request);
                 return View("AdvSearch", model);
             }
 		}
