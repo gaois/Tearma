@@ -4,11 +4,11 @@ This information applies to the **téarma.ie** public website.
 
 ## What usage data we collect
 
-We collect certain usage data with the aid of cookies while users browse the website. These cookies store certain data primarily related to Google Analytics. We use Google Analytics to record information about where our users come from and what they do while on this site. Google Analytics collects and stores technical details about the browser and the computer used to visit the site. An additional cookie is used to store information about the most recent search you completed on the website. This information is stored for 24 hours only and the cookie is not linked to any personal data.
+We collect certain usage data with the aid of services such as [Plausible](https://plausible.io) while users browse the website. We use Plausible to record information about where our users come from and what they do while on this site. Plausible collects and stores technical details about the browser and the computer used to visit the site. We use a cookie to store information about the most recent search you completed on the website. This information is stored for 24 hours only and the cookie is not linked to any personal data.
 
 ## How we use this usage data
 
-We use the data collected by Google Analytics to construct aggregate reports on user numbers, location and behaviour. These reports inform our future development plans. This data is not personal data, as defined by EU GDPR, as we use Google Analytics 'IP anonymisation'. We never use this data to identify individual users.
+We use the data collected by Plausible to construct aggregate reports on user numbers, location and behaviour. These reports inform our future development plans. This data is not personal data, as defined by EU GDPR, and it does not allow us identify individual users.
 
 We reserve the right to report and/or publish aggregated usage metrics.
 

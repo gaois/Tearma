@@ -4,11 +4,11 @@ Baineann an t-eolas seo leis an suíomh gréasáin poiblí **téarma.ie**.
 
 ## Cé na sonraí úsáide a bhailímid
 
-Bailímid sonraí úsáide áirithe le cabhair fianán agus an suíomh á bhrabhsáil ag duine. Baineann na fianáin seo le sonraí Google Analytics go príomha. Úsáidimid Google Analytics chun eolas a thaifeadadh mar gheall ar cad as a dtagann ár gcuid úsáideoirí agus cad a dhéanann siad agus iad ar an suíomh. Bailíonn agus stórálann Google Analytics sonraí teicniúla faoin mbrabhsálaí agus faoin ríomhaire a úsáidtear chun cuairt a thabhairt ar an suíomh. Úsáidtear fianán chun eolas a stóráil faoin gcuardach deireanach a rinne tú ar an suíomh. Stóráiltear an t-eolas seo ar feadh 24 uair an chloig agus ní bhíonn an fianán nasctha le sonraí pearsanta ar bith de do chuid.
+Bailímid sonraí úsáide áirithe le cabhair seirbhísí mar [Plausible](https://plausible.io). Úsáidimid Plausible chun eolas a thaifeadadh mar gheall ar cad as a dtagann ár gcuid úsáideoirí agus cad a dhéanann siad agus iad ar an suíomh. Bailíonn agus stórálann Plausible sonraí teicniúla faoin mbrabhsálaí agus faoin ríomhaire a úsáidtear chun cuairt a thabhairt ar an suíomh. Úsáidtear fianán chun eolas a stóráil faoin gcuardach deireanach a rinne tú ar an suíomh. Stóráiltear an t-eolas seo ar feadh 24 uair an chloig agus ní bhíonn an fianán nasctha le sonraí pearsanta ar bith de do chuid.
 
 ## Conas a úsáidimid na sonraí úsáide seo
 
-Usáidimid na sonraí bailithe ag Google Analytics chun tuairiscí comhiomlánaithe a chruthú ar líon, suíomh agus gníomhaíocht ár n-úsáideoirí. Cuireann na tuairiscí seo bonn eolais faoinár bpleananna forbartha don todhchaí. Ní sonraí pearsanta na sonraí seo, de réir shainmhíniú GDPR an AE, mar go n-úsáidimid anaithnidiú IP Google Analytics. Ní úsáidimid na sonraí seo le húsáideoirí aonair a aithint riamh.
+Usáidimid na sonraí bailithe ag Plausible chun tuairiscí comhiomlánaithe a chruthú ar líon, suíomh agus gníomhaíocht ár n-úsáideoirí. Cuireann na tuairiscí seo bonn eolais faoinár bpleananna forbartha don todhchaí. Ní sonraí pearsanta na sonraí seo, de réir shainmhíniú GDPR an AE, agus ní chuireann na sonraí seo ar ár gcumas úsáideoirí aonair a shainaithint.
 
 Coimeádaimid an ceart againn féin méadracht úsáide chomhiomlánaithe a thuairisciú agus/nó a fhoilsiú.
 
