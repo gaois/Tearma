@@ -826,7 +826,7 @@ CREATE TABLE [dbo].[terms](
 	[json] [nvarchar](max) COLLATE Latin1_General_CI_AI NULL,
 	[lang] [nvarchar](10) COLLATE Latin1_General_CI_AI NULL,
 	[wording] [nvarchar](255) COLLATE Latin1_General_CI_AS NULL,
-	[wordingSpartanized]  AS ([dbo].[spartanize]([wording])) PERSISTED
+	[wordingSpartanized]  AS (([dbo].[spartanize]([wording])) collate Latin1_General_CI_AS) PERSISTED
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 GO
 CREATE CLUSTERED INDEX [IX_terms] ON [dbo].[terms]
