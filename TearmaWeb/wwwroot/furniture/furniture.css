@@ -530,6 +530,7 @@ div#termMenu > a.icon {padding-left: 55px; background-position: 10px 13px; backg
 div#termMenu > a.icon.neid {background-image: url(collection-fnbg.png);}
 div#termMenu > a.icon.teanglann {background-image: url(collection-teanglann.png);}
 div#termMenu > a.icon.nci {background-image: url(collection-nci.png);}
+div#termMenu > a.icon.corpas {background-image: url(collection-corpas.png);}
 div#termMenu > a.icon.gaois {background-image: url(collection-gaois.png);}
 div#termMenu > a.icon.gaois > span.arrow {margin-top: 0.25em;}
 

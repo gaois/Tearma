@@ -134,20 +134,28 @@ function termMenuClick(clicker) {
         $item.append("<span class='url'>teanglann.ie</span>")
         $item.appendTo($menu);
     }
+    //if (lang == "ga") {
+    //    var $item = $("<a class='icon nci' target='_blank' href='https://corpas.focloir.ie/crystal/#concordance?corpname=gaeilge2&tab=basic&keyword=" + encodeURIComponent(wording) + "&attrs=word&viewmode=kwic&attr_allpos=all&refs_up=0&shorten_refs=1&glue=1&gdexcnt=300&show_gdex_scores=0&itemsPerPage=20&structs=s%2Cg&refs=&showresults=1&showTBL=0&tbl_template=&gdexconf=&f_tab=basic&f_showrelfrq=1&f_showperc=0&f_showreldens=0&f_showreltt=0&c_customrange=0'></a>");
+    //    $item.append("<span class='arrow'>»</span>")
+    //    $item.append("<span class='title ga' lang='ga'>Nua-Chorpas na hÉireann <span class='remark'>(clárúchán de dhíth)</span></span>");
+    //    $item.append("<span class='title en' lang='en'>New Corpus for Ireland <span class='remark'>(registration required)</span></span>");
+    //    $item.append("<span class='url'>corpas.focloir.ie</span>")
+    //    $item.appendTo($menu);
+    //}
+    if (lang == "ga") {
+        var $item = $("<a class='icon corpas' target='_blank' href='https://www.corpas.ie/ga/cng/?q=" + encodeURIComponent(wording) + "'></a>");
+        $item.append("<span class='arrow'>»</span>")
+        $item.append("<span class='title ga' lang='ga'>Corpas Náisiúnta na Gaeilge</span>");
+        $item.append("<span class='title en' lang='en'>National Corpus of Irish</span>");
+        $item.append("<span class='url'>corpas.ie</span>")
+        $item.appendTo($menu);
+    }
     if (lang == "ga" || lang == "en") {
         var $item = $("<a class='icon gaois' target='_blank' href='https://www.gaois.ie/ga/?txt=" + encodeURIComponent(wording) + "'></a>");
         $item.append("<span class='arrow'>»</span>")
         $item.append("<span class='title ga' lang='ga'>Gaois</span>");
         //$item.append("<span class='title en' lang='en'>Dictionary and Language Library</span>");
         $item.append("<span class='url'>gaois.ie</span>")
-        $item.appendTo($menu);
-    }
-    if (lang == "ga") {
-        var $item = $("<a class='icon nci' target='_blank' href='https://corpas.focloir.ie/crystal/#concordance?corpname=gaeilge2&tab=basic&keyword=" + encodeURIComponent(wording) + "&attrs=word&viewmode=kwic&attr_allpos=all&refs_up=0&shorten_refs=1&glue=1&gdexcnt=300&show_gdex_scores=0&itemsPerPage=20&structs=s%2Cg&refs=&showresults=1&showTBL=0&tbl_template=&gdexconf=&f_tab=basic&f_showrelfrq=1&f_showperc=0&f_showreldens=0&f_showreltt=0&c_customrange=0'></a>");
-        $item.append("<span class='arrow'>»</span>")
-        $item.append("<span class='title ga' lang='ga'>Nua-Chorpas na hÉireann <span class='remark'>(clárúchán de dhíth)</span></span>");
-        $item.append("<span class='title en' lang='en'>New Corpus for Ireland <span class='remark'>(registration required)</span></span>");
-        $item.append("<span class='url'>corpas.focloir.ie</span>")
         $item.appendTo($menu);
     }
 
