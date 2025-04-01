@@ -1,0 +1,47 @@
+﻿@model TearmaWeb.Models.Iate.Search
+@using TearmaWeb.Models.Iate
+@{
+    Layout="_HomeLayout";
+    ViewBag.swapper="q";
+}
+
+@section Rightie {
+    <div class="kickbox">
+        <a class="sitelink" href="javascript:printableOn()">
+            <span class="icon fas fa-print"></span>
+            <span class="ga" lang="ga">Leagan furasta le priontáil</span>
+            <span class="en" lang="en">Printer-friendly version</span>
+        </a>
+    </div>
+}
+
+<form class="textbox" action="." onsubmit="return submitIateSearch(this)">
+    <div class="text"><input name="word" value="@Model.word" class="searchbox" onblur="searchboxBlur()"/></div>
+    <button class="submit" aria-label="Cuardaigh · Search">
+        <span class="icon fas fa-search"></span>
+    </button>
+</form>
+
+<div class="providers">
+    <a href="@Model.quickSearchUrl()" class="provider tearma noncurrent">
+        <img src="~/furniture/minilogo-tearma.svg" alt="téarma.ie" />
+        <span class="caption">téarma.ie</span>
+        <span class="count">1</span>
+        <span class="wedge"></span>
+    </a>    
+    <span class="provider iate current">
+        <img src="~/furniture/iate.png" alt="IATE" />
+        <span class="multicaption">
+            <span class="line1" lang="ga">Téarmaíocht an Aontais Eorpaigh</span>
+            <span class="line2" lang="en">European Union Terminology</span>
+        </span>
+        <span class="count">31</span>
+        <span class="wedge"></span>
+    </span>    
+</div>
+
+<a class="kickboxToggler" href="javascript:void(null)" onclick="$('.kickbox').insertAfter($('.kickboxToggler')).slideToggle()">
+    <span class="icon fas fa-bars"></span>
+    <span class="text ga" lang="ga">Roghanna</span>
+    <span class="text en" lang="en">Options</span>
+</a>

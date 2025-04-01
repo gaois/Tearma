@@ -139,7 +139,7 @@ header.logobox div.icons a:hover {position: relative; top: -1px;}
 }
 body.printable div.icons {display: none;}
 
-a.kickboxToggler {display: none; margin-top: 30px; text-decoration: none; color: #666666; position: relative; padding-left: 75px; margin-left: -10px;}
+a.kickboxToggler {display: none; margin-top: 40px; text-decoration: none; color: #666666; position: relative; padding-left: 75px; margin-left: -10px;}
 a.kickboxToggler.mergeUp {margin-top: 20px;}
 a.kickboxToggler.mergeWayUp {margin-top: 0px;}
 a.kickboxToggler:hover {color: #006699;}
@@ -290,7 +290,8 @@ div.underform a:hover {color: #2288bb;}
 }
 body.printable div.underform {display: none;}
 
-div.similars {margin-top: 1.75em; padding: 0px 10px; font-size: 1.1em;}
+div.similars {margin-top: 2em; margin-bottom: -1em; padding: 0px 5px; font-size: 1.1em;}
+body.printable div.similars {margin-top: 1em; margin-bottom: 0em; }
 div.similars span.sep {color: #999999; font-weight: bold;}
 div.similars a {color: #999999; text-decoration: none; font-weight: bold;}
 div.similars a:hover {color: #006699;}
@@ -673,3 +674,140 @@ div.auxBlock > div.auxItem {border-bottom: 1px solid #cccccc; padding: 5px 5px;}
 div.auxBlock > div.auxItem > div.auxLeft {width: 49%; float: left; color: #25305F; font-weight: bold;}
 div.auxBlock > div.auxItem > div.auxRight {color: #25305F; margin-left: 51%;}
 div.auxBlock > div.auxItem > div.clear {clear: left;}
+
+div.providers {
+  overflow-y: hidden;
+  white-space: nowrap;
+  margin-top: 25px;
+}
+body.printable div.providers {
+  display: none;
+} 
+div.providers .provider {
+  display: inline-block;
+  vertical-align: bottom;
+  white-space: nowrap;
+  box-sizing: border-box;
+  padding: 16px 25px 16px 55px;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  position: relative;
+  background-color: #f9f9f9;
+  margin-right: 5px;
+  text-decoration: none;
+}
+@media (max-width: 800px){
+  div.providers .provider {
+    display: block;
+    float: left;
+    width: 50%;
+    margin: 0px;
+  }
+  div.providers .provider:first-child {
+    width: calc(50% - 10px);
+    margin-right: 10px;
+  }
+}
+div.providers a.provider:hover {
+  background-color: #f6f6f6;
+}
+div.providers .provider.iate {
+  padding-left: 90px;
+  padding-top: 6px;
+  padding-bottom: 6px;
+}
+div.providers .provider.current {
+  background-color: #daeefb;
+  border-color: #0B76C3;
+}
+div.providers .provider.current span.wedge {
+  display: block;
+  width: 20px;
+  height: 20px;
+  background-color: #ffffff;
+  border: 1px solid #0B76C3;
+  position: absolute;
+  left: 50%;
+  margin-left: -11px;
+  transform: rotate(45deg);
+  bottom: -18px;
+}
+div.providers .provider img {
+  position: absolute;
+  width: 30px;
+  top: 20px;
+  left: 25px;
+}
+div.providers .provider.iate img {
+  width: auto;
+  height: 30px;
+  top: 10px;
+}
+div.providers .provider.noncurrent img {
+  filter: grayscale();
+}
+div.providers .provider span.caption {
+  margin-left: 0.75em;
+  font-weight: bold;
+  color: #069;
+  font-size: 1.1em;
+}
+div.providers .provider.noncurrent span.caption {
+  color: #666666;
+}
+@media (max-width: 800px){
+  div.providers .provider span.caption {
+    width: 1px;
+    overflow: hidden;
+    visibility: hidden;
+    margin-right: 0px;
+    margin-left: -50px;
+  }
+}
+div.providers .provider span.multicaption {
+  display: inline-block;
+  margin-left: 0.75em;
+  font-size: 0.9em;
+  color: #069;
+  vertical-align: middle;
+}
+div.providers .provider.noncurrent span.multicaption {
+  color: #666666;
+}
+@media (max-width: 800px){
+  div.providers .provider span.multicaption {
+    width: 1px;
+    overflow: hidden;
+    visibility: hidden;
+    margin-left: -10px;
+  }
+}
+div.providers .provider span.multicaption span.line1 {
+  font-weight: bold;
+  display: block;
+}
+div.providers .provider span.multicaption span.line2 {
+  font-weight: normal;
+  display: block;
+}
+div.providers .provider span.count {
+  margin-left: 0.75em;
+  font-weight: normal;
+  background-color: #0B76C3;
+  color: #ffffff;
+  padding: 5px 10px;
+  border-radius: 20px;
+  font-size: 0.9em;
+}
+@media (max-width: 800px){
+  div.providers .provider span.count {
+    position: absolute;
+    top: 12px;
+    right: 15px;
+    min-width: 1em;
+    text-align: center;
+  }
+}
+div.providers .provider.noncurrent span.count {
+  background-color: #999999;
+}

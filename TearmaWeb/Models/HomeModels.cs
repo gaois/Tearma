@@ -191,6 +191,11 @@ namespace TearmaWeb.Models.Home
 			return ret;
 		}
 
+		public string iateSearchUrl() {
+			string ret="/iate/"+Uri.EscapeDataString(Tools.SlashEncode(this.word))+"/";
+			return ret;
+		}
+
         public string searchData() => JsonConvert.SerializeObject(new {
             word,
             lang,
