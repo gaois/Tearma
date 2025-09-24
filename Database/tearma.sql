@@ -42,7 +42,7 @@ begin
 	if @level<10
 	begin
 		declare @subdomainID int
-		DECLARE crsr CURSOR FOR
+		DECLARE crsr CURSOR FAST_FORWARD FOR
 			select m.id
 			from metadata as m
 			where m.type='domain' and m.parentID=@domainID
