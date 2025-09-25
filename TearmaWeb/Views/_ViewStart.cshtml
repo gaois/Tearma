@@ -1,5 +1,6 @@
 ﻿@{
     ViewData["SiteUrl"] = "https://www.tearma.ie";
+    ViewData["CanonicalUrl"] = !(ViewData["CanonicalUrl"] is null) ? ViewData["CanonicalUrl"] : ViewData["SiteUrl"] + Context.Request.GetEncodedPathAndQuery();
     ViewData["PageTitle"] = (ViewData["PageTitle"] is null) ? "téarma.ie" : ViewData["PageTitle"];
     ViewData["TagLine"] = (ViewData["TagLine"] is null) ? "téarma.ie" : ViewData["TagLine"];
     ViewData["MetaKeywords"] = (ViewData["MetaKeywords"] is null)
