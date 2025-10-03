@@ -798,16 +798,29 @@ div.providers .provider span.count {
   padding: 5px 10px;
   border-radius: 20px;
   font-size: 0.9em;
+  display: inline-block;
+  line-height: 1em;
+  min-width: 2em;
+  text-align: center;
 }
 @media (max-width: 800px){
   div.providers .provider span.count {
     position: absolute;
-    top: 12px;
+    top: 15px;
     right: 15px;
-    min-width: 1em;
+    min-width: 1.5em;
     text-align: center;
   }
 }
 div.providers .provider.noncurrent span.count {
   background-color: #999999;
+}
+div.providers .provider span.count.loading {
+  background-image: url(/furniture/preloader.png);
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: 1.75em auto;
+  @media (max-width: 800px){
+    background-size: 1.5em auto;
+  }
 }

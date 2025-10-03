@@ -1,8 +1,10 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json.Linq;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
+using TearmaWeb.Models;
 using TearmaWeb.Models.Home;
 
 namespace TearmaWeb.Controllers
@@ -131,6 +133,28 @@ namespace TearmaWeb.Controllers
 								model.auxes[coll].Add(new System.Tuple<string, string>((string)reader["en"], (string)reader["ga"]));
 							}
 						}
+                    }
+                }
+            }
+		}
+
+		/// <summary>Does the same thing as quick search but only returns the number of results.</summary>
+		public void Peek(PeekResult model) {
+            using(var conn = new SqlConnection(_connectionString)) {
+                conn.Open();
+
+                using(var command = new SqlCommand("dbo.pub_peek", conn)) {
+                    command.CommandType=CommandType.StoredProcedure;
+                    SqlParameter param;
+                    param=new SqlParameter(); param.ParameterName="@word"; param.SqlDbType=SqlDbType.NVarChar; param.Value=model.word; command.Parameters.Add(param);
+
+                    using(var reader = command.ExecuteReader()) {
+                        while(reader.Read()) {
+							var countExacts = (int)reader["CountExacts"];
+							var countRelateds = (int)reader["CountRelateds"];
+							model.count = countExacts + Math.Min(100, countRelateds);
+							model.hasMore = (countRelateds > 100);
+                        }
                     }
                 }
             }

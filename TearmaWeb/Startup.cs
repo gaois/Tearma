@@ -104,9 +104,11 @@ namespace TearmaWeb
 
 				//Quick search:
 				routes.MapRoute(name: "", template: "/q/{word}/{lang?}/", defaults: new {controller="Home", action="QuickSearch", lang=""});
+                routes.MapRoute(name: "", template: "/peekTearma.json/", defaults: new { controller = "Peek", action = "PeekTearma" });
 
                 //Iate search:
                 routes.MapRoute(name: "", template: "/iate/{word}/{lang?}/", defaults: new { controller = "Iate", action = "Search", lang = "" });
+                routes.MapRoute(name: "", template: "/peekIate.json/", defaults: new { controller = "Peek", action = "PeekIate" });
 
                 //Advanced search:
                 routes.MapRoute(name: "", template: "/plus/", defaults: new {controller="Home", action="AdvSearch"});

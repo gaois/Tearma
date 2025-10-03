@@ -334,7 +334,7 @@ function copyTextToClipboard(text) {
     }
     navigator.clipboard.writeText(text).catch(err => { console.error("Async copy: Could not copy to clipboard: ", err); });
   }
-  function fallbackCopyTextToClipboard(text) {
+function fallbackCopyTextToClipboard(text) {
     var textArea = document.createElement("textarea");
     textArea.value = text;
     textArea.style.top = "0";
@@ -344,9 +344,35 @@ function copyTextToClipboard(text) {
     textArea.focus();
     textArea.select();
     try {
-      document.execCommand("copy");
+        document.execCommand("copy");
     } catch (err) {
-      console.error("Fallback: Cound not copy to clipboard", err);
+        console.error("Fallback: Cound not copy to clipboard", err);
     }
     document.body.removeChild(textArea);
-  }
+}
+
+$(document).ready(function () {
+    maybePeek();
+});
+function maybePeek(){
+    const $provider = $("a.provider.noncurrent");
+    if($provider){
+        const word = $("input.searchbox").val();
+        const provider = $provider.hasClass("iate") ? "iate" : "tearma"; 
+        if(provider == "iate"){
+            $.getJSON("/peekIate.json", {word}, function(data){
+                finishPeek(data);
+            });
+        }
+        else if(provider == "tearma"){
+            $.getJSON("/peekTearma.json", {word}, function(data){
+                finishPeek(data);
+            });
+        }
+    }
+}
+function finishPeek(data){
+    const $count = $("a.provider.noncurrent span.count");
+    $count.removeClass("loading");
+    $count.html(data.count + (data.hasMore ? `<span class="plus">+</span>` : "") );
+}

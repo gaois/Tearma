@@ -3,6 +3,7 @@ using Gaois.QueryLogger;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 using System.Text.RegularExpressions;
+using TearmaWeb.Models;
 using TearmaWeb.Models.Iate;
 
 namespace TearmaWeb.Controllers
@@ -19,7 +20,7 @@ namespace TearmaWeb.Controllers
 			return text;
 		}
 
-		public IActionResult Search(string word, string lang) {
+        public IActionResult Search(string word, string lang) {
             if(word.IsNullOrWhiteSpace()) {
               return new RedirectToActionResult("Index", "Home", null);
             }

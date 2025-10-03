@@ -1789,6 +1789,81 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
+CREATE procedure [dbo].[pub_peek]
+  @word nvarchar(255)
+as
+begin
+
+declare @wordSpartanized nvarchar(255)
+set @wordSpartanized=dbo.spartanize(@word)
+
+--find exact matches:
+declare @exacts table(entry_id int, lang nvarchar(10))
+insert into @exacts(entry_id, lang) select e.id, t.lang from entries as e
+	inner join entry_term as et on et.entry_id=e.id
+	inner join terms as t on t.id=et.term_id
+	--where t.wording=@word and e.pStatus=1
+	where t.wordingSpartanized=@wordSpartanized and e.pStatus=1
+
+--find related matches:
+declare @words table(word nvarchar(max))
+insert into @words(word) select dbo.spartanize(display_term)
+	from sys.dm_fts_parser(N'"'+replace(replace(@word, '-', ' '), '"', ' ')+'"', 0, null, 1)
+	where special_term in ('Noise Word', 'Exact Match')
+	order by len(display_term) desc
+declare @relateds table(entry_id int, lang nvarchar(10), term_id int)
+declare @temp table(entry_id int, term_id int)
+declare @tokens table(token nvarchar(255), lang nvarchar(10))
+--first word:
+declare @word1 nvarchar(max); select top 1 @word1=word from @words;
+delete from @tokens; insert into @tokens(token, lang) values(@word1, ''); insert into @tokens(token, lang) select token, lang from flex where lemma=@word1; insert into @tokens(token, lang) select lemma, lang from flex where token=@word1
+insert into @relateds(entry_id, lang, term_id) select distinct e.id, t.lang, t.id from entries as e
+	inner join entry_term as et on et.entry_id=e.id
+	inner join terms as t on t.id=et.term_id
+	inner join words as w on w.term_id=t.id
+	inner join @tokens as tok on tok.token=w.word collate Latin1_General_CI_AS and (tok.lang=t.lang or tok.lang='')
+--second word:
+declare @word2 nvarchar(max); select top 2 @word2=word from @words
+if(@word2<>@word1)
+begin
+	delete from @temp; insert into @temp(entry_id, term_id) select entry_id, term_id from @relateds; delete from @relateds
+	delete from @tokens; insert into @tokens(token, lang) values(@word2, ''); insert into @tokens(token, lang) select token, lang from flex where lemma=@word2; insert into @tokens(token, lang) select lemma, lang from flex where token=@word2
+	insert into @relateds(entry_id, lang, term_id) select distinct e.id, t.lang, t.id from entries as e
+		inner join @temp as temp on temp.entry_id=e.id and temp.entry_id=e.id
+		inner join entry_term as et on et.entry_id=e.id
+		inner join terms as t on t.id=et.term_id
+		inner join words as w on w.term_id=t.id
+		inner join @tokens as tok on tok.token=w.word collate Latin1_General_CI_AS and (tok.lang=t.lang or tok.lang='')
+end
+--third word:
+declare @word3 nvarchar(max); select top 3 @word3=word from @words
+if(@word3<>@word2 and @word3<>@word1)
+begin
+	delete from @temp; insert into @temp(entry_id, term_id) select entry_id, term_id from @relateds; delete from @relateds
+	delete from @tokens; insert into @tokens(token, lang) values(@word3, ''); insert into @tokens(token, lang) select token, lang from flex where lemma=@word3; insert into @tokens(token, lang) select lemma, lang from flex where token=@word3
+	insert into @relateds(entry_id, lang, term_id) select distinct e.id, t.lang, t.id from entries as e
+		inner join @temp as temp on temp.entry_id=e.id and temp.entry_id=e.id
+		inner join entry_term as et on et.entry_id=e.id
+		inner join terms as t on t.id=et.term_id
+		inner join words as w on w.term_id=t.id
+		inner join @tokens as tok on tok.token=w.word collate Latin1_General_CI_AS and (tok.lang=t.lang or tok.lang='')
+end
+
+
+declare @count_exacts int
+select @count_exacts = count(distinct entry_id) from @exacts
+
+declare @count_relateds int
+select @count_relateds = count(distinct entry_id) from @relateds as r where r.entry_id not in (select entry_id from @exacts)
+
+select @count_exacts as [CountExacts], @count_relateds as [CountRelateds]
+
+end
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
 CREATE procedure [dbo].[pub_quicksearch]
   @word nvarchar(255)
 , @lang nvarchar(10) = '' --empty string means any language
