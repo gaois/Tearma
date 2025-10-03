@@ -21,3 +21,5 @@ User-agent: PetalBot
 Disallow: /
 User-agent: SemrushBot
 Disallow: /
+User-agent: meta-externalagent
+Disallow: /

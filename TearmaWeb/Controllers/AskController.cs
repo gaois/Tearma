@@ -78,7 +78,7 @@ namespace TearmaWeb.Controllers
 					{
                         message.To.Add(new MailAddress("tearmai@forasnagaeilge.ie"));
                         message.Bcc.Add(new MailAddress("tearma@dcu.ie"));
-                        message.From = new MailAddress("noreply@tearma.ie", "Téarma");
+                        message.From = new MailAddress("noreply@gaois.ie", "Téarma");
 						message.Subject = subject;
 						message.Body = html;
 						message.BodyEncoding = System.Text.Encoding.UTF8;

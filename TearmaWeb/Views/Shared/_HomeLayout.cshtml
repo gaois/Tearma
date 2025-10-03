@@ -18,6 +18,12 @@
     <meta name="msapplication-TileColor" content="#ffffff">
     <meta name="theme-color" content="#ffffff">
 
+    <link rel="canonical" href="@ViewData["CanonicalUrl"]" />
+    @if (ViewData["AlternateUrl"] != null && ViewData["AltLang"] != null)
+    {
+        <link rel="alternate" href="@ViewData["AlternateUrl"]" hreflang="@ViewData["AltLang"]" />
+    }
+
     <meta name="keywords" content="@ViewData["MetaKeywords"]" />
     <meta name="description" content="@ViewData["MetaDescription"]" />
     <meta property="og:description" content="@ViewData["MetaDescription"]" />

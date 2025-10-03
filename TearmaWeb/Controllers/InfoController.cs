@@ -24,9 +24,12 @@ namespace TearmaWeb.Controllers
 				model.section=section;
 				model.nickname=nickname;
 				model.lang=lang;
-				string path=@"./wwwroot/"+section+"/"+nickname+"."+lang+".md";
+                string path=@"./wwwroot/"+section+"/"+nickname+"."+lang+".md";
 				if(System.IO.File.Exists(path)) {
                     model.body=System.IO.File.ReadAllText(path);
+                    string altLang = (lang == "ga") ? "en" : "ga";
+					ViewData["AltLang"] = altLang;
+                    ViewData["AlternateUrl"] = "https://www.tearma.ie/"+section+"/"+nickname+"."+altLang;
                     ret=View("Topic", model);
                 } else {
                     ret=new NotFoundResult();
