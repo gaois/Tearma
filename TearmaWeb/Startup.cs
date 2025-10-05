@@ -49,6 +49,7 @@ namespace TearmaWeb
             services.AddQueryLogger(_configuration.GetSection("QueryLogger"));
 
             services.AddScoped<Controllers.Broker>();
+            services.AddScoped<Controllers.IateBroker>();
         }
 
 		public void Configure(IApplicationBuilder app, Microsoft.AspNetCore.Hosting.IHostingEnvironment env) {

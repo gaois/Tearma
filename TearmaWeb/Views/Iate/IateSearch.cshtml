@@ -35,7 +35,7 @@
             <span class="line1" lang="ga">Téarmaíocht an Aontais Eorpaigh</span>
             <span class="line2" lang="en">European Union Terminology</span>
         </span>
-        <span class="count">0</span>
+        <span class="count">@(Model.count)@if(Model.hasMore){<span class="plus">+</span>}</span>
         <span class="wedge"></span>
     </span>    
 </div>
@@ -45,3 +45,39 @@
     <span class="text ga" lang="ga">Roghanna</span>
     <span class="text en" lang="en">Options</span>
 </a>
+
+<div class="sectitle strong">
+	<span class="icon far fa-dot-circle"></span>
+	<span class="ga" lang="ga">Torthaí beachta</span>
+	<span class="en" lang="en">Exact matches</span>
+</div>
+@if(Model.exacts.Count == 0) {
+    <div class="nojoy">
+        <div class="ga">Níor aimsíodh téarma ar bith.</div>
+        <div class="en">No terms found.</div>
+    </div>
+} else {
+    @foreach(string s in Model.exacts){
+        <p>
+            @Html.Raw(s)
+        </p>
+    }
+}
+
+<div class="sectitle strong">
+    <span class="icon fas fa-bullseye"></span>
+    <span class="ga" lang="ga">Torthaí gaolmhara</span>
+    <span class="en" lang="en">Related matches</span>
+</div>
+@if(Model.relateds.Count == 0) {
+    <div class="nojoy">
+        <div class="ga">Níor aimsíodh téarma ar bith.</div>
+        <div class="en">No terms found.</div>
+    </div>
+} else {
+    @foreach(string s in Model.relateds){
+        <p>
+            @Html.Raw(s)
+        </p>
+    }
+}

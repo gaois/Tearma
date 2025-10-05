@@ -11,10 +11,12 @@ namespace TearmaWeb.Controllers {
     public class PeekController : Controller {
         private readonly IQueryLogger _queryLogger;
         private readonly Broker _broker;
+        private readonly IateBroker _iateBroker;
 
-        public PeekController(IQueryLogger queryLogger, Broker broker) {
+        public PeekController(IQueryLogger queryLogger, Broker broker, IateBroker iateBroker) {
             _queryLogger = queryLogger;
             _broker = broker;
+            _iateBroker = iateBroker;
         }
 
         public IActionResult PeekTearma([FromQuery] string word) {
@@ -27,6 +29,7 @@ namespace TearmaWeb.Controllers {
         public IActionResult PeekIate([FromQuery] string word) {
             PeekResult pr = new PeekResult();
             pr.word = word;
+            _iateBroker.Peek(pr);
             return Json(pr);
         }
 

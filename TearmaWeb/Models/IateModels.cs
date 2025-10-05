@@ -26,10 +26,14 @@ namespace TearmaWeb.Models.Iate
         public bool super = false;
         
 		public string quickSearchUrl() {
-			string ret="/q/"+Uri.EscapeDataString(Tools.SlashEncode(this.word))+"/";
+			string ret = "/q/"+Uri.EscapeDataString(Tools.SlashEncode(this.word))+"/";
 			return ret;
 		}
 
+		public int count = 0;
+		public bool hasMore = false;
+		public List<string> exacts = new List<string>();
+		public List<string> relateds = new List<string>();
 	}
 
 }
