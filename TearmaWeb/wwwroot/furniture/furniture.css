@@ -680,9 +680,6 @@ div.providers {
   white-space: nowrap;
   margin-top: 25px;
 }
-body.printable div.providers {
-  display: none;
-} 
 div.providers .provider {
   display: inline-block;
   vertical-align: bottom;
@@ -696,6 +693,9 @@ div.providers .provider {
   margin-right: 5px;
   text-decoration: none;
 }
+body.printable div.providers .provider {
+  background-color: #ffffff;
+} 
 @media (max-width: 800px){
   div.providers .provider {
     display: block;
@@ -720,6 +720,10 @@ div.providers .provider.current {
   background-color: #daeefb;
   border-color: #0B76C3;
 }
+body.printable div.providers .provider.current {
+  background-color: #ffffff;
+  border-color: #333333;
+} 
 div.providers .provider.current span.wedge {
   display: block;
   width: 20px;
@@ -731,6 +735,9 @@ div.providers .provider.current span.wedge {
   margin-left: -11px;
   transform: rotate(45deg);
   bottom: -18px;
+}
+body.printable div.providers .provider.current span.wedge {
+  border-color: #333333;
 }
 div.providers .provider img {
   position: absolute;
@@ -746,11 +753,17 @@ div.providers .provider.iate img {
 div.providers .provider.noncurrent img {
   filter: grayscale();
 }
+body.printable div.providers .provider img {
+  filter: grayscale();
+}
 div.providers .provider span.caption {
   margin-left: 0.75em;
   font-weight: bold;
   color: #069;
   font-size: 1.1em;
+}
+body.printable div.providers .provider span.caption {
+  color: #333333;
 }
 div.providers .provider.noncurrent span.caption {
   color: #666666;
@@ -770,6 +783,9 @@ div.providers .provider span.multicaption {
   font-size: 0.9em;
   color: #069;
   vertical-align: middle;
+}
+body.printable div.providers .provider span.multicaption {
+  color: #333333;
 }
 div.providers .provider.noncurrent span.multicaption {
   color: #666666;
@@ -802,6 +818,9 @@ div.providers .provider span.count {
   line-height: 1em;
   min-width: 2em;
   text-align: center;
+}
+body.printable div.providers .provider span.count {
+  background-color: #999999;
 }
 @media (max-width: 800px){
   div.providers .provider span.count {

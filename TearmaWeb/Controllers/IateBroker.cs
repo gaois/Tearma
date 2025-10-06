@@ -98,14 +98,10 @@ namespace TearmaWeb.Controllers {
                                     bool hasGA = false;
                                     bool hasEN = false;
                                     if(entry["language"]["ga"] != null && entry["language"]["ga"]["term_entries"] != null) {
-                                        foreach(JObject term_entry in entry["language"]["ga"]["term_entries"]) {
-                                            hasGA = true;
-                                        }
+                                        hasGA = true;
                                     }
                                     if(entry["language"]["en"] != null && entry["language"]["en"]["term_entries"] != null) {
-                                        foreach(JObject term_entry in entry["language"]["en"]["term_entries"]) {
-                                            hasEN = true;
-                                        }
+                                        hasEN = true;
                                     }
                                     if(hasGA && hasEN) {
                                         entryURLs.Add(entryURL);
@@ -162,23 +158,10 @@ namespace TearmaWeb.Controllers {
                             if(model.count<100) {
                                 int entryID = (int)entry["id"];
                                 if(!entryIDs.Contains(entryID)){
-                                    bool hasGA = false;
-                                    bool hasEN = false;
-                                    string s = $"<div>{entry["id"]}</div>";
-                                    if(entry["language"]["ga"] != null && entry["language"]["ga"]["term_entries"] != null) {
-                                        foreach(JObject term_entry in entry["language"]["ga"]["term_entries"]) {
-                                            s += "<div>ga: "+term_entry["term_value"]+"</div>";
-                                            hasGA = true;
-                                        }
-                                    }
-                                    if(entry["language"]["en"] != null && entry["language"]["en"]["term_entries"] != null) {
-                                        foreach(JObject term_entry in entry["language"]["en"]["term_entries"]) {
-                                            s += "<div>en: "+term_entry["term_value"]+"</div>";
-                                            hasEN = true;
-                                        }
-                                    }
-                                    s += $"<div style='font-family: monospace; font-size: 0.75em; color: #999; line-height: 1.25em; height: 1.25em; overflow: hidden'>{HttpUtility.HtmlEncode(entry.ToString())}</div>";
+                                    bool hasGA = (entry["language"]["ga"] != null && entry["language"]["ga"]["term_entries"] != null);
+                                    bool hasEN = (entry["language"]["en"] != null && entry["language"]["en"]["term_entries"] != null);
                                     if(hasGA && hasEN) {
+                                        string s = PrettifyIate.Entry(entry);
                                         if(i<2) {
                                             model.exacts.Add(s);
                                         } else {
