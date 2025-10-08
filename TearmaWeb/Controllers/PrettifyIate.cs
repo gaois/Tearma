@@ -42,7 +42,7 @@ namespace TearmaWeb.Controllers {
                     if(isFirst) {
                         s += "<span class='prettyLang hintable' title='Gaeilge/Irish'>GA</span>";
                     }
-                    s += $"<a class='prettyWording' href='/iate/{Uri.EscapeDataString(wording.Replace("/", "$forwardslash;").Replace("\\", "$backslash;"))}'>";
+                    s += $"<a class='prettyWording' href='/q/{Uri.EscapeDataString(wording.Replace("/", "$forwardslash;").Replace("\\", "$backslash;"))}'>";
                     s += HttpUtility.HtmlEncode(wording);
                     s += "</a>";
                     s += "<span class='clickme' onclick='termMenuClick(this)'>▼</span>";
@@ -62,7 +62,7 @@ namespace TearmaWeb.Controllers {
                     if(isFirst) {
                         s += "<span class='prettyLang hintable' title='Béarla/English'>EN</span>";
                     }
-                    s += $"<a class='prettyWording' href='/iate/{Uri.EscapeDataString(wording.Replace("/", "$forwardslash;").Replace("\\", "$backslash;"))}'>";
+                    s += $"<a class='prettyWording' href='/q/{Uri.EscapeDataString(wording.Replace("/", "$forwardslash;").Replace("\\", "$backslash;"))}'>";
                     s += HttpUtility.HtmlEncode(wording);
                     s += "</a>";
                     s += "<span class='clickme' onclick='termMenuClick(this)'>▼</span>";

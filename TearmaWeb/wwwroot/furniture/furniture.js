@@ -15,15 +15,6 @@ function submitQuickSearch(form) {
     return false;
 }
 
-function submitIateSearch(form) {
-    var word = form["word"].value;
-    if (word) {
-        var url = "/iate/" + myEncodeURIComponent(word) + "/";
-        window.location = url;
-    }
-    return false;
-}
-
 function submitAdvSearch(form) {
     var word = form["word"].value;
     if (word) {
