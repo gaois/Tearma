@@ -35,6 +35,7 @@ namespace TearmaWeb.Models.Info
 			toc.Add(new TocItem("stair", "Stair téarma.ie", "History of téarma.ie"));
 			toc.Add(new TocItem("abhar", "Eolas faoin ábhar", "About the content"));
 			toc.Add(new TocItem("coiste", "An Coiste Téarmaíochta", "Terminology Committee"));
+			toc.Add(new TocItem("iate", "Ábhar ó IATE", "Content from IATE"));
 			toc.Add(new TocItem("cosaint-sonrai", "Eolas cosanta sonraí", "Data protection information"));
 			return toc;
 		}

@@ -12,17 +12,24 @@ namespace TearmaWeb.Controllers {
     
     public class PrettifyIate {
 
-        private static string RemoveHtml(string s) {
+        private static string RemoveSomeHtml(string s) {
+            s = Regex.Replace(s, "<(?!b>|/b>|i>|/i>|strong>|/strong>|em>|/em>])[^>]+>", "", RegexOptions.IgnoreCase);
+            return s;
+        }
+        private static string RemoveAllHtml(string s) {
             s = Regex.Replace(s, "<[^>]+>", "");
             return s;
         }
 
-        public static string Entry(JObject entry) {
+        public static string Entry(JObject entry, string leftlang, string rightlang) {
             string s = "<div class='prettyEntry'>";
+
+            string id = (string)entry["id"];
+            s += $"<a class='iateLink' target='_blank' href='https://iate.europa.eu/entry/result/{id}'>#{id} <i class=\"fas fa-external-link-alt\"></i></a>";
 
             if(entry["domains"] != null) {
                 foreach(JObject domain in entry["domains"]) {
-                    s += "<div class='prettyDomain'>";
+                    s += "<div class='prettyDomain iate'>";
                     if(domain["domain"]["path"] != null) {
                         foreach(string step in domain["domain"]["path"]) {
                             s += step + " » ";
@@ -33,58 +40,60 @@ namespace TearmaWeb.Controllers {
                 }
             }
 
-            s += "<div class='desigBlock left'>";
-            if(entry["language"]["ga"] != null && entry["language"]["ga"]["term_entries"] != null) {
-                bool isFirst = true;
-                foreach(JObject term_entry in entry["language"]["ga"]["term_entries"]) {
-                    string wording = RemoveHtml((string)term_entry["term_value"]);
-                    s += $"<div class='prettyDesig' data-lang='ga' data-wording='{HttpUtility.HtmlEncode(wording)}'>";
-                    if(isFirst) {
-                        s += "<span class='prettyLang hintable' title='Gaeilge/Irish'>GA</span>";
+            string sLeft = "";
+            string sRight = "";
+            foreach(string lang in new List<string> { "ga", "en", "fr", "de" }) {
+                string sBlock = "";
+                if (entry["language"][lang] != null && entry["language"][lang]["term_entries"] != null) {
+                    bool isFirst = true;
+                    foreach (JObject term_entry in entry["language"][lang]["term_entries"]) {
+                        string wording = RemoveAllHtml((string)term_entry["term_value"]);
+                        sBlock += $"<div class='prettyDesig' data-lang='{lang}' data-wording='{HttpUtility.HtmlEncode(wording)}'>";
+                        if (isFirst) {
+                            if(lang=="ga") sBlock += "<span class='prettyLang hintable' title='Gaeilge/Irish'>GA</span>";
+                            if(lang=="en") sBlock += "<span class='prettyLang hintable' title='Béarla/English'>EN</span>";
+                            if(lang=="de") sBlock += "<span class='prettyLang hintable' title='Gearmáinis/German'>DE</span>";
+                            if(lang=="fr") sBlock += "<span class='prettyLang hintable' title='Fraincis/French'>FR</span>";
+                        }
+                        if(lang=="ga" || lang == "en") {
+                            sBlock += $"<a class='prettyWording' href='/q/{Uri.EscapeDataString(wording.Replace("/", "$forwardslash;").Replace("\\", "$backslash;"))}'>";
+                            sBlock += HttpUtility.HtmlEncode(wording);
+                            sBlock += "</a>";
+                            sBlock += "<span class='clickme' onclick='termMenuClick(this)'>▼</span>";
+                            sBlock += "<span class='copyme' onclick='copyClick(this)' title='Cóipeáil · Copy'><i class='far fa-copy'></i><i class='fas fa-check'></i></span>";
+                        } else
+                        {
+                            sBlock += $"<span class='prettyWording'>";
+                            sBlock += HttpUtility.HtmlEncode(wording);
+                            sBlock += "</span>";
+                        }
+                        if (lang == "ga" && term_entry["contexts"] != null) {
+                            foreach (JObject context in term_entry["contexts"]) {
+                                sBlock += $"<div class='iateExample'>{RemoveSomeHtml((string)context["context"])}</div>";
+                            }
+                        }
+                        sBlock += "</div>"; //.prettyDesig
+                        isFirst = false;
                     }
-                    s += $"<a class='prettyWording' href='/q/{Uri.EscapeDataString(wording.Replace("/", "$forwardslash;").Replace("\\", "$backslash;"))}'>";
-                    s += HttpUtility.HtmlEncode(wording);
-                    s += "</a>";
-                    s += "<span class='clickme' onclick='termMenuClick(this)'>▼</span>";
-                    s += "<span class='copyme' onclick='copyClick(this)' title='Cóipeáil · Copy'><i class='far fa-copy'></i><i class='fas fa-check'></i></span>";
-                    s += "</div>"; //.prettyDesig
-                    isFirst = false;
-                }
-            }
-            s += "</div>"; //.desigBlock.left
-
-            s += "<div class='desigBlock right'>";
-            if(entry["language"]["en"] != null && entry["language"]["en"]["term_entries"] != null) {
-                bool isFirst = true;
-                foreach(JObject term_entry in entry["language"]["en"]["term_entries"]) {
-                    string wording = RemoveHtml((string)term_entry["term_value"]);
-                    s += $"<div class='prettyDesig' data-lang='en' data-wording='{HttpUtility.HtmlEncode(wording)}'>";
-                    if(isFirst) {
-                        s += "<span class='prettyLang hintable' title='Béarla/English'>EN</span>";
+                    if ((lang=="ga" || lang=="en") && entry["language"][lang]["definition"] != null)
+                    {
+                        sBlock += $"<div class='iateDefinition'>{RemoveSomeHtml((string)entry["language"][lang]["definition"]["value"])}</div>";
                     }
-                    s += $"<a class='prettyWording' href='/q/{Uri.EscapeDataString(wording.Replace("/", "$forwardslash;").Replace("\\", "$backslash;"))}'>";
-                    s += HttpUtility.HtmlEncode(wording);
-                    s += "</a>";
-                    s += "<span class='clickme' onclick='termMenuClick(this)'>▼</span>";
-                    s += "<span class='copyme' onclick='copyClick(this)' title='Cóipeáil · Copy'><i class='far fa-copy'></i><i class='fas fa-check'></i></span>";
-                    s += "</div>"; //.prettyDesig
-                    isFirst = false;
+                }
+                if (lang == leftlang) {
+                    sLeft += sBlock;
+                } else if(lang == rightlang) { 
+                    sRight += sBlock;
+                } else if(sBlock != "") {
+                    if("en" == leftlang) {
+                        sLeft += "<div class='desigBlock bottom'>" + sBlock + "</div>";
+                    } else if("en" == rightlang) {
+                        sRight += "<div class='desigBlock bottom'>" + sBlock + "</div>";
+                    }
                 }
             }
-            s += "</div>"; //.desigBlock.right
-
-            if( (entry["language"]["en"] != null && entry["language"]["en"]["definition"] != null)
-                || (entry["language"]["ga"] != null && entry["language"]["ga"]["definition"] != null)
-            ) {
-                s += "<div class='prettyDefinition'>";
-                if(entry["language"]["ga"] != null && entry["language"]["ga"]["definition"] != null) {
-                    s += $"<div class='left'>{HttpUtility.HtmlEncode(RemoveHtml((string)entry["language"]["ga"]["definition"]["value"]))}</div>";
-                }
-                if(entry["language"]["en"] != null && entry["language"]["en"]["definition"] != null) {
-                    s += $"<div class='right'>{HttpUtility.HtmlEncode(RemoveHtml((string)entry["language"]["en"]["definition"]["value"]))}</div>";
-                }
-                s += "</div>"; //.prettyDefinition
-            }
+            s += "<div class='desigBlock left'>"+sLeft+"</div>";
+            s += "<div class='desigBlock right'>"+sRight+"</div>";
 
             s += "<div class='clear'></div>";
 

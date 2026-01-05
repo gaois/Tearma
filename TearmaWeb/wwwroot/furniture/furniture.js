@@ -365,5 +365,6 @@ function maybePeek(){
 function finishPeek(data){
     const $count = $("a.provider.noncurrent span.count");
     $count.removeClass("loading");
-    $count.html(data.count + (data.hasMore ? `<span class="plus">+</span>` : "") );
+    $count.html(data.count + (data.hasMore ? `<span class="plus">+</span>` : ""));
+    if (data.count > 0) $("a.provider.noncurrent").addClass("available");
 }

@@ -71,10 +71,10 @@ namespace TearmaWeb.Controllers {
                     { "Authorization", "Bearer "+token },
                 },
                 Content = new StringContent($@"[
-                    {{""limit"": 5, ""expand"": true, ""search_request"": {{""sources"": [""ga""], ""targets"": [""en""], ""query"": ""{model.word}"", ""query_operator"": 3}}}},
-                    {{""limit"": 5, ""expand"": true, ""search_request"": {{""sources"": [""en""], ""targets"": [""ga""], ""query"": ""{model.word}"", ""query_operator"": 3}}}},
-                    {{""limit"": 101, ""expand"": true, ""search_request"": {{""sources"": [""ga""], ""targets"": [""en""], ""query"": ""{model.word}"", ""query_operator"": 1}}}},
-                    {{""limit"": 101, ""expand"": true, ""search_request"": {{""sources"": [""en""], ""targets"": [""ga""], ""query"": ""{model.word}"", ""query_operator"": 1}}}}
+                    {{""limit"": 10, ""expand"": true, ""search_request"": {{""sources"": [""ga""], ""targets"": [""en"", ""de"", ""fr""], ""query"": ""{model.word}"", ""query_operator"": 3}}}},
+                    {{""limit"": 10, ""expand"": true, ""search_request"": {{""sources"": [""en""], ""targets"": [""ga"", ""de"", ""fr""], ""query"": ""{model.word}"", ""query_operator"": 3}}}},
+                    {{""limit"": 101, ""expand"": true, ""search_request"": {{""sources"": [""ga""], ""targets"": [""en"", ""de"", ""fr""], ""query"": ""{model.word}"", ""query_operator"": 1}}}},
+                    {{""limit"": 101, ""expand"": true, ""search_request"": {{""sources"": [""en""], ""targets"": [""ga"", ""de"", ""fr""], ""query"": ""{model.word}"", ""query_operator"": 1}}}}
                 ]") {
                     Headers =
                         {
@@ -126,17 +126,18 @@ namespace TearmaWeb.Controllers {
             var client = new HttpClient();
             var request = new HttpRequestMessage {
                 Method = HttpMethod.Post,
-                RequestUri = new Uri("https://iate.europa.eu/em-api/entries/_msearch?fields_set_name=minimal"),
+                RequestUri = new Uri("https://iate.europa.eu/em-api/entries/_msearch?fields_set_name=minimal"), //this does not include "context" (= examples)
+                //RequestUri = new Uri("https://iate.europa.eu/em-api/entries/_msearch"), //this does, but is noticably slower
                 Headers =
                 {
                     { "accept", "application/vnd.iate.entry+json; version=2" },
                     { "Authorization", "Bearer "+token },
                 },
                 Content = new StringContent($@"[
-                    {{""limit"": 5, ""expand"": true, ""search_request"": {{""sources"": [""ga""], ""targets"": [""en""], ""query"": ""{model.word}"", ""query_operator"": 3}}}},
-                    {{""limit"": 5, ""expand"": true, ""search_request"": {{""sources"": [""en""], ""targets"": [""ga""], ""query"": ""{model.word}"", ""query_operator"": 3}}}},
-                    {{""limit"": 101, ""expand"": true, ""search_request"": {{""sources"": [""ga""], ""targets"": [""en""], ""query"": ""{model.word}"", ""query_operator"": 1}}}},
-                    {{""limit"": 101, ""expand"": true, ""search_request"": {{""sources"": [""en""], ""targets"": [""ga""], ""query"": ""{model.word}"", ""query_operator"": 1}}}}
+                    {{""limit"": 10, ""expand"": true, ""search_request"": {{""sources"": [""ga""], ""targets"": [""en"", ""de"", ""fr""], ""query"": ""{model.word}"", ""query_operator"": 3}}}},
+                    {{""limit"": 10, ""expand"": true, ""search_request"": {{""sources"": [""en""], ""targets"": [""ga"", ""de"", ""fr""], ""query"": ""{model.word}"", ""query_operator"": 3}}}},
+                    {{""limit"": 101, ""expand"": true, ""search_request"": {{""sources"": [""ga""], ""targets"": [""en"", ""de"", ""fr""], ""query"": ""{model.word}"", ""query_operator"": 1}}}},
+                    {{""limit"": 101, ""expand"": true, ""search_request"": {{""sources"": [""en""], ""targets"": [""ga"", ""de"", ""fr""], ""query"": ""{model.word}"", ""query_operator"": 1}}}}
                 ]")
                 {
                     Headers =
@@ -161,7 +162,9 @@ namespace TearmaWeb.Controllers {
                                     bool hasGA = (entry["language"]["ga"] != null && entry["language"]["ga"]["term_entries"] != null);
                                     bool hasEN = (entry["language"]["en"] != null && entry["language"]["en"]["term_entries"] != null);
                                     if(hasGA && hasEN) {
-                                        string s = PrettifyIate.Entry(entry);
+                                        string leftlang = (i==0 || i==2 ? "ga" : "en");
+                                        string rightlang = (leftlang == "ga" ? "en" : "ga");
+                                        string s = PrettifyIate.Entry(entry, leftlang, rightlang);
                                         if(i<2) {
                                             model.exacts.Add(s);
                                         } else {
