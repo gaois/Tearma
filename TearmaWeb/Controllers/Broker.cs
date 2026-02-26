@@ -44,7 +44,7 @@ public class Broker(IConfiguration configuration)
         {
             int id = (int)reader["id"];
             string type = (string)reader["type"];
-            string json = (string)reader["json"];
+            string json = reader["json"] as string ?? "";
             bool hasChildren = (int)reader["hasChildren"] > 0;
 
             var jo = JObject.Parse(json);
@@ -133,7 +133,7 @@ public class Broker(IConfiguration configuration)
         while (await reader.ReadAsync())
         {
             int id = (int)reader["id"];
-            string json = (string)reader["json"];
+            string json = reader["json"] as string ?? "";
             model.Exacts.Add(Prettify.Entry(id, json, lookups, model.SortLang, xrefTargets));
         }
 
@@ -147,7 +147,7 @@ public class Broker(IConfiguration configuration)
             if (relatedCount <= 100)
             {
                 int id = (int)reader["id"];
-                string json = (string)reader["json"];
+                string json = reader["json"] as string ?? "";
                 model.Relateds.Add(Prettify.Entry(id, json, lookups, model.SortLang));
             }
         }
@@ -163,8 +163,9 @@ public class Broker(IConfiguration configuration)
             while (await reader.ReadAsync())
             {
                 var coll = (string)reader["coll"];
+
                 if (!model.Auxes.ContainsKey(coll))
-                    model.Auxes[coll] = new List<Tuple<string, string>>();
+                    model.Auxes[coll] = [];
 
                 model.Auxes[coll].Add(
                     new Tuple<string, string>(
@@ -252,7 +253,7 @@ public class Broker(IConfiguration configuration)
         while (await reader.ReadAsync())
         {
             int id = (int)reader["id"];
-            string json = (string)reader["json"];
+            string json = reader["json"] as string ?? "";
             model.Matches.Add(Prettify.Entry(id, json, lookups, model.SortLang, xrefTargets));
         }
 
@@ -321,7 +322,7 @@ public class Broker(IConfiguration configuration)
         if (await reader.ReadAsync())
         {
             int id = (int)reader["id"];
-            string json = (string)reader["json"];
+            string json = reader["json"] as string ?? "";
             model.Tod = Prettify.Entry(id, json, lookups, "ga");
         }
 
@@ -330,7 +331,7 @@ public class Broker(IConfiguration configuration)
         while (await reader.ReadAsync())
         {
             int id = (int)reader["id"];
-            string json = (string)reader["json"];
+            string json = reader["json"] as string ?? "";
             model.Recent.Add(Prettify.EntryLink(id, json, "ga"));
         }
 
@@ -368,7 +369,7 @@ public class Broker(IConfiguration configuration)
         if (await reader.ReadAsync())
         {
             int id = (int)reader["id"];
-            string json = (string)reader["json"];
+            string json = reader["json"] as string ?? "";
             model.EntryHtml = Prettify.Entry(id, json, lookups, "ga", xrefTargets);
         }
     }
@@ -436,7 +437,7 @@ public class Broker(IConfiguration configuration)
         while (await reader.ReadAsync())
         {
             int id = (int)reader["id"];
-            string json = (string)reader["json"];
+            string json = reader["json"] as string ?? "";
             model.Matches.Add(Prettify.Entry(id, json, lookups, model.Lang, xrefTargets));
         }
 
@@ -470,7 +471,7 @@ public class Broker(IConfiguration configuration)
         if (await reader.ReadAsync())
         {
             int id = (int)reader["id"];
-            string json = (string)reader["json"];
+            string json = reader["json"] as string ?? "";
             model.TodID = id;
             model.TodText = Prettify.Entry(id, json, lookups, "ga");
         }

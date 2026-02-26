@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System.Text.Encodings.Web;
 using System.Text.RegularExpressions;
+using TearmaWeb.Models.Home;
 
 namespace TearmaWeb.Controllers;
 
@@ -8,9 +9,6 @@ public static class Prettify
 {
 	// Set by Startup.cs
 	public static string ContentPath { get; set; } = "";
-
-	// Lookups are passed per-call, not stored statically
-	private static Models.Home.Lookups? _lookups;
 
 	// ---------------------------
 	// Sound files
@@ -91,21 +89,19 @@ public static class Prettify
 	public static string Entry(
 		int id,
 		string json,
-		Models.Home.Lookups lookups,
+		Lookups lookups,
 		string primLang)
 	{
-		return Entry(id, json, lookups, primLang, new Dictionary<int, string>());
+		return Entry(id, json, lookups, primLang, []);
 	}
 
 	public static string Entry(
 		int id,
 		string json,
-		Models.Home.Lookups lookups,
+		Lookups lookups,
 		string primLang,
 		Dictionary<int, string> xrefTargets)
 	{
-		_lookups = lookups;
-
 		var entry = JsonConvert.DeserializeObject<Models.Data.Entry>(json)
 					?? new Models.Data.Entry();
 
@@ -123,7 +119,7 @@ public static class Prettify
 
 		// Domains
 		foreach (var dom in entry.Domains)
-			html.Append(DomainAssig(dom, leftLang, rightLang));
+			html.Append(DomainAssig(dom, leftLang, rightLang, lookups));
 
 		// Draft status
 		if (entry.DStatus == "0")
@@ -148,22 +144,22 @@ public static class Prettify
 
 		// Desigs + intros (left)
 		{
-			var block = BuildDesigBlock(entry, leftLang);
+			var block = BuildDesigBlock(entry, leftLang, lookups);
 			html.Append("<div class='desigBlock left'>").Append(block).Append("</div>");
 		}
 
 		// Desigs + intros (right)
 		{
-			var block = BuildDesigBlock(entry, rightLang);
+			var block = BuildDesigBlock(entry, rightLang, lookups);
 			html.Append("<div class='desigBlock right'>").Append(block).Append("</div>");
 		}
 
 		// Other languages
-		foreach (var lang in _lookups.Languages)
+		foreach (var lang in lookups.Languages)
 		{
 			if (lang.Abbr is not "ga" and not "en")
 			{
-				var block = BuildDesigBlock(entry, lang.Abbr);
+				var block = BuildDesigBlock(entry, lang.Abbr, lookups);
 				if (!string.IsNullOrEmpty(block))
 					html.Append("<div class='desigBlock bottom'>").Append(block).Append("</div>");
 			}
@@ -171,7 +167,7 @@ public static class Prettify
 
 		// Definitions
 		foreach (var def in entry.Definitions)
-			html.Append(Definition(def, leftLang, rightLang));
+			html.Append(Definition(def, leftLang, rightLang, lookups));
 
 		// Examples
 		foreach (var ex in entry.Examples)
@@ -194,7 +190,8 @@ public static class Prettify
 
 		return html.ToString();
 	}
-    public static string Desig(Models.Data.Desig desig, bool withLangLabel)
+
+    public static string Desig(Models.Data.Desig desig, bool withLangLabel, Lookups lookups)
     {
         if (desig is null || desig.Term is null)
             return "";
@@ -211,7 +208,7 @@ public static class Prettify
         // Determine grey class (negative acceptability)
         var grey = "";
         if (desig.Accept is int acceptId &&
-            _lookups!.AcceptLabelsById.TryGetValue(acceptId, out var acceptMd) &&
+            lookups!.AcceptLabelsById.TryGetValue(acceptId, out var acceptMd) &&
             acceptMd.Level < 0)
         {
             grey = " grey";
@@ -230,7 +227,7 @@ public static class Prettify
 
         // Language label
         if (withLangLabel)
-            sb.Append(Lang(lang));
+            sb.Append(Lang(lang, lookups));
 
         // Sound files
         var sounds = GetSounds(lang, wording);
@@ -249,7 +246,7 @@ public static class Prettify
         }
 
         // Wording + annotations
-        sb.Append(Wording(lang, wording, annots));
+        sb.Append(Wording(lang, wording, annots, lookups));
 
         // Term menu
         if (lang is "ga" or "en")
@@ -260,7 +257,7 @@ public static class Prettify
 
         // Acceptability label
         if (desig.Accept is int acc)
-            sb.Append(' ').Append(Accept(acc));
+            sb.Append(' ').Append(Accept(acc, lookups));
 
         // Clarification
         if (!string.IsNullOrWhiteSpace(clarif))
@@ -274,7 +271,7 @@ public static class Prettify
             foreach (var inflect in inflects)
             {
                 if (!first) sb.Append(", ");
-                sb.Append(Inflect(inflect));
+                sb.Append(Inflect(inflect, lookups));
                 first = false;
             }
             sb.Append("</div>");
@@ -284,12 +281,24 @@ public static class Prettify
         return sb.ToString();
     }
 
-    public static string Wording(string lang, string wording, List<Models.Data.Annot> annots)
+    private struct CharInfo
+    {
+        public char Character;
+        public string MarkupBefore;
+        public string MarkupAfter;
+        public string LabelsAfter;
+    }
+
+    public static string Wording(
+        string lang,
+        string wording,
+        List<Models.Data.Annot> annots,
+        Lookups lookups)
     {
         // Build character list
-        var chars = new List<Char>(wording.Length);
+        var chars = new CharInfo[wording.Length];
         for (int i = 0; i < wording.Length; i++)
-            chars.Add(new Char { Character = wording[i].ToString() });
+            chars[i].Character = wording[i];
 
         int index = 0;
 
@@ -303,50 +312,52 @@ public static class Prettify
 
             int start = Math.Max(annot.Start - 1, 0);
             int stop = annot.Stop;
-            if (stop > chars.Count) stop = chars.Count;
-            if (stop == 0) stop = chars.Count;
+            if (stop > chars.Length) stop = chars.Length;
+            if (stop == 0) stop = chars.Length;
 
             for (int i = start; i < stop; i++)
             {
+                ref var c = ref chars[i];
+
                 switch (annot.Label.Type)
                 {
                     case "posLabel":
-                        if (_lookups!.PosLabelsById.TryGetValue(int.Parse(labelValue), out var posMd))
+                        if (lookups!.PosLabelsById.TryGetValue(int.Parse(labelValue), out var posMd))
                         {
-                            chars[i].MarkupBefore = $"<span class='char h{index}'>" + chars[i].MarkupBefore;
-                            chars[i].MarkupAfter += "</span>";
+                            c.MarkupBefore = $"<span class='char h{index}'>" + c.MarkupBefore;
+                            c.MarkupAfter += "</span>";
 
                             if (i == stop - 1)
                             {
-                                chars[i].LabelsAfter +=
+                                c.LabelsAfter +=
                                     $" <span class='label posLabel hintable' onmouseover='hon(this, {index})' onmouseout='hoff(this, {index})' title='{posMd.Name["ga"]}/{posMd.Name["en"]}'>{posMd.Abbr}</span>";
                             }
                         }
                         break;
 
                     case "inflectLabel":
-                        if (_lookups!.InflectLabelsById.TryGetValue(int.Parse(labelValue), out var inflMd))
+                        if (lookups!.InflectLabelsById.TryGetValue(int.Parse(labelValue), out var inflMd))
                         {
-                            chars[i].MarkupBefore = $"<span class='char h{index}'>" + chars[i].MarkupBefore;
-                            chars[i].MarkupAfter += "</span>";
+                            c.MarkupBefore = $"<span class='char h{index}'>" + c.MarkupBefore;
+                            c.MarkupAfter += "</span>";
 
                             if (i == stop - 1)
                             {
-                                chars[i].LabelsAfter +=
+                                c.LabelsAfter +=
                                     $" <span class='label inflectLabel hintable' onmouseover='hon(this, {index})' onmouseout='hoff(this, {index})' title='{inflMd.Name["ga"]}/{inflMd.Name["en"]}'>{inflMd.Abbr}</span>";
                             }
                         }
                         break;
 
                     case "langLabel":
-                        if (_lookups!.LanguagesByAbbr.TryGetValue(labelValue, out var langMd))
+                        if (lookups!.LanguagesByAbbr.TryGetValue(labelValue, out var langMd))
                         {
-                            chars[i].MarkupBefore = $"<span class='char h{index}'>" + chars[i].MarkupBefore;
-                            chars[i].MarkupAfter += "</span>";
+                            c.MarkupBefore = $"<span class='char h{index}'>" + c.MarkupBefore;
+                            c.MarkupAfter += "</span>";
 
                             if (i == stop - 1)
                             {
-                                chars[i].LabelsAfter +=
+                                c.LabelsAfter +=
                                     $" <span class='label langLabel hintable' onmouseover='hon(this, {index})' onmouseout='hoff(this, {index})' title='{langMd.Name["ga"]}/{langMd.Name["en"]}'>{langMd.Abbr.ToUpper()}</span>";
                             }
                         }
@@ -355,8 +366,8 @@ public static class Prettify
                     case "symbol":
                         if (labelValue != "proper")
                         {
-                            chars[i].MarkupBefore = $"<span class='char h{index}'>" + chars[i].MarkupBefore;
-                            chars[i].MarkupAfter += "</span>";
+                            c.MarkupBefore = $"<span class='char h{index}'>" + c.MarkupBefore;
+                            c.MarkupAfter += "</span>";
 
                             var (symbol, title) = labelValue switch
                             {
@@ -368,15 +379,15 @@ public static class Prettify
 
                             if (i == stop - 1)
                             {
-                                chars[i].LabelsAfter +=
+                                c.LabelsAfter +=
                                     $" <span class='label symbol hintable' onmouseover='hon(this, {index})' onmouseout='hoff(this, {index})' title='{title}'>{symbol}</span>";
                             }
                         }
                         break;
 
                     case "formatting":
-                        chars[i].MarkupBefore = "<span style='font-style: italic'>" + chars[i].MarkupBefore;
-                        chars[i].MarkupAfter += "</span>";
+                        c.MarkupBefore = "<span style='font-style: italic'>" + c.MarkupBefore;
+                        c.MarkupAfter += "</span>";
                         break;
                 }
             }
@@ -396,17 +407,9 @@ public static class Prettify
         return $"<a class='prettyWording' href='/q/{encoded}/{lang}/'>{sb}</a>";
     }
 
-    private class Char
+    public static string Inflect(Models.Data.Inflect inflect, Lookups lookups)
     {
-        public string Character { get; set; } = "";
-        public string MarkupBefore { get; set; } = "";
-        public string MarkupAfter { get; set; } = "";
-        public string LabelsAfter { get; set; } = "";
-    }
-
-    public static string Inflect(Models.Data.Inflect inflect)
-    {
-        if (_lookups!.InflectLabelsById.TryGetValue(inflect.Label, out var md))
+        if (lookups!.InflectLabelsById.TryGetValue(inflect.Label, out var md))
         {
             return $"<span class='inflect'><span class='abbr hintable' title='{md.Name["ga"]}/{md.Name["en"]}'>{md.Abbr}</span>&nbsp;<span class='wording'>{inflect.Text}</span></span>";
         }
@@ -414,9 +417,9 @@ public static class Prettify
         return "";
     }
 
-    public static string Accept(int id)
+    public static string Accept(int id, Lookups lookups)
     {
-        if (_lookups!.AcceptLabelsById.TryGetValue(id, out var md))
+        if (lookups!.AcceptLabelsById.TryGetValue(id, out var md))
         {
             return $"<span class='accept'>{md.Name["ga"]}/{md.Name["en"]}</span>";
         }
@@ -429,9 +432,9 @@ public static class Prettify
         return $"<span class='clarif'>({s})</span>";
     }
 
-    public static string Lang(string abbr)
+    public static string Lang(string abbr, Lookups lookups)
     {
-        if (_lookups!.LanguagesByAbbr.TryGetValue(abbr, out var language))
+        if (lookups!.LanguagesByAbbr.TryGetValue(abbr, out var language))
         {
             return $"<span class='prettyLang hintable' title='{language.Name["ga"]}/{language.Name["en"]}'>{abbr.ToUpper()}</span>";
         }
@@ -439,9 +442,9 @@ public static class Prettify
         return "";
     }
 
-    public static string DomainAssig(int? domID, string leftLang, string rightLang)
+    public static string DomainAssig(int? domID, string leftLang, string rightLang, Lookups lookups)
     {
-        if (domID is null || !_lookups!.DomainsById.TryGetValue(domID.Value, out var domain))
+        if (domID is null || !lookups!.DomainsById.TryGetValue(domID.Value, out var domain))
             return "";
 
         var stepsLeft = "";
@@ -471,7 +474,7 @@ public static class Prettify
             current =
                 current.ParentID > 0 &&
                 recursionCounter < 10 &&
-                _lookups.DomainsById.TryGetValue(current.ParentID, out var parent)
+                lookups.DomainsById.TryGetValue(current.ParentID, out var parent)
                     ? parent
                     : null;
         }
@@ -484,9 +487,9 @@ public static class Prettify
             "</div>";
     }
 
-    public static string DomainAssig(int? domID, string lang)
+    public static string DomainAssig(int? domID, string lang, Lookups lookups)
     {
-        if (domID is null || !_lookups!.DomainsById.TryGetValue(domID.Value, out var domain))
+        if (domID is null || !lookups!.DomainsById.TryGetValue(domID.Value, out var domain))
             return "";
 
         var steps = "";
@@ -507,7 +510,7 @@ public static class Prettify
             current =
                 current.ParentID > 0 &&
                 recursionCounter < 10 &&
-                _lookups.DomainsById.TryGetValue(current.ParentID, out var parent)
+                lookups.DomainsById.TryGetValue(current.ParentID, out var parent)
                     ? parent
                     : null;
         }
@@ -518,7 +521,11 @@ public static class Prettify
             "</span>";
     }
 
-    public static string Definition(Models.Data.Definition def, string leftLang, string rightLang)
+    public static string Definition(
+        Models.Data.Definition def,
+        string leftLang,
+        string rightLang,
+        Lookups lookups)
     {
         var nonessential = def.Nonessential == 1 ? " nonessential" : "";
 
@@ -530,7 +537,7 @@ public static class Prettify
         sb.Append("<div class='left'>");
         foreach (var da in def.Domains)
             if (da is int id)
-                sb.Append(DomainAssig(id, leftLang)).Append(" ");
+                sb.Append(DomainAssig(id, leftLang, lookups)).Append(' ');
 
         if (def.Texts.TryGetValue(leftLang, out var leftText))
             sb.Append(leftText);
@@ -541,7 +548,7 @@ public static class Prettify
         sb.Append("<div class='right'>");
         foreach (var da in def.Domains)
             if (da is int id)
-                sb.Append(DomainAssig(id, rightLang)).Append(" ");
+                sb.Append(DomainAssig(id, rightLang, lookups)).Append(' ');
 
         if (def.Texts.TryGetValue(rightLang, out var rightText))
             sb.Append(rightText);
@@ -586,7 +593,7 @@ public static class Prettify
         return sb.ToString();
     }
 
-    private static string BuildDesigBlock(Models.Data.Entry entry, string lang)
+    private static string BuildDesigBlock(Models.Data.Entry entry, string lang, Lookups lookups)
     {
         var sb = new System.Text.StringBuilder();
         var withLabel = true;
@@ -595,7 +602,7 @@ public static class Prettify
         {
             if (desig.Term.Lang == lang)
             {
-                sb.Append(Desig(desig, withLabel));
+                sb.Append(Desig(desig, withLabel, lookups));
                 withLabel = false;
             }
         }
