@@ -7,11 +7,16 @@
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
 
-  <PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)' == 'Release'">
     <Optimize>true</Optimize>
     <DebugType>none</DebugType>
     <PublishReadyToRun>true</PublishReadyToRun>
   </PropertyGroup>
+
+  <ItemGroup Condition="'$(Configuration)' == 'Release'">
+    <PublishReadyToRunExclude Include="BotDetect.Web.Mvc.dll" />
+    <PublishReadyToRunExclude Include="BotDetect.dll" />
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Ansa.Extensions" Version="0.2.6" />
@@ -23,11 +28,6 @@
     <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
     <PackageReference Include="StackExchange.Exceptional.AspNetCore" Version="3.0.1" />
     <PackageReference Include="Westwind.AspNetCore.Markdown" Version="3.31.0" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <PublishReadyToRunExclude Include="BotDetect.Web.Mvc.dll" />
-    <PublishReadyToRunExclude Include="BotDetect.dll" />
   </ItemGroup>
 
 </Project>
