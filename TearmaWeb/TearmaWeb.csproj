@@ -12,10 +12,11 @@
     <PackageReference Include="Captcha" Version="4.4.2" />
     <PackageReference Include="Gaois.QueryLogger.AspNetCore" Version="0.7.7-alpha" />
     <PackageReference Include="LigerShark.WebOptimizer.Core" Version="3.0.477" />
-    <PackageReference Include="MiniProfiler.AspNetCore.Mvc" Version="4.3.8" />
+    <PackageReference Include="Microsoft.Data.SqlClient" Version="6.1.4" />
+    <PackageReference Include="MiniProfiler.AspNetCore.Mvc" Version="4.5.4" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
     <PackageReference Include="StackExchange.Exceptional.AspNetCore" Version="3.0.1" />
-    <PackageReference Include="Westwind.AspNetCore.Markdown" Version="3.3.0" />
+    <PackageReference Include="Westwind.AspNetCore.Markdown" Version="3.31.0" />
   </ItemGroup>
 
 </Project>
