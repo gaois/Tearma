@@ -90,9 +90,9 @@ public class Broker(IConfiguration configuration)
             CommandType = CommandType.StoredProcedure
         };
 
-        command.Parameters.AddWithValue("@word", model.Word);
-        command.Parameters.AddWithValue("@lang", model.Lang);
-        command.Parameters.AddWithValue("@super", model.Super);
+        command.Parameters.Add("@word", SqlDbType.NVarChar, 255).Value = model.Word;
+        command.Parameters.Add("@lang", SqlDbType.NVarChar, 10).Value = model.Lang;
+        command.Parameters.Add("@super", SqlDbType.Bit).Value = model.Super;
 
         await using var reader = await command.ExecuteReaderAsync();
 
@@ -210,13 +210,13 @@ public class Broker(IConfiguration configuration)
             CommandType = CommandType.StoredProcedure
         };
 
-        command.Parameters.AddWithValue("@word", model.Word);
-        command.Parameters.AddWithValue("@length", model.Length);
-        command.Parameters.AddWithValue("@extent", model.Extent);
-        command.Parameters.AddWithValue("@lang", model.Lang);
-        command.Parameters.AddWithValue("@pos", model.PosLabel);
-        command.Parameters.AddWithValue("@dom", model.DomainID);
-        command.Parameters.AddWithValue("@page", model.Page);
+        command.Parameters.Add("@word", SqlDbType.NVarChar, 255).Value = model.Word;
+        command.Parameters.Add("@length", SqlDbType.NVarChar, 2).Value = model.Length;
+        command.Parameters.Add("@extent", SqlDbType.NVarChar, 2).Value = model.Extent;
+        command.Parameters.Add("@lang", SqlDbType.NVarChar, 255).Value = model.Lang;
+        command.Parameters.Add("@pos", SqlDbType.Int).Value = model.PosLabel;
+        command.Parameters.Add("@dom", SqlDbType.Int).Value = model.DomainID;
+        command.Parameters.Add("@page", SqlDbType.Int).Value = model.Page;
 
         var totalParam = new SqlParameter("@total", SqlDbType.Int)
         {
@@ -278,7 +278,7 @@ public class Broker(IConfiguration configuration)
             CommandType = CommandType.StoredProcedure
         };
 
-        command.Parameters.AddWithValue("@lang", model.Lang);
+        command.Parameters.Add("@lang", SqlDbType.NVarChar, 255).Value = model.Lang;
 
         await using var reader = await command.ExecuteReaderAsync();
 
@@ -353,7 +353,7 @@ public class Broker(IConfiguration configuration)
             CommandType = CommandType.StoredProcedure
         };
 
-        command.Parameters.AddWithValue("@id", model.Id);
+        command.Parameters.Add("@id", SqlDbType.Int).Value = model.Id;
 
         await using var reader = await command.ExecuteReaderAsync();
 
@@ -383,15 +383,16 @@ public class Broker(IConfiguration configuration)
             CommandType = CommandType.StoredProcedure
         };
 
-        command.Parameters.AddWithValue("@lang", model.Lang);
-        command.Parameters.AddWithValue("@domID", model.DomID);
-        command.Parameters.AddWithValue("@page", model.Page);
+        command.Parameters.Add("@lang", SqlDbType.NVarChar, 255).Value = model.Lang;
+        command.Parameters.Add("@domID", SqlDbType.Int).Value = model.DomID;
+        command.Parameters.Add("@page", SqlDbType.Int).Value = model.Page;
 
         var totalParam = new SqlParameter("@total", SqlDbType.Int)
         {
             Direction = ParameterDirection.InputOutput,
             Value = 0
         };
+
         command.Parameters.Add(totalParam);
 
         await using var reader = await command.ExecuteReaderAsync();
@@ -406,7 +407,11 @@ public class Broker(IConfiguration configuration)
             // Parents
             while (lookups.DomainsById.TryGetValue(md.ParentID, out var parent) && parent.ParentID != 0)
             {
-                model.Parents.Add(new DomainListing(parent.Id, parent.Name["ga"], parent.Name["en"], parent.HasChildren));
+                model.Parents.Add(
+                    new DomainListing(
+                        parent.Id, parent.Name["ga"], parent.Name["en"], parent.HasChildren
+                    )
+                );
                 md = parent;
             }
 
