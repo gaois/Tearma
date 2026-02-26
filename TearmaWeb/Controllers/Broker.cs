@@ -20,7 +20,7 @@ public class Broker(IConfiguration configuration)
         var lookups = new Lookups();
 
         // Languages
-        if (await reader.ReadAsync().ConfigureAwait(false))
+        if (await reader.ReadAsync())
         {
             var json = (string)reader["json"];
 
@@ -38,9 +38,9 @@ public class Broker(IConfiguration configuration)
         }
 
         // Metadata
-        await reader.NextResultAsync().ConfigureAwait(false);
+        await reader.NextResultAsync();
 
-        while (await reader.ReadAsync().ConfigureAwait(false))
+        while (await reader.ReadAsync())
         {
             int id = (int)reader["id"];
             string type = (string)reader["type"];
@@ -64,7 +64,7 @@ public class Broker(IConfiguration configuration)
     {
         var dict = new Dictionary<int, string>();
 
-        while (await reader.ReadAsync().ConfigureAwait(false))
+        while (await reader.ReadAsync())
         {
             int id = (int)reader["id"];
             if (!dict.ContainsKey(id))
@@ -83,7 +83,7 @@ public class Broker(IConfiguration configuration)
     public async Task DoQuickSearchAsync(QuickSearch model)
     {
         await using var conn = new SqlConnection(_connectionString);
-        await conn.OpenAsync().ConfigureAwait(false);
+        await conn.OpenAsync();
 
         await using var command = new SqlCommand("dbo.pub_quicksearch", conn)
         {
@@ -94,21 +94,21 @@ public class Broker(IConfiguration configuration)
         command.Parameters.AddWithValue("@lang", model.Lang);
         command.Parameters.AddWithValue("@super", model.Super);
 
-        await using var reader = await command.ExecuteReaderAsync().ConfigureAwait(false);
+        await using var reader = await command.ExecuteReaderAsync();
 
         // Lookups
-        var lookups = await ReadLookupsAsync(reader).ConfigureAwait(false);
+        var lookups = await ReadLookupsAsync(reader);
 
         // Similars
-        await reader.NextResultAsync().ConfigureAwait(false);
-        while (await reader.ReadAsync().ConfigureAwait(false))
+        await reader.NextResultAsync();
+        while (await reader.ReadAsync())
         {
             model.Similars.Add((string)reader["similar"]);
         }
 
         // Languages
-        await reader.NextResultAsync().ConfigureAwait(false);
-        while (await reader.ReadAsync().ConfigureAwait(false))
+        await reader.NextResultAsync();
+        while (await reader.ReadAsync())
         {
             string abbr = (string)reader["lang"];
             if (lookups.LanguagesByAbbr.TryGetValue(abbr, out var lang))
@@ -125,12 +125,12 @@ public class Broker(IConfiguration configuration)
         }
 
         // Xref targets
-        await reader.NextResultAsync().ConfigureAwait(false);
-        var xrefTargets = await ReadXrefTargetsAsync(reader).ConfigureAwait(false);
+        await reader.NextResultAsync();
+        var xrefTargets = await ReadXrefTargetsAsync(reader);
 
         // Exact matches
-        await reader.NextResultAsync().ConfigureAwait(false);
-        while (await reader.ReadAsync().ConfigureAwait(false))
+        await reader.NextResultAsync();
+        while (await reader.ReadAsync())
         {
             int id = (int)reader["id"];
             string json = (string)reader["json"];
@@ -138,10 +138,10 @@ public class Broker(IConfiguration configuration)
         }
 
         // Related matches
-        await reader.NextResultAsync().ConfigureAwait(false);
+        await reader.NextResultAsync();
         int relatedCount = 0;
 
-        while (await reader.ReadAsync().ConfigureAwait(false))
+        while (await reader.ReadAsync())
         {
             relatedCount++;
             if (relatedCount <= 100)
@@ -158,9 +158,9 @@ public class Broker(IConfiguration configuration)
         // Aux matches
         if (model.Super)
         {
-            await reader.NextResultAsync().ConfigureAwait(false);
+            await reader.NextResultAsync();
 
-            while (await reader.ReadAsync().ConfigureAwait(false))
+            while (await reader.ReadAsync())
             {
                 var coll = (string)reader["coll"];
                 if (!model.Auxes.ContainsKey(coll))
@@ -179,16 +179,16 @@ public class Broker(IConfiguration configuration)
     public async Task PrepareAdvSearchAsync(AdvSearch model)
     {
         await using var conn = new SqlConnection(_connectionString);
-        await conn.OpenAsync().ConfigureAwait(false);
+        await conn.OpenAsync();
 
         await using var command = new SqlCommand("dbo.pub_advsearch_prepare", conn)
         {
             CommandType = CommandType.StoredProcedure
         };
 
-        await using var reader = await command.ExecuteReaderAsync().ConfigureAwait(false);
+        await using var reader = await command.ExecuteReaderAsync();
 
-        var lookups = await ReadLookupsAsync(reader).ConfigureAwait(false);
+        var lookups = await ReadLookupsAsync(reader);
 
         foreach (var language in lookups.Languages)
             model.Langs.Add(language);
@@ -203,7 +203,7 @@ public class Broker(IConfiguration configuration)
     public async Task DoAdvSearchAsync(AdvSearch model)
     {
         await using var conn = new SqlConnection(_connectionString);
-        await conn.OpenAsync().ConfigureAwait(false);
+        await conn.OpenAsync();
 
         await using var command = new SqlCommand("dbo.pub_advsearch", conn)
         {
@@ -225,9 +225,9 @@ public class Broker(IConfiguration configuration)
         };
         command.Parameters.Add(totalParam);
 
-        await using var reader = await command.ExecuteReaderAsync().ConfigureAwait(false);
+        await using var reader = await command.ExecuteReaderAsync();
 
-        var lookups = await ReadLookupsAsync(reader).ConfigureAwait(false);
+        var lookups = await ReadLookupsAsync(reader);
 
         foreach (var language in lookups.Languages)
             model.Langs.Add(language);
@@ -244,12 +244,12 @@ public class Broker(IConfiguration configuration)
             model.SortLang = "ga";
 
         // Xref targets
-        await reader.NextResultAsync().ConfigureAwait(false);
-        var xrefTargets = await ReadXrefTargetsAsync(reader).ConfigureAwait(false);
+        await reader.NextResultAsync();
+        var xrefTargets = await ReadXrefTargetsAsync(reader);
 
         // Matches
-        await reader.NextResultAsync().ConfigureAwait(false);
-        while (await reader.ReadAsync().ConfigureAwait(false))
+        await reader.NextResultAsync();
+        while (await reader.ReadAsync())
         {
             int id = (int)reader["id"];
             string json = (string)reader["json"];
@@ -257,8 +257,8 @@ public class Broker(IConfiguration configuration)
         }
 
         // Pager
-        await reader.NextResultAsync().ConfigureAwait(false);
-        if (await reader.ReadAsync().ConfigureAwait(false))
+        await reader.NextResultAsync();
+        if (await reader.ReadAsync())
         {
             int currentPage = (int)reader["currentPage"];
             int maxPage = (int)reader["maxPage"];
@@ -271,7 +271,7 @@ public class Broker(IConfiguration configuration)
     public async Task DoDomainsAsync(Domains model)
     {
         await using var conn = new SqlConnection(_connectionString);
-        await conn.OpenAsync().ConfigureAwait(false);
+        await conn.OpenAsync();
 
         await using var command = new SqlCommand("dbo.pub_domains", conn)
         {
@@ -280,9 +280,9 @@ public class Broker(IConfiguration configuration)
 
         command.Parameters.AddWithValue("@lang", model.Lang);
 
-        await using var reader = await command.ExecuteReaderAsync().ConfigureAwait(false);
+        await using var reader = await command.ExecuteReaderAsync();
 
-        var lookups = await ReadLookupsAsync(reader).ConfigureAwait(false);
+        var lookups = await ReadLookupsAsync(reader);
 
         foreach (var md in lookups.Domains)
         {
@@ -298,16 +298,16 @@ public class Broker(IConfiguration configuration)
     public async Task DoIndexAsync(Models.Home.Index model)
     {
         await using var conn = new SqlConnection(_connectionString);
-        await conn.OpenAsync().ConfigureAwait(false);
+        await conn.OpenAsync();
 
         await using var command = new SqlCommand("dbo.pub_index", conn)
         {
             CommandType = CommandType.StoredProcedure
         };
 
-        await using var reader = await command.ExecuteReaderAsync().ConfigureAwait(false);
+        await using var reader = await command.ExecuteReaderAsync();
 
-        var lookups = await ReadLookupsAsync(reader).ConfigureAwait(false);
+        var lookups = await ReadLookupsAsync(reader);
 
         // Domains
         foreach (var md in lookups.Domains)
@@ -317,8 +317,8 @@ public class Broker(IConfiguration configuration)
         }
 
         // Term of the day
-        await reader.NextResultAsync().ConfigureAwait(false);
-        if (await reader.ReadAsync().ConfigureAwait(false))
+        await reader.NextResultAsync();
+        if (await reader.ReadAsync())
         {
             int id = (int)reader["id"];
             string json = (string)reader["json"];
@@ -326,8 +326,8 @@ public class Broker(IConfiguration configuration)
         }
 
         // Recent entries
-        await reader.NextResultAsync().ConfigureAwait(false);
-        while (await reader.ReadAsync().ConfigureAwait(false))
+        await reader.NextResultAsync();
+        while (await reader.ReadAsync())
         {
             int id = (int)reader["id"];
             string json = (string)reader["json"];
@@ -335,8 +335,8 @@ public class Broker(IConfiguration configuration)
         }
 
         // News
-        await reader.NextResultAsync().ConfigureAwait(false);
-        if (await reader.ReadAsync().ConfigureAwait(false))
+        await reader.NextResultAsync();
+        if (await reader.ReadAsync())
         {
             model.NewsGA = (string)reader["TextGA"];
             model.NewsEN = (string)reader["TextEN"];
@@ -346,7 +346,7 @@ public class Broker(IConfiguration configuration)
     public async Task DoEntryAsync(Entry model)
     {
         await using var conn = new SqlConnection(_connectionString);
-        await conn.OpenAsync().ConfigureAwait(false);
+        await conn.OpenAsync();
 
         await using var command = new SqlCommand("dbo.pub_entry", conn)
         {
@@ -355,17 +355,17 @@ public class Broker(IConfiguration configuration)
 
         command.Parameters.AddWithValue("@id", model.Id);
 
-        await using var reader = await command.ExecuteReaderAsync().ConfigureAwait(false);
+        await using var reader = await command.ExecuteReaderAsync();
 
-        var lookups = await ReadLookupsAsync(reader).ConfigureAwait(false);
+        var lookups = await ReadLookupsAsync(reader);
 
         // Xref targets
-        await reader.NextResultAsync().ConfigureAwait(false);
-        var xrefTargets = await ReadXrefTargetsAsync(reader).ConfigureAwait(false);
+        await reader.NextResultAsync();
+        var xrefTargets = await ReadXrefTargetsAsync(reader);
 
         // Entry
-        await reader.NextResultAsync().ConfigureAwait(false);
-        if (await reader.ReadAsync().ConfigureAwait(false))
+        await reader.NextResultAsync();
+        if (await reader.ReadAsync())
         {
             int id = (int)reader["id"];
             string json = (string)reader["json"];
@@ -376,7 +376,7 @@ public class Broker(IConfiguration configuration)
     public async Task DoDomainAsync(Domain model)
     {
         await using var conn = new SqlConnection(_connectionString);
-        await conn.OpenAsync().ConfigureAwait(false);
+        await conn.OpenAsync();
 
         await using var command = new SqlCommand("dbo.pub_domain", conn)
         {
@@ -394,9 +394,9 @@ public class Broker(IConfiguration configuration)
         };
         command.Parameters.Add(totalParam);
 
-        await using var reader = await command.ExecuteReaderAsync().ConfigureAwait(false);
+        await using var reader = await command.ExecuteReaderAsync();
 
-        var lookups = await ReadLookupsAsync(reader).ConfigureAwait(false);
+        var lookups = await ReadLookupsAsync(reader);
 
         // Domain + parents + children
         if (lookups.DomainsById.TryGetValue(model.DomID, out var md))
@@ -423,12 +423,12 @@ public class Broker(IConfiguration configuration)
         }
 
         // Xref targets
-        await reader.NextResultAsync().ConfigureAwait(false);
-        var xrefTargets = await ReadXrefTargetsAsync(reader).ConfigureAwait(false);
+        await reader.NextResultAsync();
+        var xrefTargets = await ReadXrefTargetsAsync(reader);
 
         // Matches
-        await reader.NextResultAsync().ConfigureAwait(false);
-        while (await reader.ReadAsync().ConfigureAwait(false))
+        await reader.NextResultAsync();
+        while (await reader.ReadAsync())
         {
             int id = (int)reader["id"];
             string json = (string)reader["json"];
@@ -436,8 +436,8 @@ public class Broker(IConfiguration configuration)
         }
 
         // Pager
-        await reader.NextResultAsync().ConfigureAwait(false);
-        if (await reader.ReadAsync().ConfigureAwait(false))
+        await reader.NextResultAsync();
+        if (await reader.ReadAsync())
         {
             int currentPage = (int)reader["currentPage"];
             int maxPage = (int)reader["maxPage"];
@@ -450,19 +450,19 @@ public class Broker(IConfiguration configuration)
     public async Task DoTodAsync(Models.Widgets.Tod model)
     {
         await using var conn = new SqlConnection(_connectionString);
-        await conn.OpenAsync().ConfigureAwait(false);
+        await conn.OpenAsync();
 
         await using var command = new SqlCommand("dbo.pub_tod", conn)
         {
             CommandType = CommandType.StoredProcedure
         };
 
-        await using var reader = await command.ExecuteReaderAsync().ConfigureAwait(false);
+        await using var reader = await command.ExecuteReaderAsync();
 
-        var lookups = await ReadLookupsAsync(reader).ConfigureAwait(false);
+        var lookups = await ReadLookupsAsync(reader);
 
-        await reader.NextResultAsync().ConfigureAwait(false);
-        if (await reader.ReadAsync().ConfigureAwait(false))
+        await reader.NextResultAsync();
+        if (await reader.ReadAsync())
         {
             int id = (int)reader["id"];
             string json = (string)reader["json"];
