@@ -268,7 +268,6 @@ public class Broker(IConfiguration configuration)
         }
 
         await reader.DisposeAsync();
-
         model.Total = (int)totalParam.Value;
     }
 
@@ -453,6 +452,7 @@ public class Broker(IConfiguration configuration)
             model.Pager = new Pager(currentPage, maxPage);
         }
 
+        await reader.DisposeAsync();
         model.Total = (int)totalParam.Value;
     }
 
