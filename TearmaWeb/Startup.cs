@@ -1,7 +1,8 @@
 ﻿using BotDetect.Web;
 using Gaois.QueryLogger;
+using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.AspNetCore.Rewrite;
-using Microsoft.Extensions.Options;
+using Microsoft.AspNetCore.Server.Kestrel.Core;
 using TearmaWeb.Rules;
 
 namespace TearmaWeb;
@@ -27,15 +28,31 @@ public class Startup(IConfiguration configuration, IWebHostEnvironment environme
             options.Cookie.IsEssential = true;
         });
 
-        // Synchronous I/O needed by BotDetect/Captcha 
-        if (environment.IsProduction())
+        // Synchronous I/O needed by BotDetect/Captcha (should replace)
+        if (environment.IsDevelopment())
+        {
+            services.Configure<KestrelServerOptions>(options =>
+            {
+                options.AllowSynchronousIO = true;
+            });
+        }
+        else if (environment.IsProduction())
+        {
             services.Configure<IISServerOptions>(options =>
             {
                 options.AllowSynchronousIO = true;
             });
+        }
 
         // MiniProfiler
         services.AddMiniProfiler();
+
+        // Output cache
+        services.AddOutputCache(options =>
+        {
+            options.AddBasePolicy(builder => builder.Expire(TimeSpan.FromSeconds(60)));
+            options.AddPolicy("Extended", builder => builder.Expire(TimeSpan.FromHours(1)));
+        });
 
         // Exceptional
         services.AddExceptional(configuration.GetSection("Exceptional"), settings =>
@@ -52,6 +69,15 @@ public class Startup(IConfiguration configuration, IWebHostEnvironment environme
 
         // QueryLogger
         services.AddQueryLogger(configuration.GetSection("QueryLogger"));
+
+        // Response compression
+        services.AddResponseCompression(options =>
+        {
+            options.EnableForHttps = true;
+            options.MimeTypes = ResponseCompressionDefaults.MimeTypes.Concat(["text/javascript"]);
+            options.Providers.Add<BrotliCompressionProvider>();
+            options.Providers.Add<GzipCompressionProvider>();
+        });
 
         services.AddScoped<Controllers.Broker>();
     }
@@ -88,12 +114,16 @@ public class Startup(IConfiguration configuration, IWebHostEnvironment environme
         {
             app.UseHsts();
             app.UseHttpsRedirection();
+            app.UseResponseCompression();
         }
 
         app.UseMiniProfiler();
         app.UseWebOptimizer();
         app.UseStaticFiles();
         app.UseRouting();
+
+        if (env.IsProduction())
+            app.UseOutputCache();
 
         // Endpoint routing (replacement for UseMvc)
         app.UseEndpoints(endpoints =>

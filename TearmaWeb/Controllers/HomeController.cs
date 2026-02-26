@@ -1,6 +1,7 @@
 ﻿using Ansa.Extensions;
 using Gaois.QueryLogger;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.OutputCaching;
 using System.Diagnostics;
 using System.Text.RegularExpressions;
 using TearmaWeb.Models.Home;
@@ -22,6 +23,7 @@ public class HomeController(IQueryLogger queryLogger, Broker broker) : Controlle
     // ---------------------------
     // Home page
     // ---------------------------
+    [OutputCache]
     public async Task<IActionResult> Index()
     {
         var model = new Models.Home.Index();
@@ -52,6 +54,7 @@ public class HomeController(IQueryLogger queryLogger, Broker broker) : Controlle
     // ---------------------------
     // Quick search
     // ---------------------------
+    [OutputCache]
     public async Task<IActionResult> QuickSearch(string word, string? lang)
     {
         if (word.IsNullOrWhiteSpace())
@@ -106,6 +109,7 @@ public class HomeController(IQueryLogger queryLogger, Broker broker) : Controlle
     // ---------------------------
     // Advanced search
     // ---------------------------
+    [OutputCache]
     public async Task<IActionResult> AdvSearch(
         string? word,
         string length,
@@ -168,6 +172,7 @@ public class HomeController(IQueryLogger queryLogger, Broker broker) : Controlle
     // ---------------------------
     // Domain list
     // ---------------------------
+    [OutputCache]
     public async Task<IActionResult> Domains(string? lang)
     {
         var model = new Domains
