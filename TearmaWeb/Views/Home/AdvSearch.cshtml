@@ -59,8 +59,9 @@
         <div class="line">
             <div class="label"><span class="text ga" lang="ga">Teanga</span><span class="text en" lang="en">Language</span></div>
             <select name="lang" onchange="advChangeLang(this)" size="1" onfocus="this.size='10'" onblur="this.size='1'">
-                <option value="0" @(Model.Lang=="" ? "selected" : "")>teanga ar bith &middot; any language</option>
-                @foreach(Language lang in Model.Langs) {
+                <option value="0" @(Model.Lang == "" ? "selected" : "")>teanga ar bith &middot; any language</option>
+                @foreach (Language lang in Model.Langs)
+                {
                     <option value="@lang.Abbr" @(Model.Lang==lang.Abbr ? "selected" : "")>@lang.Abbr.ToUpper() (@lang.Name["ga"] &middot; @lang.Name["en"])</option>
                 }
             </select>
@@ -68,10 +69,12 @@
         <div class="line">
             <div class="label"><span class="text ga" lang="ga">Roinn chainte</span><span class="text en" lang="en">Part of speech</span></div>
             <select name="pos" size="1" onfocus="this.size='10'" onblur="this.size='1'">
-                <option value="0" data-isfor="" @(Model.PosLabel==0 ? "selected" : "")>roinn chainte ar bith &middot; any part of speech</option>
+                <option value="0" data-isfor="" @(Model.PosLabel == 0 ? "selected" : "")>roinn chainte ar bith &middot; any part of speech</option>
                 @foreach (Metadatum datum in Model.PosLabels)
                 {
-                    <option value="@datum.Id" data-isfor="@datum.IsFor" @(Model.PosLabel == datum.Id ? "selected" : "")>@datum.Abbr (@datum.Name["ga"] &middot; @datum.Name["en"])</option>
+                    <option value="@datum.Id" data-isfor="@datum.IsFor" @(Model.PosLabel == datum.Id ? "selected" : "")>
+                        @datum.Abbr (@datum.Name["ga"] &middot; @datum.Name["en"])
+                    </option>
                 }
             </select>
         </div>
@@ -123,12 +126,15 @@
         <span class="text en" lang="en">Options</span>
     </a>
 
-    @if(Model.Matches.Count == 0) {
+    @if (Model.Matches.Count == 0)
+    {
         <div class="nojoy">
             <div class="ga">Níor aimsíodh téarma ar bith.</div>
             <div class="en">No terms found.</div>
         </div>
-    } else {
+    }
+    else
+    {
         <div class="nojoy">
             <div class="num">@Model.Total</div>
             <div class="ga">Líon torthaí a aimsíodh</div>
@@ -139,8 +145,8 @@
     @if (Model.Pager?.Needed == true)
     {
         <div class="pager alone">
-            @if(Model.Pager.PrevNum>0){ <a href="@Model.UrlByPage(Model.Pager.PrevNum)" class="left arrow">«</a> }
-            @if(Model.Pager.NextNum>0){ <a href="@Model.UrlByPage(Model.Pager.NextNum)" class="right arrow">»</a> }
+            @if(Model.Pager.PrevNum > 0){ <a href="@Model.UrlByPage(Model.Pager.PrevNum)" class="left arrow">«</a> }
+            @if(Model.Pager.NextNum > 0){ <a href="@Model.UrlByPage(Model.Pager.NextNum)" class="right arrow">»</a> }
             @foreach(int num in Model.Pager.StartNums) { <a href="@Model.UrlByPage(num)" class="page">@num</a> }
             @if(Model.Pager.PreDots) { <span class="dots">&middot; &middot; &middot; &middot;</span> }
             @foreach(int num in Model.Pager.PreNums) { <a href="@Model.UrlByPage(num)" class="page">@num</a> }
@@ -156,8 +162,8 @@
     @if (Model.Pager?.Needed == true)
     {
         <div class="pager">
-            @if(Model.Pager.PrevNum>0){ <a href="@Model.UrlByPage(Model.Pager.PrevNum)" class="left arrow">«</a> }
-            @if(Model.Pager.NextNum>0){ <a href="@Model.UrlByPage(Model.Pager.NextNum)" class="right arrow">»</a> }
+            @if(Model.Pager.PrevNum > 0){ <a href="@Model.UrlByPage(Model.Pager.PrevNum)" class="left arrow">«</a> }
+            @if(Model.Pager.NextNum > 0){ <a href="@Model.UrlByPage(Model.Pager.NextNum)" class="right arrow">»</a> }
             @foreach(int num in Model.Pager.StartNums) { <a href="@Model.UrlByPage(num)" class="page">@num</a> }
             @if(Model.Pager.PreDots) { <span class="dots">&middot; &middot; &middot; &middot;</span> }
             @foreach(int num in Model.Pager.PreNums) { <a href="@Model.UrlByPage(num)" class="page">@num</a> }

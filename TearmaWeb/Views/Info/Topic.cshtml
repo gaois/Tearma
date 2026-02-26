@@ -14,7 +14,8 @@
         <span class="text en" lang="en">Menu</span>
     </a>
     <div class="kickbox">
-        @foreach (TocItem tocItem in Model.Toc){
+        @foreach (TocItem tocItem in Model.Toc)
+        {
             <a class="infolink @(tocItem.Nickname == Model.Nickname ? "selected" : "")" href="~/@Model.Section/@tocItem.Nickname.@Model.Lang">
                 @tocItem.Title[Model.Lang]
             </a>

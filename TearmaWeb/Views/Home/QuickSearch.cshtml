@@ -18,7 +18,7 @@
                     <span class="en" lang="en">Matches in any language</span>
                 </a>
                 @foreach(Language lang in Model.Langs) {
-                    <a class="langlink @(Model.Lang==lang.Abbr ? "selected" : "")" href="~/q/@Model.Word/@lang.Abbr/">
+                    <a class="langlink @(Model.Lang == lang.Abbr ? "selected" : "")" href="~/q/@Model.Word/@lang.Abbr/">
                         <span class="icon">@lang.Abbr.ToUpper()</span>
                         <span class="ga" lang="ga">@lang.Name["ga"] amháin</span>
                         <span class="en" lang="en">@lang.Name["en"] only</span>
@@ -26,12 +26,12 @@
                 }
                 <div class="sep"></div>
             }
-	        <a class="sitelink" id="showAllDetails" href="javascript:showAllDetails()">
+            <a class="sitelink" id="showAllDetails" href="javascript:showAllDetails()">
                 <span class="icon fas fa-plus-square"></span>
                 <span class="ga" lang="ga">Taispeáin breis mionsonraí</span>
                 <span class="en" lang="en">Show more details</span>
             </a>
-	        <a class="sitelink" id="hideAllDetails" href="javascript:hideAllDetails()">
+            <a class="sitelink" id="hideAllDetails" href="javascript:hideAllDetails()">
                 <span class="icon fas fa-minus-square"></span>
                 <span class="ga" lang="ga">Folaigh mionsonraí breise</span>
                 <span class="en" lang="en">Hide details</span>
@@ -80,7 +80,9 @@
         <div class="ga">Níor aimsíodh téarma ar bith.</div>
         <div class="en">No terms found.</div>
     </div>
-} else {
+}
+else
+{
     @foreach (string s in Model.Exacts){@Html.Raw(s)}
 }
 
@@ -95,9 +97,12 @@
         <div class="ga">Níor aimsíodh téarma ar bith.</div>
         <div class="en">No terms found.</div>
     </div>
-} else {
+}
+else
+{
     @foreach(string s in Model.Relateds){@Html.Raw(s)}
 }
+
 @if (Model.RelatedMore)
 {
     <div class="gotoAdvSearch">
@@ -123,15 +128,19 @@
             <div class="ga">Níor aimsíodh téarma ar bith.</div>
             <div class="en">No terms found.</div>
         </div>
-    } else {
+    }
+    else
+    {
         @foreach (string coll in Model.Auxes.Keys)
         {
             <div class="auxBlock">
                 <div class="auxTitle">
-                    @if (coll.Trim() == "mileata") {
+                    @if (coll.Trim() == "mileata")
+                    {
                         <span>TÉARMAÍ MÍLEATA</span>
                     }
-                    @if (coll.Trim() == "iate") {
+                    @if (coll.Trim() == "iate")
+                    {
                         <span>IATE</span>
                     }
                 </div>

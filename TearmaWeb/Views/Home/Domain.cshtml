@@ -6,14 +6,15 @@
     ViewBag.swapper="dom";
 }
 
-@section Rightie {
+@section Rightie
+{
     <div class="kickbox">
-	    <a class="langlink @(Model.Lang=="ga" ? "selected": "")" href="@Model.UrlByLang("ga")">
+	    <a class="langlink @(Model.Lang == "ga" ? "selected": "")" href="@Model.UrlByLang("ga")">
             <span class="icon">GA</span>
             <span class="ga" lang="ga">Sórtáil i nGaeilge</span>
             <span class="en" lang="en">Sort by Irish</span>
         </a>
-		<a class="langlink @(Model.Lang=="en" ? "selected": "")" href="@Model.UrlByLang("en")">
+		<a class="langlink @(Model.Lang == "en" ? "selected": "")" href="@Model.UrlByLang("en")">
             <span class="icon">EN</span>
             <span class="ga" lang="ga">Sórtáil i mBéarla</span>
             <span class="en" lang="en">Sort by English</span>
@@ -79,7 +80,9 @@
             <div class="ga">Níor aimsíodh téarma ar bith.</div>
             <div class="en">No terms found.</div>
         </div>
-    } else {
+    }
+    else
+    {
         <div class="nojoy">
             <div class="num">@Model.Total</div>
             <div class="ga">Líon torthaí a aimsíodh</div>
@@ -90,8 +93,8 @@
     @if (Model.Pager?.Needed == true)
     {
         <div class="pager alone">
-            @if(Model.Pager.PrevNum>0){ <a href="@Model.UrlByPage(Model.Pager.PrevNum)" class="left arrow">«</a> }
-            @if(Model.Pager.NextNum>0){ <a href="@Model.UrlByPage(Model.Pager.NextNum)" class="right arrow">»</a> }
+            @if(Model.Pager.PrevNum > 0){ <a href="@Model.UrlByPage(Model.Pager.PrevNum)" class="left arrow">«</a> }
+            @if(Model.Pager.NextNum > 0){ <a href="@Model.UrlByPage(Model.Pager.NextNum)" class="right arrow">»</a> }
             @foreach(int num in Model.Pager.StartNums) { <a href="@Model.UrlByPage(num)" class="page">@num</a> }
             @if(Model.Pager.PreDots) { <span class="dots">&middot; &middot; &middot; &middot;</span> }
             @foreach(int num in Model.Pager.PreNums) { <a href="@Model.UrlByPage(num)" class="page">@num</a> }
@@ -107,8 +110,8 @@
     @if (Model.Pager?.Needed == true)
     {
         <div class="pager">
-            @if(Model.Pager.PrevNum>0){ <a href="@Model.UrlByPage(Model.Pager.PrevNum)" class="left arrow">«</a> }
-            @if(Model.Pager.NextNum>0){ <a href="@Model.UrlByPage(Model.Pager.NextNum)" class="right arrow">»</a> }
+            @if(Model.Pager.PrevNum > 0){ <a href="@Model.UrlByPage(Model.Pager.PrevNum)" class="left arrow">«</a> }
+            @if(Model.Pager.NextNum > 0){ <a href="@Model.UrlByPage(Model.Pager.NextNum)" class="right arrow">»</a> }
             @foreach(int num in Model.Pager.StartNums) { <a href="@Model.UrlByPage(num)" class="page">@num</a> }
             @if(Model.Pager.PreDots) { <span class="dots">&middot; &middot; &middot; &middot;</span> }
             @foreach(int num in Model.Pager.PreNums) { <a href="@Model.UrlByPage(num)" class="page">@num</a> }

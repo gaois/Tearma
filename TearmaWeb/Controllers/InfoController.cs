@@ -35,7 +35,9 @@ public class InfoController : Controller
             model.Section = section;
             model.Nickname = nickname;
             model.Lang = lang;
+            
             string path = @"./wwwroot/" + section + "/" + nickname + "." + lang + ".md";
+
             if (System.IO.File.Exists(path))
             {
                 model.Body = System.IO.File.ReadAllText(path);

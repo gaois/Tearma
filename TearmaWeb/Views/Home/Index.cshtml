@@ -74,9 +74,9 @@
 @if (Model.Tod != "")
 {
     <div class="sectitle strong">
-	    <span class="icon fas fa-calendar-alt"></span>
-	    <span class="ga" lang="ga">Téarma an lae</span>
-	    <span class="en" lang="en">Term of the day</span>
+        <span class="icon fas fa-calendar-alt"></span>
+        <span class="ga" lang="ga">Téarma an lae</span>
+        <span class="en" lang="en">Term of the day</span>
     </div>
     @Html.Raw(Model.Tod)
 }
@@ -84,9 +84,9 @@
 @if (Model.Recent.Count > 0)
 {
     <div class="sectitle strong">
-	    <span class="icon fas fa-clock"></span>
-	    <span class="ga" lang="ga">Athruithe le déanaí</span>
-	    <span class="en" lang="en">Recent changes</span>
+        <span class="icon fas fa-clock"></span>
+        <span class="ga" lang="ga">Athruithe le déanaí</span>
+        <span class="en" lang="en">Recent changes</span>
     </div>
     <div class="recentlyChangedContainer">
         @foreach(string s in Model.Recent)
@@ -97,9 +97,9 @@
 }
 
 <div class="sectitle strong">
-	<span class="icon fas fa-sitemap"></span>
-	<span class="ga" lang="ga">Brabhsáil</span>
-	<span class="en" lang="en">Browse</span>
+    <span class="icon fas fa-sitemap"></span>
+    <span class="ga" lang="ga">Brabhsáil</span>
+    <span class="en" lang="en">Browse</span>
 </div>
 <div class="domains">
     @foreach (DomainListing dom in Model.Domains)
