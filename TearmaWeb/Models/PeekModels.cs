@@ -1,17 +1,10 @@
-﻿using Newtonsoft.Json.Linq;
-using Newtonsoft.Json;
-using System.Collections.Generic;
-using System;
+﻿namespace TearmaWeb.Models; 
 
-namespace TearmaWeb.Models {
+public class PeekResult
+{
+    public string Word = "";
 
-    /// <summary>Represents the result of peeking, either into IATE or into Téarma.</summary>
-    public class PeekResult {
-        //input:
-        public string word = "";
-        //output:
-        public int count = 0;
-        public bool hasMore = false;
-    }
+    public int Count = 0;
 
+    public bool HasMore = false;
 }

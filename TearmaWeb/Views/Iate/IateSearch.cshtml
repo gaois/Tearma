@@ -1,11 +1,13 @@
 ﻿@model TearmaWeb.Models.Iate.Search
 @using TearmaWeb.Models.Iate
+
 @{
-    Layout="_HomeLayout";
-    ViewBag.swapper="q";
+    Layout = "_HomeLayout";
+    ViewBag.swapper = "q";
 }
 
-@section Rightie {
+@section Rightie
+{
     <div class="kickbox">
         <a class="sitelink" href="javascript:printableOn()">
             <span class="icon fas fa-print"></span>
@@ -16,14 +18,14 @@
 }
 
 <form class="textbox" action="." onsubmit="return submitQuickSearch(this)">
-    <div class="text"><input name="word" value="@Model.word" class="searchbox" onblur="searchboxBlur()"/></div>
+    <div class="text"><input name="word" value="@Model.Word" class="searchbox" onblur="searchboxBlur()"/></div>
     <button class="submit" aria-label="Cuardaigh · Search">
         <span class="icon fas fa-search"></span>
     </button>
 </form>
 
 <div class="providers">
-    <a href="@Model.quickSearchUrl()" class="provider tearma noncurrent">
+    <a href="@Model.QuickSearchUrl()" class="provider tearma noncurrent">
         <img src="~/furniture/minilogo-tearma.svg" alt="téarma.ie" />
         <span class="caption">téarma.ie</span>
         <span class="count loading">&nbsp;</span>
@@ -35,7 +37,7 @@
             <span class="line1" lang="ga">Téarmaíocht an Aontais Eorpaigh</span>
             <span class="line2" lang="en">European Union Terminology</span>
         </span>
-        <span class="count">@(Model.count)@if(Model.hasMore){<span class="plus">+</span>}</span>
+        <span class="count">@(Model.Count)@if(Model.HasMore){<span class="plus">+</span>}</span>
         <span class="wedge"></span>
     </span>    
 </div>
@@ -62,13 +64,18 @@
 	<span class="ga" lang="ga">Torthaí beachta</span>
 	<span class="en" lang="en">Exact matches</span>
 </div>
-@if(Model.exacts.Count == 0) {
+
+@if (Model.Exacts.Count == 0)
+{
     <div class="nojoy">
         <div class="ga">Níor aimsíodh téarma ar bith.</div>
         <div class="en">No terms found.</div>
     </div>
-} else {
-    @foreach(string s in Model.exacts){
+}
+else
+{
+    @foreach(string s in Model.Exacts)
+    {
         <p>
             @Html.Raw(s)
         </p>
@@ -80,13 +87,18 @@
     <span class="ga" lang="ga">Torthaí gaolmhara</span>
     <span class="en" lang="en">Related matches</span>
 </div>
-@if(Model.relateds.Count == 0) {
+
+@if (Model.Relateds.Count == 0)
+{
     <div class="nojoy">
         <div class="ga">Níor aimsíodh téarma ar bith.</div>
         <div class="en">No terms found.</div>
     </div>
-} else {
-    @foreach(string s in Model.relateds){
+}
+else
+{
+    @foreach (string s in Model.Relateds)
+    {
         <p>
             @Html.Raw(s)
         </p>

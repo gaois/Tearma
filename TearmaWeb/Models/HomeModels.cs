@@ -189,6 +189,11 @@ public class QuickSearch
         return $"/plus/{encoded}/al/ft/lang{langPart}/pos0/dom0/";
     }
 
+    public string IateSearchUrl()
+    {
+        return $"/iate/{Uri.EscapeDataString(Tools.SlashEncode(Word))}/";
+    }
+
     public string SearchData() => JsonConvert.SerializeObject(new
     {
         word = Word,

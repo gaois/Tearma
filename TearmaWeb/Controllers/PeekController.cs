@@ -1,37 +1,29 @@
-﻿using Ansa.Extensions;
-using Gaois.QueryLogger;
-using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Text.RegularExpressions;
+﻿using Microsoft.AspNetCore.Mvc;
 using TearmaWeb.Models;
-using TearmaWeb.Models.Home;
 
-namespace TearmaWeb.Controllers {
-    public class PeekController : Controller {
-        private readonly IQueryLogger _queryLogger;
-        private readonly Broker _broker;
-        private readonly IateBroker _iateBroker;
+namespace TearmaWeb.Controllers;
 
-        public PeekController(IQueryLogger queryLogger, Broker broker, IateBroker iateBroker) {
-            _queryLogger = queryLogger;
-            _broker = broker;
-            _iateBroker = iateBroker;
-        }
+public class PeekController(Broker broker, IateBroker iateBroker) : Controller
+{
+    public async Task<IActionResult> PeekTearma([FromQuery] string word) {
+        PeekResult pr = new()
+        {
+            Word = word
+        };
 
-        public IActionResult PeekTearma([FromQuery] string word) {
-            PeekResult pr = new PeekResult();
-            pr.word = word;
-            _broker.Peek(pr);
-            return Json(pr);
-        }
+        await broker.PeekAsync(pr);
 
-        public IActionResult PeekIate([FromQuery] string word) {
-            PeekResult pr = new PeekResult();
-            pr.word = word;
-            _iateBroker.Peek(pr);
-            return Json(pr);
-        }
+        return Json(pr);
+    }
 
+    public async Task<IActionResult> PeekIate([FromQuery] string word) {
+        PeekResult pr = new()
+        {
+            Word = word
+        };
+        
+        await iateBroker.PeekAsync(pr);
+
+        return Json(pr);
     }
 }

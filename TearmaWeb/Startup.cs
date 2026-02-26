@@ -44,6 +44,8 @@ public class Startup(IConfiguration configuration, IWebHostEnvironment environme
             });
         }
 
+        services.AddHttpClient("IateClient");
+
         // MiniProfiler
         services.AddMiniProfiler();
 
@@ -80,6 +82,7 @@ public class Startup(IConfiguration configuration, IWebHostEnvironment environme
         });
 
         services.AddScoped<Controllers.Broker>();
+        services.AddSingleton<Controllers.IateBroker>();
     }
 
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -151,6 +154,22 @@ public class Startup(IConfiguration configuration, IWebHostEnvironment environme
                 name: "quicksearch",
                 pattern: "/q/{word}/{lang?}",
                 defaults: new { controller = "Home", action = "QuickSearch" });
+
+            endpoints.MapControllerRoute(
+                name: "peaktearma",
+                pattern: "/peekTearma.json",
+                defaults: new { controller = "Peek", action = "PeekTearma" });
+
+            // Iate search
+            endpoints.MapControllerRoute(
+                name: "iatesearch",
+                pattern: "/iate/{word}/{lang?}/",
+                defaults: new { controller = "Iate", action = "Search" });
+
+            endpoints.MapControllerRoute(
+                name: "peakeiate",
+                pattern: "/peekIate.json/",
+                defaults: new { controller = "Peek", action = "PeekIate" });
 
             // Advanced search
             endpoints.MapControllerRoute(
