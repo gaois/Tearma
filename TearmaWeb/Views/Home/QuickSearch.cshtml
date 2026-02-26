@@ -52,6 +52,24 @@
     </button>
 </form>
 
+<div class="providers">
+    <span class="provider tearma current">
+        <img src="~/furniture/minilogo-tearma.svg" alt="téarma.ie" />
+        <span class="caption">téarma.ie</span>
+        <span class="count">@(Model.exacts.Count + Model.relateds.Count)@if(Model.relatedMore){<span class="plus">+</span>}</span>
+        <span class="wedge"></span>
+    </span>    
+    <a href="@Model.iateSearchUrl()" class="provider iate noncurrent">
+        <img src="~/furniture/iate.png" alt="IATE" />
+        <span class="multicaption">
+            <span class="line1" lang="ga">Téarmaíocht an Aontais Eorpaigh</span>
+            <span class="line2" lang="en">European Union Terminology</span>
+        </span>
+        <span class="count loading">&nbsp;</span>
+        <span class="wedge"></span>
+    </a>    
+</div>
+
 @if (Model.Similars.Count > 0)
 {
     <div class="similars">
