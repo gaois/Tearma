@@ -1,394 +1,473 @@
-﻿using Microsoft.Extensions.Configuration;
-using Newtonsoft.Json.Linq;
-using System.Collections.Generic;
+﻿using Newtonsoft.Json.Linq;
 using System.Data;
 using System.Data.SqlClient;
 using TearmaWeb.Models.Home;
 
-namespace TearmaWeb.Controllers
+namespace TearmaWeb.Controllers;
+
+public class Broker(IConfiguration configuration)
 {
-    public class Broker {
-        private readonly string _connectionString;
+    private readonly string _connectionString = 
+        configuration.GetConnectionString("DefaultConnection")
+            ?? throw new InvalidOperationException("Missing connection string.");
 
-        public Broker(IConfiguration configuration) {
-            _connectionString = configuration.GetConnectionString("DefaultConnection");
-        }
+    // ---------------------------
+    // Shared helpers
+    // ---------------------------
 
-        private static Lookups ReadLookups(SqlDataReader reader) {
-            Lookups lookups=new Lookups();
+    private static async Task<Lookups> ReadLookupsAsync(SqlDataReader reader)
+    {
+        var lookups = new Lookups();
 
-			//read lingo config:
-			if(reader.Read()) {
-				string json=(string)reader["json"];
-				JObject jo=JObject.Parse(json);
-				JArray ja=(JArray)jo.Property("languages")?.Value ?? new JArray();
-				for(int i=0; i<ja.Count; i++) {
-					JObject jlang=(JObject)ja[i];
-                    Language language=new Language(jlang);
-					lookups.addLanguage(language);
-				}
-			}
+        // Languages
+        if (await reader.ReadAsync().ConfigureAwait(false))
+        {
+            var json = (string)reader["json"];
 
-			//read metadata:
-			reader.NextResult();
-			while(reader.Read()) {
-				int id=(int)reader["id"];
-				string type=(string)reader["type"];
-				string json=(string)reader["json"];
-				bool hasChildren=false; if((int)reader["hasChildren"]>0) hasChildren=true;
-				JObject jo=JObject.Parse(json);
-                Metadatum metadatum;
-				if(type=="posLabel") {
-					metadatum=new Metadatum(id, jo, hasChildren, lookups.languages);
-				} else {
-					metadatum=new Metadatum(id, jo, hasChildren);
-				}
-				lookups.addMetadatatum(type, metadatum);
-			}
+            var jo = JObject.Parse(json);
+            var ja = (JArray?)jo["languages"] ?? [];
 
-			return lookups;
-		}
-
-		private static Dictionary<int, string> ReadXrefTargets(SqlDataReader reader) {
-			Dictionary<int, string> xrefTargets=new Dictionary<int, string>();
-			while(reader.Read()) {
-				int id=(int)reader["id"];
-				if(!xrefTargets.ContainsKey(id)) {
-					string json=(string)reader["json"];
-					xrefTargets.Add(id, json);
-				}
-			}
-			return xrefTargets;
-		}
-
-		/// <summary>Takes the view model of the quick search page (with 'word' and 'lang' filled in) and populates all other properties from the database.</summary>
-		public void DoQuickSearch(QuickSearch model) {
-            using (var conn = new SqlConnection(_connectionString)) {
-                conn.Open();
-
-                using (var command = new SqlCommand("dbo.pub_quicksearch", conn)) {
-			        command.CommandType=CommandType.StoredProcedure;
-			        SqlParameter param;
-			        param=new SqlParameter(); param.ParameterName="@word"; param.SqlDbType=SqlDbType.NVarChar; param.Value=model.word; command.Parameters.Add(param);
-			        param=new SqlParameter(); param.ParameterName="@lang"; param.SqlDbType=SqlDbType.NVarChar; param.Value=model.lang; command.Parameters.Add(param);
-			        param=new SqlParameter(); param.ParameterName="@super"; param.SqlDbType=SqlDbType.Bit; param.Value=model.super; command.Parameters.Add(param);
-                    
-                    using (var reader = command.ExecuteReader()) {
-                        //read lookups:
-                        Lookups lookups = ReadLookups(reader);
-
-			            //read similars:
-			            reader.NextResult();
-			            while(reader.Read()) {
-				            model.similars.Add((string)reader["similar"]);
-			            }
-
-			            //read languages in which matches have been found:
-			            reader.NextResult();
-			            while(reader.Read()) {
-				            string abbr=(string)reader["lang"];
-				            if(lookups.languagesByAbbr.ContainsKey(abbr)) model.langs.Add(lookups.languagesByAbbr[abbr]);
-			            }
-
-			            //determine the sorting language:
-			            model.sortlang=model.lang;
-			            if(model.sortlang=="" && model.langs.Count>0) {
-				            model.sortlang=model.langs[0].abbr;
-				            if(model.sortlang!="ga" && model.sortlang!="en") model.sortlang="ga";
-			            }
-
-			            //read xref targets:
-			            reader.NextResult();
-			            Dictionary<int, string> xrefTargets=ReadXrefTargets(reader);
-
-			            //read exact matches:
-			            reader.NextResult();
-			            while(reader.Read()) {
-				            int id=(int)reader["id"];
-				            string json=(string)reader["json"];
-				            model.exacts.Add(Prettify.Entry(id, json, lookups, model.sortlang, xrefTargets));
-			            }
-
-			            //read related matches:
-			            reader.NextResult();
-			            int relatedCount=0;
-			            while(reader.Read()) {
-				            relatedCount++;
-				            if(relatedCount <= 100) {
-					            int id=(int)reader["id"];
-					            string json=(string)reader["json"];
-					            model.relateds.Add(Prettify.Entry(id, json, lookups, model.sortlang));
-				            }
-			            }
-			            if(relatedCount>100) model.relatedMore=true;
-
-						//read auxilliary matches:
-						if(model.super) {
-							reader.NextResult();
-							while(reader.Read()) {
-								var coll=(string)reader["coll"];
-								if(!model.auxes.ContainsKey(coll)) model.auxes.Add(coll, new List<System.Tuple<string, string>>());
-								model.auxes[coll].Add(new System.Tuple<string, string>((string)reader["en"], (string)reader["ga"]));
-							}
-						}
-                    }
-                }
-            }
-		}
-
-		/// <summary>Takes the view model of the advanced search page and populates the 'langs' property from the database.</summary>
-		public void PrepareAdvSearch(AdvSearch model) {
-            using (var conn = new SqlConnection(_connectionString)) {
-                conn.Open();
-
-                using (var command = new SqlCommand("dbo.pub_advsearch_prepare", conn)) {
-			        command.CommandType=CommandType.StoredProcedure;
-
-                    using (var reader = command.ExecuteReader()) {
-                        //read lookups:
-                        Lookups lookups=ReadLookups(reader);
-			            foreach(Language language in lookups.languages) model.langs.Add(language);
-			            foreach(Metadatum datum in lookups.posLabels) model.posLabels.Add(datum);
-			            foreach(Metadatum datum in lookups.domains) {
-				            //if(datum.parentID==0){
-					            model.domains.Add(datum);
-							//}
-			            }
-                    }
-			    }
-			}
-		}
-
-		/// <summary>Takes the view model of the advanced search page (with 'word', 'length', 'extent', 'lang' and 'page' filled in) and populates all other properties from the database.</summary>
-		public void DoAdvSearch(AdvSearch model) {
-            using (var conn = new SqlConnection(_connectionString)) {
-                conn.Open();
-
-                using (var command = new SqlCommand("dbo.pub_advsearch", conn)) {
-			        command.CommandType=CommandType.StoredProcedure;
-			        SqlParameter param;
-			        param=new SqlParameter(); param.ParameterName="@word"; param.SqlDbType=SqlDbType.NVarChar; param.Value=model.word; command.Parameters.Add(param);
-			        param=new SqlParameter(); param.ParameterName="@length"; param.SqlDbType=SqlDbType.NVarChar; param.Value=model.length; command.Parameters.Add(param);
-			        param=new SqlParameter(); param.ParameterName="@extent"; param.SqlDbType=SqlDbType.NVarChar; param.Value=model.extent; command.Parameters.Add(param);
-			        param=new SqlParameter(); param.ParameterName="@lang"; param.SqlDbType=SqlDbType.NVarChar; param.Value=model.lang; command.Parameters.Add(param);
-			        param=new SqlParameter(); param.ParameterName="@pos"; param.SqlDbType=SqlDbType.Int; param.Value=model.posLabel; command.Parameters.Add(param);
-			        param=new SqlParameter(); param.ParameterName="@dom"; param.SqlDbType=SqlDbType.Int; param.Value=model.domainID; command.Parameters.Add(param);
-			        param=new SqlParameter(); param.ParameterName="@page"; param.SqlDbType=SqlDbType.Int; param.Value=model.page; command.Parameters.Add(param);
-					param=new SqlParameter(); param.ParameterName="@total"; param.SqlDbType=SqlDbType.Int; param.Value=model.total; param.Direction=ParameterDirection.InputOutput; command.Parameters.Add(param);
-
-                    using (var reader = command.ExecuteReader()) {
-                        //read lookups:
-                        Lookups lookups =ReadLookups(reader);
-			            foreach(Language language in lookups.languages) model.langs.Add(language);
-			            foreach(Metadatum datum in lookups.posLabels) model.posLabels.Add(datum);
-			            foreach(Metadatum datum in lookups.domains) {
-							//if(datum.parentID == 0) {
-					            model.domains.Add(datum);
-							//}
-			            }
-
-			            //determine the sorting language:
-			            model.sortlang=model.lang;
-			            if(model.sortlang!="ga" && model.sortlang!="en") model.sortlang="ga";
-
-			            //read xref targets:
-			            reader.NextResult();
-			            Dictionary<int, string> xrefTargets=ReadXrefTargets(reader);
-
-			            //read matches:
-			            reader.NextResult();
-			            while(reader.Read()) {
-				            int id=(int)reader["id"];
-				            string json=(string)reader["json"];
-				            model.matches.Add(Prettify.Entry(id, json, lookups, model.sortlang, xrefTargets));
-			            }
-
-			            //read pager:
-			            reader.NextResult();
-			            if(reader.Read()) {
-				            int currentPage=(int)reader["currentPage"];
-				            int maxPage=(int)reader["maxPage"];
-				            model.pager=new Pager(currentPage, maxPage);
-			            }
-                    }
-					model.total=(int)command.Parameters["@total"].Value;
-			    }
-			}
-		}
-
-		/// <summary>Populates the view model of the page that lists all top-level domains.</summary>
-		public void DoDomains(Domains model) {
-            using (var conn = new SqlConnection(_connectionString)) {
-                conn.Open();
-
-                using (var command = new SqlCommand("dbo.pub_domains", conn)) {
-                    command.CommandType = CommandType.StoredProcedure;
-                    SqlParameter param;
-                    param = new SqlParameter(); param.ParameterName = "@lang"; param.SqlDbType = SqlDbType.NVarChar; param.Value = model.lang;
-                    command.Parameters.Add(param);
-
-                    using (var reader = command.ExecuteReader()) {
-                        //read lookups:
-                        Lookups lookups = ReadLookups(reader);
-                        foreach (Metadatum md in lookups.domains) if(md.parentID==0) model.domains.Add(new Models.Home.DomainListing(md.id, md.name["ga"], md.name["en"], md.hasChildren));
-                    }
-                }
-            }
-		}
-
-		/// <summary>Populates the view model of the home page.</summary>
-		public void DoIndex(Index model) {
-            using (var conn = new SqlConnection(_connectionString)) {
-                conn.Open();
-
-                using (var command = new SqlCommand("dbo.pub_index", conn)) {
-			        command.CommandType=CommandType.StoredProcedure;
-                    
-                    using (var reader = command.ExecuteReader()) {
-                        //read lookups:
-                        Lookups lookups =ReadLookups(reader);
-			            foreach(Metadatum md in lookups.domains){
-							if(md.parentID==0) {
-								model.domains.Add(new DomainListing(md.id, md.name["ga"], md.name["en"]));
-							}
-						}
-
-			            //read entry of the day:
-			            reader.NextResult();
-			            if(reader.Read()) {
-				            int id=(int)reader["id"];
-				            string json=(string)reader["json"];
-				            model.tod=Prettify.Entry(id, json, lookups, "ga");
-			            }
-
-			            //read recently changed entries:
-			            reader.NextResult();
-			            while(reader.Read()) {
-				            int id=(int)reader["id"];
-				            string json=(string)reader["json"];
-				            model.recent.Add(Prettify.EntryLink(id, json, "ga"));
-			            }
-
-			            //read news item:
-			            reader.NextResult();
-			            if(reader.Read()) {
-				            model.newsGA=(string)reader["TextGA"];
-				            model.newsEN=(string)reader["TextEN"];
-			            }
-			        }
-                }
-            }
-		}
-
-		/// <summary>Populates the view model of the single-entry page.</summary>
-		public void DoEntry(Entry model) {
-            using (var conn = new SqlConnection(_connectionString)) {
-                conn.Open();
-
-                using (var command = new SqlCommand("dbo.pub_entry", conn)) {
-			        command.CommandType=CommandType.StoredProcedure;
-			        SqlParameter param;
-			        param=new SqlParameter(); param.ParameterName="@id"; param.SqlDbType=SqlDbType.Int; param.Value=model.id; command.Parameters.Add(param);
-                    
-                    using (var reader = command.ExecuteReader()) {
-                        //read lookups:
-                        Lookups lookups =ReadLookups(reader);
-
-			            //read xref targets:
-			            reader.NextResult();
-			            Dictionary<int, string> xrefTargets=ReadXrefTargets(reader);
-
-			            //read the entry:
-			            reader.NextResult();
-			            if(reader.Read()) {
-				            int id=(int)reader["id"];
-				            string json=(string)reader["json"];
-				            model.entry=Prettify.Entry(id, json, lookups, "ga", xrefTargets);
-			            }
-                    }
+            foreach (var token in ja)
+            {
+                if (token is JObject jlang)
+                {
+                    var language = new Language(jlang);
+                    lookups.AddLanguage(language);
                 }
             }
         }
 
-		/// <summary>Populates the view model of the page that lists entries by domain.</summary>
-		public void DoDomain(Domain model) {
-            using (var conn = new SqlConnection(_connectionString)) {
-                conn.Open();
+        // Metadata
+        await reader.NextResultAsync().ConfigureAwait(false);
 
-                using (var command = new SqlCommand("dbo.pub_domain", conn)) {
-			        command.CommandType=CommandType.StoredProcedure;
-			        SqlParameter param;
-			        param=new SqlParameter(); param.ParameterName="@lang"; param.SqlDbType=SqlDbType.NVarChar; param.Value=model.lang; command.Parameters.Add(param);
-			        param=new SqlParameter(); param.ParameterName="@domID"; param.SqlDbType=SqlDbType.Int; param.Value=model.domID; command.Parameters.Add(param);
-			        param=new SqlParameter(); param.ParameterName="@page"; param.SqlDbType=SqlDbType.Int; param.Value=model.page; command.Parameters.Add(param);
-					param=new SqlParameter(); param.ParameterName="@total"; param.SqlDbType=SqlDbType.Int; param.Value=0; param.Direction=ParameterDirection.InputOutput; command.Parameters.Add(param);
-                    
-                    using (var reader = command.ExecuteReader()) {
-                        //read lookups:
-                        Lookups lookups=ReadLookups(reader);
-			            if(lookups.domainsById.ContainsKey(model.domID)){
-                            Metadatum md=lookups.domainsById[model.domID];
-				            model.domain=new DomainListing(md.id, md.name["ga"], md.name["en"], md.hasChildren);
-							while(lookups.domainsById.ContainsKey(md.parentID) && md.parentID != 0) {
-								md=lookups.domainsById[md.parentID];
-								if(md!=null) model.parents.Add(new DomainListing(md.id, md.name["ga"], md.name["en"], md.hasChildren));
-							}
-							model.parents.Reverse();
-							foreach(Metadatum smd in lookups.domains) {
-								if(smd .parentID == model.domID) {
-									model.subdomains.Add(new DomainListing(smd.id, smd.name["ga"], smd.name["en"], smd.hasChildren));
-								}
-							}
-			            }
+        while (await reader.ReadAsync().ConfigureAwait(false))
+        {
+            int id = (int)reader["id"];
+            string type = (string)reader["type"];
+            string json = (string)reader["json"];
+            bool hasChildren = (int)reader["hasChildren"] > 0;
 
-			            //read xref targets:
-			            reader.NextResult();
-			            Dictionary<int, string> xrefTargets=ReadXrefTargets(reader);
+            var jo = JObject.Parse(json);
 
-			            //read matches:
-			            reader.NextResult();
-			            while(reader.Read()) {
-				            int id=(int)reader["id"];
-				            string json=(string)reader["json"];
-				            model.matches.Add(Prettify.Entry(id, json, lookups, model.lang, xrefTargets));
-			            }
+            Metadatum metadatum =
+                type == "posLabel"
+                    ? new Metadatum(id, jo, hasChildren, lookups.Languages)
+                    : new Metadatum(id, jo, hasChildren);
 
-			            //read pager:
-			            reader.NextResult();
-			            if(reader.Read()) {
-				            int currentPage=(int)reader["currentPage"];
-				            int maxPage=(int)reader["maxPage"];
-				            model.pager=new Pager(currentPage, maxPage);
-			            }
-			        }
-					model.total=(int)command.Parameters["@total"].Value;
+            lookups.AddMetadatum(type, metadatum);
+        }
+
+        return lookups;
+    }
+
+    private static async Task<Dictionary<int, string>> ReadXrefTargetsAsync(SqlDataReader reader)
+    {
+        var dict = new Dictionary<int, string>();
+
+        while (await reader.ReadAsync().ConfigureAwait(false))
+        {
+            int id = (int)reader["id"];
+            if (!dict.ContainsKey(id))
+            {
+                dict[id] = (string)reader["json"];
+            }
+        }
+
+        return dict;
+    }
+
+    // ---------------------------
+    // Quick Search
+    // ---------------------------
+
+    public async Task DoQuickSearchAsync(QuickSearch model)
+    {
+        await using var conn = new SqlConnection(_connectionString);
+        await conn.OpenAsync().ConfigureAwait(false);
+
+        await using var command = new SqlCommand("dbo.pub_quicksearch", conn)
+        {
+            CommandType = CommandType.StoredProcedure
+        };
+
+        command.Parameters.AddWithValue("@word", model.Word);
+        command.Parameters.AddWithValue("@lang", model.Lang);
+        command.Parameters.AddWithValue("@super", model.Super);
+
+        await using var reader = await command.ExecuteReaderAsync().ConfigureAwait(false);
+
+        // Lookups
+        var lookups = await ReadLookupsAsync(reader).ConfigureAwait(false);
+
+        // Similars
+        await reader.NextResultAsync().ConfigureAwait(false);
+        while (await reader.ReadAsync().ConfigureAwait(false))
+        {
+            model.Similars.Add((string)reader["similar"]);
+        }
+
+        // Languages
+        await reader.NextResultAsync().ConfigureAwait(false);
+        while (await reader.ReadAsync().ConfigureAwait(false))
+        {
+            string abbr = (string)reader["lang"];
+            if (lookups.LanguagesByAbbr.TryGetValue(abbr, out var lang))
+                model.Langs.Add(lang);
+        }
+
+        // Sorting language
+        model.SortLang = model.Lang;
+        if (string.IsNullOrEmpty(model.SortLang) && model.Langs.Count > 0)
+        {
+            model.SortLang = model.Langs[0].Abbr;
+            if (model.SortLang != "ga" && model.SortLang != "en")
+                model.SortLang = "ga";
+        }
+
+        // Xref targets
+        await reader.NextResultAsync().ConfigureAwait(false);
+        var xrefTargets = await ReadXrefTargetsAsync(reader).ConfigureAwait(false);
+
+        // Exact matches
+        await reader.NextResultAsync().ConfigureAwait(false);
+        while (await reader.ReadAsync().ConfigureAwait(false))
+        {
+            int id = (int)reader["id"];
+            string json = (string)reader["json"];
+            model.Exacts.Add(Prettify.Entry(id, json, lookups, model.SortLang, xrefTargets));
+        }
+
+        // Related matches
+        await reader.NextResultAsync().ConfigureAwait(false);
+        int relatedCount = 0;
+
+        while (await reader.ReadAsync().ConfigureAwait(false))
+        {
+            relatedCount++;
+            if (relatedCount <= 100)
+            {
+                int id = (int)reader["id"];
+                string json = (string)reader["json"];
+                model.Relateds.Add(Prettify.Entry(id, json, lookups, model.SortLang));
+            }
+        }
+
+        if (relatedCount > 100)
+            model.RelatedMore = true;
+
+        // Aux matches
+        if (model.Super)
+        {
+            await reader.NextResultAsync().ConfigureAwait(false);
+
+            while (await reader.ReadAsync().ConfigureAwait(false))
+            {
+                var coll = (string)reader["coll"];
+                if (!model.Auxes.ContainsKey(coll))
+                    model.Auxes[coll] = new List<Tuple<string, string>>();
+
+                model.Auxes[coll].Add(
+                    new Tuple<string, string>(
+                        (string)reader["en"],
+                        (string)reader["ga"]
+                    )
+                );
+            }
+        }
+    }
+
+    public async Task PrepareAdvSearchAsync(AdvSearch model)
+    {
+        await using var conn = new SqlConnection(_connectionString);
+        await conn.OpenAsync().ConfigureAwait(false);
+
+        await using var command = new SqlCommand("dbo.pub_advsearch_prepare", conn)
+        {
+            CommandType = CommandType.StoredProcedure
+        };
+
+        await using var reader = await command.ExecuteReaderAsync().ConfigureAwait(false);
+
+        var lookups = await ReadLookupsAsync(reader).ConfigureAwait(false);
+
+        foreach (var language in lookups.Languages)
+            model.Langs.Add(language);
+
+        foreach (var datum in lookups.PosLabels)
+            model.PosLabels.Add(datum);
+
+        foreach (var datum in lookups.Domains)
+            model.Domains.Add(datum);
+    }
+
+    public async Task DoAdvSearchAsync(AdvSearch model)
+    {
+        await using var conn = new SqlConnection(_connectionString);
+        await conn.OpenAsync().ConfigureAwait(false);
+
+        await using var command = new SqlCommand("dbo.pub_advsearch", conn)
+        {
+            CommandType = CommandType.StoredProcedure
+        };
+
+        command.Parameters.AddWithValue("@word", model.Word);
+        command.Parameters.AddWithValue("@length", model.Length);
+        command.Parameters.AddWithValue("@extent", model.Extent);
+        command.Parameters.AddWithValue("@lang", model.Lang);
+        command.Parameters.AddWithValue("@pos", model.PosLabel);
+        command.Parameters.AddWithValue("@dom", model.DomainID);
+        command.Parameters.AddWithValue("@page", model.Page);
+
+        var totalParam = new SqlParameter("@total", SqlDbType.Int)
+        {
+            Direction = ParameterDirection.InputOutput,
+            Value = model.Total
+        };
+        command.Parameters.Add(totalParam);
+
+        await using var reader = await command.ExecuteReaderAsync().ConfigureAwait(false);
+
+        var lookups = await ReadLookupsAsync(reader).ConfigureAwait(false);
+
+        foreach (var language in lookups.Languages)
+            model.Langs.Add(language);
+
+        foreach (var datum in lookups.PosLabels)
+            model.PosLabels.Add(datum);
+
+        foreach (var datum in lookups.Domains)
+            model.Domains.Add(datum);
+
+        // Sorting language
+        model.SortLang = model.Lang;
+        if (model.SortLang != "ga" && model.SortLang != "en")
+            model.SortLang = "ga";
+
+        // Xref targets
+        await reader.NextResultAsync().ConfigureAwait(false);
+        var xrefTargets = await ReadXrefTargetsAsync(reader).ConfigureAwait(false);
+
+        // Matches
+        await reader.NextResultAsync().ConfigureAwait(false);
+        while (await reader.ReadAsync().ConfigureAwait(false))
+        {
+            int id = (int)reader["id"];
+            string json = (string)reader["json"];
+            model.Matches.Add(Prettify.Entry(id, json, lookups, model.SortLang, xrefTargets));
+        }
+
+        // Pager
+        await reader.NextResultAsync().ConfigureAwait(false);
+        if (await reader.ReadAsync().ConfigureAwait(false))
+        {
+            int currentPage = (int)reader["currentPage"];
+            int maxPage = (int)reader["maxPage"];
+            model.Pager = new Pager(currentPage, maxPage);
+        }
+
+        model.Total = (int)totalParam.Value;
+    }
+
+    public async Task DoDomainsAsync(Domains model)
+    {
+        await using var conn = new SqlConnection(_connectionString);
+        await conn.OpenAsync().ConfigureAwait(false);
+
+        await using var command = new SqlCommand("dbo.pub_domains", conn)
+        {
+            CommandType = CommandType.StoredProcedure
+        };
+
+        command.Parameters.AddWithValue("@lang", model.Lang);
+
+        await using var reader = await command.ExecuteReaderAsync().ConfigureAwait(false);
+
+        var lookups = await ReadLookupsAsync(reader).ConfigureAwait(false);
+
+        foreach (var md in lookups.Domains)
+        {
+            if (md.ParentID == 0)
+            {
+                model.DomainsList.Add(
+                    new DomainListing(md.Id, md.Name["ga"], md.Name["en"], md.HasChildren)
+                );
+            }
+        }
+    }
+
+    public async Task DoIndexAsync(Models.Home.Index model)
+    {
+        await using var conn = new SqlConnection(_connectionString);
+        await conn.OpenAsync().ConfigureAwait(false);
+
+        await using var command = new SqlCommand("dbo.pub_index", conn)
+        {
+            CommandType = CommandType.StoredProcedure
+        };
+
+        await using var reader = await command.ExecuteReaderAsync().ConfigureAwait(false);
+
+        var lookups = await ReadLookupsAsync(reader).ConfigureAwait(false);
+
+        // Domains
+        foreach (var md in lookups.Domains)
+        {
+            if (md.ParentID == 0)
+                model.Domains.Add(new DomainListing(md.Id, md.Name["ga"], md.Name["en"]));
+        }
+
+        // Term of the day
+        await reader.NextResultAsync().ConfigureAwait(false);
+        if (await reader.ReadAsync().ConfigureAwait(false))
+        {
+            int id = (int)reader["id"];
+            string json = (string)reader["json"];
+            model.Tod = Prettify.Entry(id, json, lookups, "ga");
+        }
+
+        // Recent entries
+        await reader.NextResultAsync().ConfigureAwait(false);
+        while (await reader.ReadAsync().ConfigureAwait(false))
+        {
+            int id = (int)reader["id"];
+            string json = (string)reader["json"];
+            model.Recent.Add(Prettify.EntryLink(id, json, "ga"));
+        }
+
+        // News
+        await reader.NextResultAsync().ConfigureAwait(false);
+        if (await reader.ReadAsync().ConfigureAwait(false))
+        {
+            model.NewsGA = (string)reader["TextGA"];
+            model.NewsEN = (string)reader["TextEN"];
+        }
+    }
+
+    public async Task DoEntryAsync(Entry model)
+    {
+        await using var conn = new SqlConnection(_connectionString);
+        await conn.OpenAsync().ConfigureAwait(false);
+
+        await using var command = new SqlCommand("dbo.pub_entry", conn)
+        {
+            CommandType = CommandType.StoredProcedure
+        };
+
+        command.Parameters.AddWithValue("@id", model.Id);
+
+        await using var reader = await command.ExecuteReaderAsync().ConfigureAwait(false);
+
+        var lookups = await ReadLookupsAsync(reader).ConfigureAwait(false);
+
+        // Xref targets
+        await reader.NextResultAsync().ConfigureAwait(false);
+        var xrefTargets = await ReadXrefTargetsAsync(reader).ConfigureAwait(false);
+
+        // Entry
+        await reader.NextResultAsync().ConfigureAwait(false);
+        if (await reader.ReadAsync().ConfigureAwait(false))
+        {
+            int id = (int)reader["id"];
+            string json = (string)reader["json"];
+            model.EntryHtml = Prettify.Entry(id, json, lookups, "ga", xrefTargets);
+        }
+    }
+
+    public async Task DoDomainAsync(Domain model)
+    {
+        await using var conn = new SqlConnection(_connectionString);
+        await conn.OpenAsync().ConfigureAwait(false);
+
+        await using var command = new SqlCommand("dbo.pub_domain", conn)
+        {
+            CommandType = CommandType.StoredProcedure
+        };
+
+        command.Parameters.AddWithValue("@lang", model.Lang);
+        command.Parameters.AddWithValue("@domID", model.DomID);
+        command.Parameters.AddWithValue("@page", model.Page);
+
+        var totalParam = new SqlParameter("@total", SqlDbType.Int)
+        {
+            Direction = ParameterDirection.InputOutput,
+            Value = 0
+        };
+        command.Parameters.Add(totalParam);
+
+        await using var reader = await command.ExecuteReaderAsync().ConfigureAwait(false);
+
+        var lookups = await ReadLookupsAsync(reader).ConfigureAwait(false);
+
+        // Domain + parents + children
+        if (lookups.DomainsById.TryGetValue(model.DomID, out var md))
+        {
+            model.DomainListing = new DomainListing(md.Id, md.Name["ga"], md.Name["en"], md.HasChildren);
+
+            // Parents
+            while (lookups.DomainsById.TryGetValue(md.ParentID, out var parent) && parent.ParentID != 0)
+            {
+                model.Parents.Add(new DomainListing(parent.Id, parent.Name["ga"], parent.Name["en"], parent.HasChildren));
+                md = parent;
+            }
+
+            model.Parents.Reverse();
+
+            // Subdomains
+            foreach (var smd in lookups.Domains)
+            {
+                if (smd.ParentID == model.DomID)
+                {
+                    model.Subdomains.Add(new DomainListing(smd.Id, smd.Name["ga"], smd.Name["en"], smd.HasChildren));
                 }
             }
-		}
+        }
 
-		/// <summary>Populates the view model of the term-of-the-day widget.</summary>
-		public void DoTod(Models.Widgets.Tod model) {
-            using (var conn = new SqlConnection(_connectionString)) {
-                conn.Open();
+        // Xref targets
+        await reader.NextResultAsync().ConfigureAwait(false);
+        var xrefTargets = await ReadXrefTargetsAsync(reader).ConfigureAwait(false);
 
-                using (var command = new SqlCommand("dbo.pub_tod", conn)) {
-			        command.CommandType=CommandType.StoredProcedure;
+        // Matches
+        await reader.NextResultAsync().ConfigureAwait(false);
+        while (await reader.ReadAsync().ConfigureAwait(false))
+        {
+            int id = (int)reader["id"];
+            string json = (string)reader["json"];
+            model.Matches.Add(Prettify.Entry(id, json, lookups, model.Lang, xrefTargets));
+        }
 
-                    using (var reader = command.ExecuteReader()) {
-                        //read lookups:
-                        Lookups lookups=ReadLookups(reader);
+        // Pager
+        await reader.NextResultAsync().ConfigureAwait(false);
+        if (await reader.ReadAsync().ConfigureAwait(false))
+        {
+            int currentPage = (int)reader["currentPage"];
+            int maxPage = (int)reader["maxPage"];
+            model.Pager = new Pager(currentPage, maxPage);
+        }
 
-			            //read entry of the day:
-			            reader.NextResult();
-			            if(reader.Read()) {
-				            int id=(int)reader["id"];
-				            string json=(string)reader["json"];
-				            model.todID=id;
-				            model.tod=Prettify.Entry(id, json, lookups, "ga");
-			            }
-                    }
-                }
-            }
-		}
-	}
+        model.Total = (int)totalParam.Value;
+    }
+
+    public async Task DoTodAsync(Models.Widgets.Tod model)
+    {
+        await using var conn = new SqlConnection(_connectionString);
+        await conn.OpenAsync().ConfigureAwait(false);
+
+        await using var command = new SqlCommand("dbo.pub_tod", conn)
+        {
+            CommandType = CommandType.StoredProcedure
+        };
+
+        await using var reader = await command.ExecuteReaderAsync().ConfigureAwait(false);
+
+        var lookups = await ReadLookupsAsync(reader).ConfigureAwait(false);
+
+        await reader.NextResultAsync().ConfigureAwait(false);
+        if (await reader.ReadAsync().ConfigureAwait(false))
+        {
+            int id = (int)reader["id"];
+            string json = (string)reader["json"];
+            model.TodID = id;
+            model.TodText = Prettify.Entry(id, json, lookups, "ga");
+        }
+    }
 }

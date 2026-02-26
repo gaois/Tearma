@@ -1,24 +1,22 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using TearmaWeb.Models.Widgets;
 
-namespace TearmaWeb.Controllers
+namespace TearmaWeb.Controllers;
+
+public class WidgetsController(Broker broker) : Controller
 {
-    public class WidgetsController : Controller {
-        private readonly Broker _broker;
+    public IActionResult Box()
+    {
+        var model = new Box();
+        return View("Box", model);
+    }
 
-        public WidgetsController(Broker broker) {
-            _broker = broker;
-        }
+    public async Task<IActionResult> Tod()
+    {
+        var model = new Tod();
 
-		public IActionResult Box() {
-			Box model=new Box();
-			return View("Box", model);
-        }
+        await broker.DoTodAsync(model);
 
-		public IActionResult Tod() {
-			Tod model=new Tod();
-            _broker.DoTod(model);
-			return View("Tod", model);
-        }
-	}
+        return View("Tod", model);
+    }
 }

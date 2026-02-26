@@ -2,32 +2,31 @@
 @using TearmaWeb.Models.Info
 
 @{
-    Layout="_HomeLayout";
-    ViewBag.swapper="";
+    Layout = "_HomeLayout";
+    ViewBag.swapper = "";
 }
 
-@section Rightie {
+@section Rightie
+{
     <a class="kickboxToggler" href="javascript:void(null)" onclick="$('.kickbox').insertAfter($('.kickboxToggler')).slideToggle()">
         <span class="icon fas fa-bars"></span>
         <span class="text ga" lang="ga">Roghchlár</span>
         <span class="text en" lang="en">Menu</span>
     </a>
-
     <div class="kickbox">
-        @foreach (TocItem tocItem in Model.toc){
-		    <a class="infolink @(tocItem.nickname==Model.nickname ? "selected" : "")" href="~/@Model.section/@tocItem.nickname.@Model.lang">
-                @tocItem.title[Model.lang]
+        @foreach (TocItem tocItem in Model.Toc){
+            <a class="infolink @(tocItem.Nickname == Model.Nickname ? "selected" : "")" href="~/@Model.Section/@tocItem.Nickname.@Model.Lang">
+                @tocItem.Title[Model.Lang]
             </a>
         }
         <div class="sep"></div>
-		<a class="infolanglink" href="~/@Model.section/@Model.nickname.@(Model.lang=="ga" ? "en" : "ga")">
-            <span class="icon">@(Model.lang=="ga" ? "EN" : "GA")</span>
-            <span class="text">@(Model.lang=="ga" ? "English version" : "Leagan Gaeilge")&nbsp;»</span>
-            
+            <a class="infolanglink" href="~/@Model.Section/@Model.Nickname.@(Model.Lang=="ga" ? "en" : "ga")">
+            <span class="icon">@(Model.Lang=="ga" ? "EN" : "GA")</span>
+            <span class="text">@(Model.Lang=="ga" ? "English version" : "Leagan Gaeilge")&nbsp;»</span>
         </a>
     </div>
 }
 
 <div class="markdown">
-    @Html.Raw(Markdig.Markdown.ToHtml(Model.body).Replace("<a href=\"http", "<a target=\"_blank\" href=\"http"))
+    @Html.Raw(Markdig.Markdown.ToHtml(Model.Body).Replace("<a href=\"http", "<a target=\"_blank\" href=\"http"))
 </div>

@@ -63,7 +63,7 @@
 
     <link href="@BotDetect.Web.CaptchaUrls.Absolute.LayoutStyleSheetUrl" rel="stylesheet" type="text/css" />
 </head>
-<body class="@((bool)ViewData["IsSuper"] ? "super" : "")">
+<body class="@(ViewData["IsSuper"] is true ? "super" : "")">
     <environment exclude="Production">
         <mini-profiler />
     </environment>
@@ -100,7 +100,8 @@
             <header class="logobox">
                 <a href="~/" class="logo">
                     <img src="~/furniture/tearma.png" alt="téarma.ie" title="Bunachar Náisiúnta Téarmaíochta don Ghaeilge · National Terminology Database for Irish" />
-                    @if((bool)ViewData["IsSuper"]) {
+                    @if (ViewData["IsSuper"] is true)
+                    {
                         <span class="super">super</span>
                     }
                 </a>
@@ -166,7 +167,6 @@
                 <a rel="noopener" target="_blank" href="https://twitter.com/tearma_ie" class="twitter fab fa-twitter"></a>
                 <a rel="noopener" target="_blank" href="https://www.youtube.com/@@gaois3453" class="youtube fab fa-youtube"></a>
                 <a rel="noopener" target="_blank" href="https://www.instagram.com/tearma_ie/" class="instagram fab fa-instagram"></a>
-                @*<a href="mailto:tearma@dcu.ie" class="email">tearma@dcu.ie</a>*@
             </div>
             <div class="statement">
                 <div>
@@ -226,9 +226,6 @@
                     <img src="~/furniture/logainm-blue.png" alt="" />&nbsp;logainm.ie
                 </a>
             </div>
-              @if(DateTime.Now<(new DateTime(2024, 5, 9, 0, 0, 0))){
-                <a class="creidimionat" href="https://www.forasnagaeilge.ie/creidim-ionat/?lang=en" target="_blank" title="Creidim ionat."></a>
-              }
         </div>
     </footer>
 </body>

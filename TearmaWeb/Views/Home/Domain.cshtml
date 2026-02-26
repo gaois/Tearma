@@ -8,12 +8,12 @@
 
 @section Rightie {
     <div class="kickbox">
-	    <a class="langlink @(Model.lang=="ga" ? "selected": "")" href="@Model.urlByLang("ga")">
+	    <a class="langlink @(Model.Lang=="ga" ? "selected": "")" href="@Model.UrlByLang("ga")">
             <span class="icon">GA</span>
             <span class="ga" lang="ga">Sórtáil i nGaeilge</span>
             <span class="en" lang="en">Sort by Irish</span>
         </a>
-		<a class="langlink @(Model.lang=="en" ? "selected": "")" href="@Model.urlByLang("en")">
+		<a class="langlink @(Model.Lang=="en" ? "selected": "")" href="@Model.UrlByLang("en")">
             <span class="icon">EN</span>
             <span class="ga" lang="ga">Sórtáil i mBéarla</span>
             <span class="en" lang="en">Sort by English</span>
@@ -37,29 +37,31 @@
     </div>
 }
 
-<a class="domainAction" href="~/dom/@Model.lang/">
+<a class="domainAction" href="~/dom/@Model.Lang/">
 	<span class="icon fas fa-chevron-circle-left"></span>
 	<span class="ga" lang="ga">Gach réimse</span>
 	<span class="en" lang="en">All domains</span>
 </a>
 <div class="domains formlike scrollable">
-    @{int level=0;}
-    @foreach(DomainListing domain in Model.parents) {
-        <a href="~/dom/@domain.id/@Model.lang/" class="domain L@(level) current">
-            <span class="ga" lang="@Model.leftLang()">@Html.Raw(domain.getExpandedTitle(Model.leftLang()))</span>
-            <span class="en" lang="@Model.rightLang()">@Html.Raw(domain.getExpandedTitle(Model.rightLang()))</span>
+    @{int level = 0;}
+    @foreach (DomainListing domain in Model.Parents)
+    {
+        <a href="~/dom/@domain.Id/@Model.Lang/" class="domain L@(level) current">
+            <span class="ga" lang="@Model.LeftLang()">@Html.Raw(domain.GetExpandedTitle(Model.LeftLang()))</span>
+            <span class="en" lang="@Model.RightLang()">@Html.Raw(domain.GetExpandedTitle(Model.RightLang()))</span>
         </a>
         level++;
     }
-    <a href="~/dom/@Model.domain.id/@Model.lang/" class="domain L@(level) current selected">
-        <span class="ga" lang="@Model.leftLang()">@Html.Raw(Model.domain.getExpandedTitle(Model.leftLang()))</span>
-        <span class="en" lang="@Model.rightLang()">@Html.Raw(Model.domain.getExpandedTitle(Model.rightLang()))</span>
+    <a href="~/dom/@Model.DomID/@Model.Lang/" class="domain L@(level) current selected">
+        <span class="ga" lang="@Model.LeftLang()">@Html.Raw(Model.DomainListing?.GetExpandedTitle(Model.LeftLang()))</span>
+        <span class="en" lang="@Model.RightLang()">@Html.Raw(Model.DomainListing?.GetExpandedTitle(Model.RightLang()))</span>
     </a>
     @{level++;}
-    @foreach(DomainListing domain in Model.subdomains) {
-        <a href="~/dom/@domain.id/@Model.lang/" class="domain L@(level)">
-            <span class="ga" lang="@Model.leftLang()">@Html.Raw(domain.getExpandableTitle(Model.leftLang()))</span>
-            <span class="en" lang="@Model.rightLang()">@Html.Raw(domain.getExpandableTitle(Model.rightLang()))</span>
+    @foreach (DomainListing domain in Model.Subdomains)
+    {
+        <a href="~/dom/@domain.Id/@Model.Lang/" class="domain L@(level)">
+            <span class="ga" lang="@Model.LeftLang()">@Html.Raw(domain.GetExpandableTitle(Model.LeftLang()))</span>
+            <span class="en" lang="@Model.RightLang()">@Html.Raw(domain.GetExpandableTitle(Model.RightLang()))</span>
         </a>
     }
 </div>
@@ -71,49 +73,49 @@
 </a>
 
 <div class="unheadedListing">
-    @if(Model.matches.Count == 0) {
+    @if (Model.Matches.Count == 0)
+    {
         <div class="nojoy">
             <div class="ga">Níor aimsíodh téarma ar bith.</div>
             <div class="en">No terms found.</div>
         </div>
     } else {
         <div class="nojoy">
-            <div class="num">@Model.total</div>
+            <div class="num">@Model.Total</div>
             <div class="ga">Líon torthaí a aimsíodh</div>
             <div class="en">Number of matches found</div>
         </div>
     }
 
-    @if(Model.pager.needed) {
+    @if (Model.Pager?.Needed == true)
+    {
         <div class="pager alone">
-            @if(Model.pager.prevNum>0){ <a href="@Model.urlByPage(Model.pager.prevNum)" class="left arrow">«</a> }
-            @if(Model.pager.nextNum>0){ <a href="@Model.urlByPage(Model.pager.nextNum)" class="right arrow">»</a> }
-            @foreach(int num in Model.pager.startNums) { <a href="@Model.urlByPage(num)" class="page">@num</a> }
-            @if(Model.pager.preDots) { <span class="dots">&middot; &middot; &middot; &middot;</span> }
-            @foreach(int num in Model.pager.preNums) { <a href="@Model.urlByPage(num)" class="page">@num</a> }
-	        <a href="#" class="page current">@Model.pager.currentNum</a>
-            @foreach(int num in Model.pager.postNums) { <a href="@Model.urlByPage(num)" class="page">@num</a> }
-            @if(Model.pager.postDots) { <span class="dots">&middot; &middot; &middot; &middot;</span> }
-            @foreach(int num in Model.pager.endNums) { <a href="@Model.urlByPage(num)" class="page">@num</a> }
+            @if(Model.Pager.PrevNum>0){ <a href="@Model.UrlByPage(Model.Pager.PrevNum)" class="left arrow">«</a> }
+            @if(Model.Pager.NextNum>0){ <a href="@Model.UrlByPage(Model.Pager.NextNum)" class="right arrow">»</a> }
+            @foreach(int num in Model.Pager.StartNums) { <a href="@Model.UrlByPage(num)" class="page">@num</a> }
+            @if(Model.Pager.PreDots) { <span class="dots">&middot; &middot; &middot; &middot;</span> }
+            @foreach(int num in Model.Pager.PreNums) { <a href="@Model.UrlByPage(num)" class="page">@num</a> }
+            <a href="#" class="page current">@Model.Pager.CurrentNum</a>
+            @foreach(int num in Model.Pager.PostNums) { <a href="@Model.UrlByPage(num)" class="page">@num</a> }
+            @if(Model.Pager.PostDots) { <span class="dots">&middot; &middot; &middot; &middot;</span> }
+            @foreach(int num in Model.Pager.EndNums) { <a href="@Model.UrlByPage(num)" class="page">@num</a> }
         </div>
     }
 
-    @foreach(string s in Model.matches){@Html.Raw(s)}
+    @foreach(string s in Model.Matches){@Html.Raw(s)}
 
-    @if(Model.pager.needed) {
+    @if (Model.Pager?.Needed == true)
+    {
         <div class="pager">
-            @if(Model.pager.prevNum>0){ <a href="@Model.urlByPage(Model.pager.prevNum)" class="left arrow">«</a> }
-            @if(Model.pager.nextNum>0){ <a href="@Model.urlByPage(Model.pager.nextNum)" class="right arrow">»</a> }
-            @foreach(int num in Model.pager.startNums) { <a href="@Model.urlByPage(num)" class="page">@num</a> }
-            @if(Model.pager.preDots) { <span class="dots">&middot; &middot; &middot; &middot;</span> }
-            @foreach(int num in Model.pager.preNums) { <a href="@Model.urlByPage(num)" class="page">@num</a> }
-	        <a href="#" class="page current">@Model.pager.currentNum</a>
-            @foreach(int num in Model.pager.postNums) { <a href="@Model.urlByPage(num)" class="page">@num</a> }
-            @if(Model.pager.postDots) { <span class="dots">&middot; &middot; &middot; &middot;</span> }
-            @foreach(int num in Model.pager.endNums) { <a href="@Model.urlByPage(num)" class="page">@num</a> }
+            @if(Model.Pager.PrevNum>0){ <a href="@Model.UrlByPage(Model.Pager.PrevNum)" class="left arrow">«</a> }
+            @if(Model.Pager.NextNum>0){ <a href="@Model.UrlByPage(Model.Pager.NextNum)" class="right arrow">»</a> }
+            @foreach(int num in Model.Pager.StartNums) { <a href="@Model.UrlByPage(num)" class="page">@num</a> }
+            @if(Model.Pager.PreDots) { <span class="dots">&middot; &middot; &middot; &middot;</span> }
+            @foreach(int num in Model.Pager.PreNums) { <a href="@Model.UrlByPage(num)" class="page">@num</a> }
+	        <a href="#" class="page current">@Model.Pager.CurrentNum</a>
+            @foreach(int num in Model.Pager.PostNums) { <a href="@Model.UrlByPage(num)" class="page">@num</a> }
+            @if(Model.Pager.PostDots) { <span class="dots">&middot; &middot; &middot; &middot;</span> }
+            @foreach(int num in Model.Pager.EndNums) { <a href="@Model.UrlByPage(num)" class="page">@num</a> }
         </div>
     }
 </div>
-
-@*<div>Hello, this is Views\Home\Domain.cshtml</div>
-@foreach(string key in ViewData.Keys){ <div>@key = @ViewData[key] @ViewData[key]?.GetType()</div> }*@

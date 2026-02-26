@@ -1,12 +1,12 @@
 ﻿using Ansa.Extensions;
 
-namespace TearmaWeb.Models
+namespace TearmaWeb.Models;
+
+public class ErrorModel
 {
-    public class ErrorModel {
-        public int? HttpStatusCode { get; set; }
+    public int? HttpStatusCode { get; set; }
 
-        public string RequestID { get; set; }
+    public string? RequestID { get; set; }
 
-        public bool ShowRequestID => RequestID.HasValue();
-    }
+    public bool ShowRequestID => RequestID.HasValue();
 }

@@ -1,76 +1,95 @@
-﻿using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Rewrite;
+﻿using Microsoft.AspNetCore.Rewrite;
 using Microsoft.Net.Http.Headers;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text.Encodings.Web;
 
-namespace TearmaWeb.Rules
-{
-    public class RedirectToWwwRule : IRule {
-        private readonly IHostingEnvironment _environment;
+namespace TearmaWeb.Rules;
 
-        public RedirectToWwwRule(IHostingEnvironment environment) {
-            _environment = environment;
+public class RedirectToWwwRule(IWebHostEnvironment environment) : IRule
+{
+    public void ApplyRule(RewriteContext context)
+    {
+        context.Result = RuleResult.ContinueRules;
+
+        var request = context.HttpContext.Request;
+        var response = context.HttpContext.Response;
+
+        var path = request.Path.Value ?? string.Empty;
+        var domain = request.Host.Host;
+
+        // Redirect to www
+        if (environment.IsProduction()
+            && domain != "www.tearma.ie"
+            && domain != "super.tearma.ie"
+            && domain != "test.tearma.ie")
+        {
+            var urlEncodedPath = EncodePath(path);
+            response.StatusCode = 301;
+            response.Headers[HeaderNames.Location] = $"https://www.tearma.ie{urlEncodedPath}";
+            context.Result = RuleResult.EndResponse;
+            return;
         }
 
-        public void ApplyRule(RewriteContext context) {
-			context.Result = RuleResult.ContinueRules;
-			var request = context.HttpContext.Request;
-            var path = request.Path.Value;
-            var response = context.HttpContext.Response;
+        // Redirect to https
+        if (environment.IsProduction() && !request.IsHttps)
+        {
+            var urlEncodedPath = EncodePath(path);
+            response.StatusCode = 301;
 
-            //Redirect to www:
-            var domain = request.Host.Host;
+            if (domain == "www.tearma.ie")
+                response.Headers[HeaderNames.Location] = $"https://www.tearma.ie{urlEncodedPath}";
+            else if (domain == "test.tearma.ie")
+                response.Headers[HeaderNames.Location] = $"https://test.tearma.ie{urlEncodedPath}";
+            else if (domain == "super.tearma.ie")
+                response.Headers[HeaderNames.Location] = $"https://super.tearma.ie{urlEncodedPath}";
 
-			if (_environment.IsProduction()
-                && domain != "www.tearma.ie" && domain != "super.tearma.ie" && domain != "test.tearma.ie") {
-                var urlEncodedPath = string.Join("/", path.Split("/").Select(s => UrlEncoder.Default.Encode(s)));
-				response.StatusCode = 301;
-				response.Headers[HeaderNames.Location] = string.Concat("https://www.tearma.ie", urlEncodedPath);
-				context.Result = RuleResult.EndResponse;
-			}
+            context.Result = RuleResult.EndResponse;
+            return;
+        }
 
-            //Redirect to https:
-            if (_environment.IsProduction() && !request.IsHttps) {
-                var urlEncodedPath = string.Join("/", path.Split("/").Select(s => UrlEncoder.Default.Encode(s)));
-                response.StatusCode = 301;
-				if(domain == "www.tearma.ie") response.Headers[HeaderNames.Location] = string.Concat("https://www.tearma.ie", urlEncodedPath);
-                if (domain == "test.tearma.ie") response.Headers[HeaderNames.Location] = string.Concat("https://test.tearma.ie", urlEncodedPath);
-                if (domain == "super.tearma.ie") response.Headers[HeaderNames.Location] = string.Concat("https://super.tearma.ie", urlEncodedPath);
-                context.Result = RuleResult.EndResponse;
-            }
+        // Redirect old simple URLs
+        var urls = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+        {
+            { "/home.aspx", "/" },
+            { "/searchbox.aspx", "/breiseain/bosca/" },
+            { "/tal.aspx", "/breiseain/tearma-an-lae/" },
+            { "/liostai.aspx", "/ioslodail/" },
+            { "/widgets.aspx", "/breiseain/" },
+            { "/enquiry.aspx", "/ceist/" },
+            { "/help.aspx", "/cabhair/" },
+            { "/about.aspx", "/eolas/" }
+        };
 
-            //Redirect (simple) old URLs:
-            var urls = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
-            {
-                { "/home.aspx", "/" },
-                { "/searchbox.aspx", "/breiseain/bosca/" },
-                { "/tal.aspx", "/breiseain/tearma-an-lae/" },
-                { "/liostai.aspx", "/ioslodail/" },
-                { "/widgets.aspx", "/breiseain/" },
-                { "/enquiry.aspx", "/ceist/" },
-                { "/help.aspx", "/cabhair/" },
-                { "/about.aspx", "/eolas/" }
-            };
+        if (urls.TryGetValue(path, out var redirect))
+        {
+            response.StatusCode = 301;
+            response.Headers[HeaderNames.Location] = redirect;
+            context.Result = RuleResult.EndResponse;
+            return;
+        }
 
-			if (urls.ContainsKey(path)) {
-				response.StatusCode = 301;
-				response.Headers[HeaderNames.Location] = urls[path];
-				context.Result = RuleResult.EndResponse;
-			}
+        // Redirect old quick search URL
+        var query = request.Query;
 
-            //redirect old quick search URL:
-            var query = request.Query;
+        if (path.Equals("/search.aspx", StringComparison.OrdinalIgnoreCase)
+            && query.TryGetValue("term", out var termValues))
+        {
+            var termRaw = termValues.ToString();
+            var term = Models.Home.Tools.SlashEncode(termRaw);
+            term = UrlEncoder.Default.Encode(term);
 
-            if (path.Equals("/search.aspx", StringComparison.OrdinalIgnoreCase) && query.ContainsKey("term")) {
-				response.StatusCode = 301;
-				var x = Models.Home.Tools.SlashEncode(query["term"]);
-				x = UrlEncoder.Default.Encode(x);
-				response.Headers[HeaderNames.Location] = $"/q/{x}/";
-				context.Result = RuleResult.EndResponse;
-			}
-		}
-	}
+            response.StatusCode = 301;
+            response.Headers[HeaderNames.Location] = $"/q/{term}/";
+            context.Result = RuleResult.EndResponse;
+        }
+    }
+
+    private static string EncodePath(string path)
+    {
+        // Encode each segment individually
+        return string
+            .Join("/", path
+                .Split("/", StringSplitOptions.RemoveEmptyEntries)
+                .Select(s => UrlEncoder.Default.Encode(s)))
+            .Insert(0, path.StartsWith("/") ? "/" : "");
+    }
 }

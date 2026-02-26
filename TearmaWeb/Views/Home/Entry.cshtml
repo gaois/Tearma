@@ -1,15 +1,14 @@
 ﻿@model TearmaWeb.Models.Home.Entry
+
 @{
-    Layout="_HomeLayout";
-    ViewBag.swapper="q";
+    Layout = "_HomeLayout";
+    ViewBag.swapper = "q";
 }
 
-@section Rightie {
-
-}
+@section Rightie { }
 
 <form class="textbox singleEntry" action="." onsubmit="return submitQuickSearch(this)">
-    <div class="text"><input name="word" value="#@Model.id"/></div>
+    <div class="text"><input name="word" value="#@Model.Id"/></div>
     <button class="submit">
         <span class="icon fas fa-search"></span>
     </button>
@@ -21,11 +20,12 @@
     </div>
 </div>
 
-@if(Model.entry=="") {
+@if (Model.EntryHtml == "")
+{
     <div class="nojoy">
         <div class="ga">Níor aimsíodh téarma ar bith.</div>
         <div class="en">No terms found.</div>
     </div>
 } else {
-    @Html.Raw(Model.entry)
+    @Html.Raw(Model.EntryHtml)
 }
