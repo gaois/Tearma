@@ -186,7 +186,7 @@ public class HomeController(IQueryLogger queryLogger, Broker broker) : Controlle
     // ---------------------------
     // Single domain page
     // ---------------------------
-    public async Task<IActionResult> Domain(int domID, string? lang, int page)
+    public async Task<IActionResult> Domain(int domID, string? lang, int page = 1)
     {
         using var stopwatch = new SimpleTimer();
 

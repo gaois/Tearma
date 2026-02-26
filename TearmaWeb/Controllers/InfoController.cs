@@ -9,7 +9,7 @@ public class InfoController : Controller
         return request.Host.Host == "super.tearma.ie";
     }
 
-    public IActionResult Topic(string section, string nickname, string lang)
+    public IActionResult Topic(string section, string nickname, string lang = "ga")
     {
         IActionResult ret;
         Models.Info.Topic model = new();
@@ -19,11 +19,13 @@ public class InfoController : Controller
             model.Toc = Models.Info.Toc.InfoToc();
             ViewData["PageTitle"] = "Eolas · About";
         }
+        
         if (section == "cabhair")
         {
             model.Toc = Models.Info.Toc.HelpToc();
             ViewData["PageTitle"] = "Cabhair · Help";
         }
+
         if (nickname == null)
         {
             ret = new RedirectResult($"/{section}/{model.Toc[0].Nickname}.{lang}");
