@@ -224,6 +224,7 @@ public class Broker(IConfiguration configuration)
             Direction = ParameterDirection.InputOutput,
             Value = model.Total
         };
+
         command.Parameters.Add(totalParam);
 
         await using var reader = await command.ExecuteReaderAsync();
@@ -265,6 +266,8 @@ public class Broker(IConfiguration configuration)
             int maxPage = (int)reader["maxPage"];
             model.Pager = new Pager(currentPage, maxPage);
         }
+
+        await reader.DisposeAsync();
 
         model.Total = (int)totalParam.Value;
     }
