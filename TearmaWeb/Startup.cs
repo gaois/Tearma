@@ -20,12 +20,19 @@ public class Startup(IConfiguration configuration, IWebHostEnvironment environme
 
         services.AddControllersWithViews();
 
-        // Session (needed by Captcha)
+        // Session (needed by BotDetect/Captcha)
         services.AddSession(options =>
         {
             options.IdleTimeout = TimeSpan.FromMinutes(20);
             options.Cookie.IsEssential = true;
         });
+
+        // Synchronous I/O needed by BotDetect/Captcha 
+        if (environment.IsProduction())
+            services.Configure<IISServerOptions>(options =>
+            {
+                options.AllowSynchronousIO = true;
+            });
 
         // MiniProfiler
         services.AddMiniProfiler();
