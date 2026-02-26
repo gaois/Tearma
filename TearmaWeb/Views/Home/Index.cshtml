@@ -1,11 +1,13 @@
 ﻿@model TearmaWeb.Models.Home.Index
 @using TearmaWeb.Models.Home
+
 @{
-    Layout="_HomeLayout";
-    ViewBag.swapper="q";
+    Layout = "_HomeLayout";
+    ViewBag.swapper = "q";
 }
 
-@section Rightie {
+@section Rightie
+{
     <a class="kickboxToggler" href="javascript:void(null)" onclick="$('.kickbox').insertAfter($('.kickboxToggler')).slideToggle()">
         <span class="icon fas fa-bars"></span>
         <span class="text ga" lang="ga">Roghchlár</span>
@@ -55,48 +57,53 @@
     </div>
 </div>
 
-@if(Model.newsGA!="" && Model.newsEN!=""){
+@if (Model.NewsGA != "" && Model.NewsEN != "")
+{
     <div class="sectitle strong">
-	    <span class="icon fas fa-bullhorn"></span>
-	    <span class="ga" lang="ga">Fógra</span>
-	    <span class="en" lang="en">Announcement</span>
+        <span class="icon fas fa-bullhorn"></span>
+        <span class="ga" lang="ga">Fógra</span>
+        <span class="en" lang="en">Announcement</span>
     </div>
     <div class="news">
-        <div class="ga">@Html.Raw(Markdig.Markdown.ToHtml(Model.newsGA).Replace("<a href=\"http", "<a target=\"_blank\" href=\"http"))</div>
-        <div class="en">@Html.Raw(Markdig.Markdown.ToHtml(Model.newsEN).Replace("<a href=\"http", "<a target=\"_blank\" href=\"http"))</div>
+        <div class="ga">@Html.Raw(Markdig.Markdown.ToHtml(Model.NewsGA).Replace("<a href=\"http", "<a target=\"_blank\" href=\"http"))</div>
+        <div class="en">@Html.Raw(Markdig.Markdown.ToHtml(Model.NewsEN).Replace("<a href=\"http", "<a target=\"_blank\" href=\"http"))</div>
         <div class="clear"></div>
     </div>
 }
 
-@if(Model.tod!=""){
+@if (Model.Tod != "")
+{
     <div class="sectitle strong">
-	    <span class="icon fas fa-calendar-alt"></span>
-	    <span class="ga" lang="ga">Téarma an lae</span>
-	    <span class="en" lang="en">Term of the day</span>
+        <span class="icon fas fa-calendar-alt"></span>
+        <span class="ga" lang="ga">Téarma an lae</span>
+        <span class="en" lang="en">Term of the day</span>
     </div>
-    @Html.Raw(Model.tod)
+    @Html.Raw(Model.Tod)
 }
 
-@if(Model.recent.Count>0){
+@if (Model.Recent.Count > 0)
+{
     <div class="sectitle strong">
-	    <span class="icon fas fa-clock"></span>
-	    <span class="ga" lang="ga">Athruithe le déanaí</span>
-	    <span class="en" lang="en">Recent changes</span>
+        <span class="icon fas fa-clock"></span>
+        <span class="ga" lang="ga">Athruithe le déanaí</span>
+        <span class="en" lang="en">Recent changes</span>
     </div>
     <div class="recentlyChangedContainer">
-        @foreach(string s in Model.recent){
+        @foreach(string s in Model.Recent)
+        {
             <div class="recentlyChanged">@Html.Raw(s.Replace("&nbsp;", " "))</div>
         }
     </div>
 }
 
 <div class="sectitle strong">
-	<span class="icon fas fa-sitemap"></span>
-	<span class="ga" lang="ga">Brabhsáil</span>
-	<span class="en" lang="en">Browse</span>
+    <span class="icon fas fa-sitemap"></span>
+    <span class="ga" lang="ga">Brabhsáil</span>
+    <span class="en" lang="en">Browse</span>
 </div>
 <div class="domains">
-    @foreach(DomainListing dom in Model.domains) {
-        <a href="~/dom/@dom.id/ga/" class="domain"><span class="ga" lang="ga">@dom.name["ga"]</span> <span class="en" lang="en">@dom.name["en"]</span> <span class="arrow">»</span></a>
+    @foreach (DomainListing dom in Model.Domains)
+    {
+        <a href="~/dom/@dom.Id/ga/" class="domain"><span class="ga" lang="ga">@dom.Name["ga"]</span> <span class="en" lang="en">@dom.Name["en"]</span> <span class="arrow">»</span></a>
     }
 </div>

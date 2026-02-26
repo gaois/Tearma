@@ -1,12 +1,20 @@
-﻿@{
-    ViewData["SiteUrl"] = "https://www.tearma.ie";
-    ViewData["CanonicalUrl"] = !(ViewData["CanonicalUrl"] is null) ? ViewData["CanonicalUrl"] : ViewData["SiteUrl"] + Context.Request.GetEncodedPathAndQuery();
-    ViewData["PageTitle"] = (ViewData["PageTitle"] is null) ? "téarma.ie" : ViewData["PageTitle"];
-    ViewData["TagLine"] = (ViewData["TagLine"] is null) ? "téarma.ie" : ViewData["TagLine"];
-    ViewData["MetaKeywords"] = (ViewData["MetaKeywords"] is null)
-        ? "téarmaí, terms, téarmaíocht, téarmeolaíocht, terminology, Gaeilge, Irish language, aistriúchán, translation"
-        : ViewData["MetaKeywords"];
-    ViewData["MetaDescription"] = (ViewData["MetaDescription"] is null)
-        ? "An Bunachar Náisiúnta Téarmaíochta don Ghaeilge · The National Terminology Database for Irish"
-        : ViewData["MetaDescription"];
+﻿
+@{
+    // Base site URL
+    var siteUrl = "https://www.tearma.ie";
+    ViewData["SiteUrl"] = siteUrl;
+
+    // Canonical URL
+    ViewData["CanonicalUrl"] ??= siteUrl + Context.Request.GetEncodedPathAndQuery();
+
+    // Page title + tagline
+    ViewData["PageTitle"] ??= "téarma.ie";
+    ViewData["TagLine"] ??= "téarma.ie";
+
+    // SEO metadata
+    ViewData["MetaKeywords"] ??=
+        "téarmaí, terms, téarmaíocht, téarmeolaíocht, terminology, Gaeilge, Irish language, aistriúchán, translation";
+
+    ViewData["MetaDescription"] ??=
+        "An Bunachar Náisiúnta Téarmaíochta don Ghaeilge · The National Terminology Database for Irish";
 }

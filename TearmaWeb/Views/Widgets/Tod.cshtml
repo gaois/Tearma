@@ -1,11 +1,11 @@
 ﻿@model TearmaWeb.Models.Widgets.Tod
-@using TearmaWeb.Models.Widgets
+
 @{
     Layout="_WidgetLayout";
 }
 
 <div class="todmessage">
-    <a href="~/id/@Model.todID/" target="_blank" class="date">@DateTime.Now.Date.ToString("dd/MM/yyyy")</a>
+    <a href="~/id/@Model.TodID/" target="_blank" class="date">@DateTime.Now.Date.ToString("dd/MM/yyyy")</a>
 </div>
 
-@Html.Raw(Model.tod.Replace("<a", "<a target=\"_blank\""))
+@Html.Raw(Model.TodText.Replace("<a", "<a target=\"_blank\""))

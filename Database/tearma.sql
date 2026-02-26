@@ -1004,6 +1004,36 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
+CREATE TABLE [dbo].[tblSearchText](
+	[ID] [int] IDENTITY(1,1) NOT NULL,
+	[SearchText] [nvarchar](255) COLLATE Latin1_General_CI_AI NOT NULL,
+	[Created] [datetime] NOT NULL,
+ CONSTRAINT [PK_tblSearchText] PRIMARY KEY CLUSTERED 
+(
+	[ID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[tblSimilar](
+	[SearchTextID] [int] NOT NULL,
+	[Similar] [nvarchar](255) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
+	[Diff] [int] NOT NULL
+) ON [PRIMARY]
+GO
+CREATE CLUSTERED INDEX [IX_tblSimilar] ON [dbo].[tblSimilar]
+(
+	[SearchTextID] ASC,
+	[Diff] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
 CREATE TABLE [dbo].[term_pos](
 	[term_id] [int] NOT NULL,
 	[pos_id] [int] NOT NULL
@@ -1132,7 +1162,8 @@ CREATE NONCLUSTERED INDEX [IX_metadata_parentID_type] ON [dbo].[metadata]
 (
 	[parentID] ASC,
 	[type] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+)
+INCLUDE([id]) WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 GO
 SET ANSI_PADDING ON
 GO
@@ -1175,7 +1206,12 @@ CREATE NONCLUSTERED INDEX [IX_spelling_word_length] ON [dbo].[spelling]
 	[word] ASC,
 	[length] ASC
 )
-INCLUDE([A],[B],[C],[D],[W],[X],[Y],[Z],[Q],[R],[S],[T],[U],[V],[K],[L],[M],[N],[O],[P],[E],[F],[G],[H],[I],[J]) WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+INCLUDE([A],[B],[C],[D],[E],[F],[G],[H],[I],[J],[K],[L],[M],[N],[O],[P],[Q],[R],[S],[T],[U],[V],[W],[X],[Y],[Z]) WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+GO
+CREATE NONCLUSTERED INDEX [IX_tblSearchText_Created] ON [dbo].[tblSearchText]
+(
+	[Created] DESC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 GO
 CREATE NONCLUSTERED INDEX [IX_term_pos_pos_id] ON [dbo].[term_pos]
 (
@@ -1228,6 +1264,15 @@ CREATE NONCLUSTERED INDEX [IX_words_2] ON [dbo].[words]
 (
 	[word] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+GO
+ALTER TABLE [dbo].[tblSearchText] ADD  CONSTRAINT [DF_tblSearchText_Created]  DEFAULT (getdate()) FOR [Created]
+GO
+ALTER TABLE [dbo].[tblSimilar]  WITH CHECK ADD  CONSTRAINT [FK_tblSimilar_tblSearchText] FOREIGN KEY([SearchTextID])
+REFERENCES [dbo].[tblSearchText] ([ID])
+ON UPDATE CASCADE
+ON DELETE CASCADE
+GO
+ALTER TABLE [dbo].[tblSimilar] CHECK CONSTRAINT [FK_tblSimilar_tblSearchText]
 GO
 SET ANSI_NULLS ON
 GO
@@ -1300,6 +1345,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
+
 
 CREATE procedure [dbo].[propag_saveEntry]
   @entryID int
@@ -1864,6 +1910,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
+
 CREATE procedure [dbo].[pub_quicksearch]
   @word nvarchar(255)
 , @lang nvarchar(10) = '' --empty string means any language
@@ -1879,66 +1926,82 @@ select * from configs where id='lingo'
 select *, 0 as hasChildren from metadata where type in ('acceptLabel', 'inflectLabel', 'posLabel', 'domain')
 
 --return similars:
---select top 0 word as similar from words
-declare @wordStart nvarchar(1); set @wordStart=substring(@word,1,1)
-declare @maxWordLength int; set @maxWordLength=LEN(@word)+5
-declare @minWordLength int; set @minWordLength=LEN(@word)-5
-declare @chars table(A int, B int, C int, D int, E int,
-					 F int, G int, H int, I int, J int,
-					 K int, L int, M int, N int, O int,
-					 P int, Q int, R int, S int, T int,
-					 U int, V int, W int, X int, Y int,
-					 Z int)
-insert into @chars
-	select [A],[B],[C],[D],[E],[F],[G],[H],[I],[J],[K],[L],[M],[N],[O],[P],[Q],[R],[S],[T],[U],[V],[W],[X],[Y],[Z]
-	from dbo.characterize(@word)
-select distinct top 5
-  t.word as similar
-, case when t.word=@word collate Latin1_General_CI_AI then 0
-       else convert(int, dbo.levenshtein(t.word, @word))
-  end as Diff
-from (
-	select top 50 s.word
-		 , abs(s.A-c.A)+abs(s.B-c.B)+abs(s.C-c.C)+abs(s.D-c.D)+abs(s.E-c.E)+abs(s.F-c.F)
-		  +abs(s.G-c.G)+abs(s.H-c.H)+abs(s.I-c.I)+abs(s.J-c.J)+abs(s.K-c.K)+abs(s.L-c.L)
-		  +abs(s.M-c.M)+abs(s.N-c.N)+abs(s.O-c.O)+abs(s.P-c.P)+abs(s.Q-c.Q)+abs(s.R-c.R)
-		  +abs(s.S-c.S)+abs(s.T-c.T)+abs(s.U-c.U)+abs(s.V-c.V)+abs(s.W-c.W)+abs(s.X-c.X)
-		  +abs(s.Y-c.Y)+abs(s.Z-c.Z) as Diff
-		, case when @wordStart=substring(s.word,1,1) then 0 else 1 end as Start
-	from spelling as s
-	inner join @chars as c on 1=1
-	where s.[length]<@maxWordLength and s.[length]>@minWordLength
-	and s.word<>@word
-	and s.A between c.A-2 and c.A+2
-	and s.B between c.B-2 and c.B+2
-	and s.C between c.C-2 and c.C+2
-	and s.D between c.D-2 and c.D+2
-	and s.E between c.E-2 and c.E+2
-	and s.F between c.F-2 and c.F+2
-	and s.G between c.G-2 and c.G+2
-	and s.H between c.H-2 and c.H+2
-	and s.I between c.I-2 and c.I+2
-	and s.J between c.J-2 and c.J+2
-	and s.K between c.K-2 and c.K+2
-	and s.L between c.L-2 and c.L+2
-	and s.M between c.M-2 and c.M+2
-	and s.N between c.N-2 and c.N+2
-	and s.O between c.O-2 and c.O+2
-	and s.P between c.P-2 and c.P+2
-	and s.Q between c.Q-2 and c.Q+2
-	and s.R between c.R-2 and c.R+2
-	and s.S between c.S-2 and c.S+2
-	and s.T between c.T-2 and c.T+2
-	and s.U between c.U-2 and c.U+2
-	and s.V between c.V-2 and c.V+2
-	and s.W between c.W-2 and c.W+2
-	and s.X between c.X-2 and c.X+2
-	and s.Y between c.Y-2 and c.Y+2
-	and s.Z between c.Z-2 and c.Z+2
-	order by Diff asc, Start asc
-) as t
-where convert(int, dbo.levenshtein(t.word, @word))<=4
-order by Diff
+--purge from similarity cache anything older that three days:
+declare @cutoff datetime
+set @cutoff = DATEADD(day, -3, getdate())
+delete from tblSearchText where Created < @cutoff
+
+declare @searchtextID int
+select @searchtextID = ID from tblSearchText where SearchText = @word
+if @searchtextID is null
+begin
+	insert into tblSearchText(SearchText) values(@word)
+	set @searchtextID = @@IDENTITY
+
+	declare @wordStart nvarchar(1); set @wordStart=substring(@word,1,1)
+	declare @maxWordLength int; set @maxWordLength=LEN(@word)+5
+	declare @minWordLength int; set @minWordLength=LEN(@word)-5
+	declare @chars table(A int, B int, C int, D int, E int,
+							F int, G int, H int, I int, J int,
+							K int, L int, M int, N int, O int,
+							P int, Q int, R int, S int, T int,
+							U int, V int, W int, X int, Y int,
+							Z int)
+	insert into @chars
+		select [A],[B],[C],[D],[E],[F],[G],[H],[I],[J],[K],[L],[M],[N],[O],[P],[Q],[R],[S],[T],[U],[V],[W],[X],[Y],[Z]
+		from dbo.characterize(@word)
+	insert into tblSimilar(SearchTextID, Similar, Diff)
+	select distinct top 5
+	  @searchtextID
+	, t.word as similar
+	, case when t.word=@word collate Latin1_General_CI_AI then 0
+			else convert(int, dbo.levenshtein(t.word, @word))
+		end as Diff
+	from (
+		select top 50 s.word
+				, abs(s.A-c.A)+abs(s.B-c.B)+abs(s.C-c.C)+abs(s.D-c.D)+abs(s.E-c.E)+abs(s.F-c.F)
+				+abs(s.G-c.G)+abs(s.H-c.H)+abs(s.I-c.I)+abs(s.J-c.J)+abs(s.K-c.K)+abs(s.L-c.L)
+				+abs(s.M-c.M)+abs(s.N-c.N)+abs(s.O-c.O)+abs(s.P-c.P)+abs(s.Q-c.Q)+abs(s.R-c.R)
+				+abs(s.S-c.S)+abs(s.T-c.T)+abs(s.U-c.U)+abs(s.V-c.V)+abs(s.W-c.W)+abs(s.X-c.X)
+				+abs(s.Y-c.Y)+abs(s.Z-c.Z) as Diff
+			, case when @wordStart=substring(s.word,1,1) then 0 else 1 end as Start
+		from spelling as s
+		inner join @chars as c on 1=1
+		where s.[length]<@maxWordLength and s.[length]>@minWordLength
+		and s.word<>@word
+		and s.A between c.A-2 and c.A+2
+		and s.B between c.B-2 and c.B+2
+		and s.C between c.C-2 and c.C+2
+		and s.D between c.D-2 and c.D+2
+		and s.E between c.E-2 and c.E+2
+		and s.F between c.F-2 and c.F+2
+		and s.G between c.G-2 and c.G+2
+		and s.H between c.H-2 and c.H+2
+		and s.I between c.I-2 and c.I+2
+		and s.J between c.J-2 and c.J+2
+		and s.K between c.K-2 and c.K+2
+		and s.L between c.L-2 and c.L+2
+		and s.M between c.M-2 and c.M+2
+		and s.N between c.N-2 and c.N+2
+		and s.O between c.O-2 and c.O+2
+		and s.P between c.P-2 and c.P+2
+		and s.Q between c.Q-2 and c.Q+2
+		and s.R between c.R-2 and c.R+2
+		and s.S between c.S-2 and c.S+2
+		and s.T between c.T-2 and c.T+2
+		and s.U between c.U-2 and c.U+2
+		and s.V between c.V-2 and c.V+2
+		and s.W between c.W-2 and c.W+2
+		and s.X between c.X-2 and c.X+2
+		and s.Y between c.Y-2 and c.Y+2
+		and s.Z between c.Z-2 and c.Z+2
+		order by Diff asc, Start asc
+	) as t
+	where convert(int, dbo.levenshtein(t.word, @word))<=4
+	order by Diff
+end
+select Similar as similar, Diff from tblSimilar where SearchTextID=@searchtextID order by Diff
+--end returning similars
 
 --find exact matches:
 declare @exacts table(entry_id int, lang nvarchar(10))

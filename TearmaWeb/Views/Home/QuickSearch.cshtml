@@ -1,34 +1,37 @@
 ﻿@model TearmaWeb.Models.Home.QuickSearch
 @using TearmaWeb.Models.Home
+
 @{
-    Layout="_HomeLayout";
-    ViewBag.swapper="q";
+    Layout = "_HomeLayout";
+    ViewBag.swapper = "q";
 }
 
-@section Rightie {
-    @if(Model.exacts.Count>0 || Model.relateds.Count > 0) {
+@section Rightie
+{
+    @if (Model.Exacts.Count>0 || Model.Relateds.Count > 0)
+    {
         <div class="kickbox">
-            @if(Model.langs.Count > 1) {
-                <a class="langlink @(Model.lang=="" ? "selected" : "")" href="~/q/@Model.word/">
+            @if(Model.Langs.Count > 1) {
+                <a class="langlink @(Model.Lang == "" ? "selected" : "")" href="~/q/@Model.Word/">
                     <span class="icon">&mdash;</span>
                     <span class="ga" lang="ga">Torthaí i ngach teanga</span>
                     <span class="en" lang="en">Matches in any language</span>
                 </a>
-                @foreach(Language lang in Model.langs) {
-                    <a class="langlink @(Model.lang==lang.abbr ? "selected" : "")" href="~/q/@Model.word/@lang.abbr/">
-                        <span class="icon">@lang.abbr.ToUpper()</span>
-                        <span class="ga" lang="ga">@lang.name["ga"] amháin</span>
-                        <span class="en" lang="en">@lang.name["en"] only</span>
+                @foreach(Language lang in Model.Langs) {
+                    <a class="langlink @(Model.Lang == lang.Abbr ? "selected" : "")" href="~/q/@Model.Word/@lang.Abbr/">
+                        <span class="icon">@lang.Abbr.ToUpper()</span>
+                        <span class="ga" lang="ga">@lang.Name["ga"] amháin</span>
+                        <span class="en" lang="en">@lang.Name["en"] only</span>
                     </a>
                 }
                 <div class="sep"></div>
             }
-	        <a class="sitelink" id="showAllDetails" href="javascript:showAllDetails()">
+            <a class="sitelink" id="showAllDetails" href="javascript:showAllDetails()">
                 <span class="icon fas fa-plus-square"></span>
                 <span class="ga" lang="ga">Taispeáin breis mionsonraí</span>
                 <span class="en" lang="en">Show more details</span>
             </a>
-	        <a class="sitelink" id="hideAllDetails" href="javascript:hideAllDetails()">
+            <a class="sitelink" id="hideAllDetails" href="javascript:hideAllDetails()">
                 <span class="icon fas fa-minus-square"></span>
                 <span class="ga" lang="ga">Folaigh mionsonraí breise</span>
                 <span class="en" lang="en">Hide details</span>
@@ -43,7 +46,7 @@
 }
 
 <form class="textbox" action="." onsubmit="return submitQuickSearch(this)">
-    <div class="text"><input name="word" value="@Model.word" class="searchbox" onblur="searchboxBlur()"/></div>
+    <div class="text"><input name="word" value="@Model.Word" class="searchbox" onblur="searchboxBlur()"/></div>
     <button class="submit" aria-label="Cuardaigh · Search">
         <span class="icon fas fa-search"></span>
     </button>
@@ -67,10 +70,12 @@
     </a>    
 </div>
 
-@if(Model.similars.Count > 0) {
+@if (Model.Similars.Count > 0)
+{
     <div class="similars">
-        @foreach(string s in Model.similars) {
-            @if(Model.similars.IndexOf(s) > 0) {<span class="sep">&middot;</span>}
+        @foreach (string s in Model.Similars)
+        {
+            @if(Model.Similars.IndexOf(s) > 0) {<span class="sep">&middot;</span>}
             <a href="~/q/@s/">@s</a>
         }
     </div>
@@ -87,13 +92,16 @@
 	<span class="ga" lang="ga">Torthaí beachta</span>
 	<span class="en" lang="en">Exact matches</span>
 </div>
-@if(Model.exacts.Count == 0) {
+@if (Model.Exacts.Count == 0)
+{
     <div class="nojoy">
         <div class="ga">Níor aimsíodh téarma ar bith.</div>
         <div class="en">No terms found.</div>
     </div>
-} else {
-    @foreach(string s in Model.exacts){@Html.Raw(s)}
+}
+else
+{
+    @foreach (string s in Model.Exacts){@Html.Raw(s)}
 }
 
 <div class="sectitle strong">
@@ -101,17 +109,22 @@
     <span class="ga" lang="ga">Torthaí gaolmhara</span>
     <span class="en" lang="en">Related matches</span>
 </div>
-@if(Model.relateds.Count == 0) {
+@if (Model.Relateds.Count == 0)
+{
     <div class="nojoy">
         <div class="ga">Níor aimsíodh téarma ar bith.</div>
         <div class="en">No terms found.</div>
     </div>
-} else {
-    @foreach(string s in Model.relateds){@Html.Raw(s)}
 }
-@if(Model.relatedMore) {
+else
+{
+    @foreach(string s in Model.Relateds){@Html.Raw(s)}
+}
+
+@if (Model.RelatedMore)
+{
     <div class="gotoAdvSearch">
-        <a class="domainAction" href="@Model.advSearchUrl()">
+        <a class="domainAction" href="@Model.AdvSearchUrl()">
             <span class="icon fas fa-chevron-circle-right"></span>
             <span class="ga">Tá tuilleadh torthaí gaolmhara le fáil sa chuardach casta</span>
             <span class="en">You can find more related matches in advanced search</span>
@@ -119,30 +132,38 @@
     </div>
 }
 
-@if(Model.super) {
+@if (Model.Super)
+{
     <script type="text/javascript">var SUPER = true;</script>
     <div class="sectitle strong">
         <span class="icon fas fa-plus"></span>
         <span class="ga" lang="ga">Gluaiseanna breise</span>
         <span class="en" lang="en">Auxilliary glossaries</span>
     </div>
-    @if(Model.auxes.Count == 0) {
+    @if (Model.Auxes.Count == 0)
+    {
         <div class="nojoy">
             <div class="ga">Níor aimsíodh téarma ar bith.</div>
             <div class="en">No terms found.</div>
         </div>
-    } else {
-        @foreach(string coll in Model.auxes.Keys){
+    }
+    else
+    {
+        @foreach (string coll in Model.Auxes.Keys)
+        {
             <div class="auxBlock">
                 <div class="auxTitle">
-                    @if(coll.Trim()=="mileata"){
+                    @if (coll.Trim() == "mileata")
+                    {
                         <span>TÉARMAÍ MÍLEATA</span>
                     }
-                    @if(coll.Trim()=="iate"){
+                    @if (coll.Trim() == "iate")
+                    {
                         <span>IATE</span>
                     }
                 </div>
-                @foreach(Tuple<string, string> tuple in Model.auxes[coll]) {
+                @foreach (Tuple<string, string> tuple in Model.Auxes[coll])
+                {
                     <div class="auxItem">
                         <div class="auxLeft" lang="en">@tuple.Item1</div>
                         <div class="auxRight" lang="ga">@tuple.Item2</div>

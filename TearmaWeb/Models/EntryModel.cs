@@ -1,56 +1,66 @@
-﻿using System.Collections.Generic;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 
-namespace TearmaWeb.Models.Data
+namespace TearmaWeb.Models.Data;
+
+public class Entry
 {
-	public class Entry {
-		public string dStatus;
-		public List<int?> domains;
-		public List<Desig> desigs;
-		public Dictionary<string, string> intros;
-		public List<Definition> definitions;
-		public List<Example> examples;
-		public List<int> xrefs;
-	}
+    public string? DStatus { get; set; }
+    public List<int?> Domains { get; set; } = [];
+    public List<Desig> Desigs { get; set; } = [];
+    public Dictionary<string, string> Intros { get; set; } = [];
+    public List<Definition> Definitions { get; set; } = [];
+    public List<Example> Examples { get; set; } = [];
+    public List<int> Xrefs { get; set; } = [];
+}
 
-	public class Example {
-		public Dictionary<string, List<string>> texts;
-		public int nonessential;
-	}
+public class Example
+{
+    public Dictionary<string, List<string>> Texts { get; set; } = [];
+    public int Nonessential { get; set; }
+}
 
-	public class Definition {
-		public Dictionary<string, string> texts;
-		public List<int?> domains;
-		public int nonessential;
-	}
+public class Definition
+{
+    public Dictionary<string, string> Texts { get; set; } = [];
+    public List<int?> Domains { get; set; } = [];
+    public int Nonessential { get; set; }
+}
 
-	public class Desig {
-		public Term term;
-		public int? accept;
-		public string clarif;
-		public int nonessential;
-	}
+public class Desig
+{
+    public Term Term { get; set; } = new();
+    public int? Accept { get; set; }
+    public string? Clarif { get; set; }
+    public int Nonessential { get; set; }
+}
 
-	public class Term {
-		public string lang;
-		public string wording;
-		public List<Annot> annots;
-		public List<Inflect> inflects;
-	}
+public class Term
+{
+    public string? Lang { get; set; }
+    public string? Wording { get; set; }
+    public List<Annot> Annots { get; set; } = [];
+    public List<Inflect> Inflects { get; set; } = [];
+}
 
-	public class Annot {
-		[JsonConverter(typeof(Controllers.IntegerJsonConverter))] public int start;
-		[JsonConverter(typeof(Controllers.IntegerJsonConverter))] public int stop;
-		public AnnotLabel label;
-	}
+public class Annot
+{
+    [JsonConverter(typeof(Controllers.IntegerJsonConverter))]
+    public int Start { get; set; }
 
-	public class AnnotLabel {
-		public string type;
-		public string value;
-	}
+    [JsonConverter(typeof(Controllers.IntegerJsonConverter))]
+    public int Stop { get; set; }
 
-	public class Inflect {
-		public int label;
-		public string text;
-	}
+    public AnnotLabel Label { get; set; } = new();
+}
+
+public class AnnotLabel
+{
+    public string? Type { get; set; }
+    public string? Value { get; set; }
+}
+
+public class Inflect
+{
+    public int Label { get; set; }
+    public string? Text { get; set; }
 }

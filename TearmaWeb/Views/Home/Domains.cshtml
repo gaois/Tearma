@@ -6,14 +6,15 @@
     ViewBag.swapper="dom";
 }
 
-@section Rightie {
+@section Rightie
+{
     <div class="kickbox">
-	    <a class="langlink @(Model.lang=="ga" ? "selected": "")" href="~/dom/ga/">
+	    <a class="langlink @(Model.Lang == "ga" ? "selected": "")" href="~/dom/ga/">
             <span class="icon">GA</span>
             <span class="ga" lang="ga">Sórtáil i nGaeilge</span>
             <span class="en" lang="en">Sort by Irish</span>
         </a>
-		<a class="langlink @(Model.lang=="en" ? "selected": "")" href="~/dom/en/">
+		<a class="langlink @(Model.Lang == "en" ? "selected": "")" href="~/dom/en/">
             <span class="icon">EN</span>
             <span class="ga" lang="ga">Sórtáil i mBéarla</span>
             <span class="en" lang="en">Sort by English</span>
@@ -28,7 +29,8 @@
 </a>
 
 <div class="domains formlike">
-    @foreach(DomainListing dom in Model.domains) {
-        <a href="~/dom/@dom.id/@Model.lang/" class="domain"><span class="ga" lang="@Model.leftLang()">@Html.Raw(dom.getExpandableTitle(Model.leftLang()))</span> <span class="en" lang="@Model.rightLang()">@Html.Raw(dom.getExpandableTitle(Model.rightLang()))</span></a>
+    @foreach (DomainListing dom in Model.DomainsList)
+    {
+        <a href="~/dom/@dom.Id/@Model.Lang/" class="domain"><span class="ga" lang="@Model.LeftLang()">@Html.Raw(dom.GetExpandableTitle(Model.LeftLang()))</span> <span class="en" lang="@Model.RightLang()">@Html.Raw(dom.GetExpandableTitle(Model.RightLang()))</span></a>
     }
 </div>

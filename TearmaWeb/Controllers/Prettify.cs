@@ -1,406 +1,700 @@
 ﻿using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using System;
-using System.Collections.Generic;
 using System.Text.Encodings.Web;
 using System.Text.RegularExpressions;
-using System.IO;
+using TearmaWeb.Models.Home;
 
-namespace TearmaWeb.Controllers
+namespace TearmaWeb.Controllers;
+
+public static class Prettify
 {
-    public class Prettify {
-		public static string ContentPath=""; //set by Startup.cs; this tells me where to look for sound files
-		private static Models.Home.Lookups Lookups;
+	// Set by Startup.cs
+	public static string ContentPath { get; set; } = "";
 
-		//Get the paths of all soundfiles (if any) for this term:
-		private static Dictionary<string, string> GetSounds(string lang, string wording) {
-			Dictionary<string, string> ret = new Dictionary<string, string>();
-			if (lang == "ga") {
-				string dirPath = Path.Combine(ContentPath, "wwwroot\\sounds");
-				wording = string.Concat(wording.Split(Path.GetInvalidFileNameChars())); //remove invalid filename characters
-                string pattern = "*__" + wording.Replace(" ", "_") + ".wav";
-				foreach (string filePath in System.IO.Directory.GetFiles(dirPath, pattern, SearchOption.AllDirectories))
-				{
-					string webFilePath="/sounds"+filePath.Substring(dirPath.Length).Replace("\\", "/");
-					string dialectAbbr = Path.GetFileName(filePath).Substring(0, 1);
-					if(!ret.ContainsKey(dialectAbbr)) ret.Add(dialectAbbr, webFilePath);
-				}
-			}
-			return ret;
-        }
-        
-		public static string EntryLink(int id, string json, string primLang) {
-			Models.Data.Entry entry=JsonConvert.DeserializeObject<Models.Data.Entry>(json);
+	// ---------------------------
+	// Sound files
+	// ---------------------------
+	private static Dictionary<string, string> GetSounds(string lang, string wording)
+	{
+		var result = new Dictionary<string, string>();
 
-			string leftLang=primLang;
-			string rightLang="en"; if(primLang=="en") rightLang="ga";
+		if (lang != "ga")
+			return result;
 
-			string ret="<a class='prettyEntryLink' href='/id/"+id+"/'>";
-			ret+="<span class='bullet'>#</span>&nbsp;";
+		var dirPath = Path.Combine(ContentPath, "wwwroot", "sounds");
 
-			string html="";
-			foreach(Models.Data.Desig desig in entry.desigs) if(desig.term.lang==leftLang && desig.nonessential==0) {
-				if(html!="") html+=" &middot; ";
-				html+="<span class='term left'>"+desig.term.wording+"</span>";
-			}
-			foreach(Models.Data.Desig desig in entry.desigs) if(desig.term.lang==rightLang && desig.nonessential==0) {
-				if(html!="") html+=" &middot; ";
-				html+="<span class='term right'>"+desig.term.wording+"</span>";
-			}
-			ret+=html;
-			if(html=="") ret+=id;
+		// Remove invalid filename characters
+		var safeWording = string.Concat(
+			wording.Split(Path.GetInvalidFileNameChars())
+		);
 
-			ret+="</a>"; //.prettyEntryLink
-			return ret;
+		var pattern = "*__" + safeWording.Replace(" ", "_") + ".wav";
+
+		if (!Directory.Exists(dirPath))
+			return result;
+
+		foreach (var filePath in Directory.GetFiles(dirPath, pattern, SearchOption.AllDirectories))
+		{
+			var webPath = "/sounds" + filePath.Substring(dirPath.Length).Replace("\\", "/");
+			var dialectAbbr = Path.GetFileName(filePath).Substring(0, 1);
+
+			if (!result.ContainsKey(dialectAbbr))
+				result[dialectAbbr] = webPath;
 		}
 
-		public static string Entry(int id, string json, Models.Home.Lookups lookups, string primLang) {
-			return Entry(id, json, lookups, primLang, new Dictionary<int, string>());
-		}
-
-		public static string Entry(int id, string json, Models.Home.Lookups lookups, string primLang, Dictionary<int, string> xrefTargets) {
-			Models.Data.Entry entry=JsonConvert.DeserializeObject<Models.Data.Entry>(json);
-			Prettify.Lookups=lookups;
-
-			string leftLang=primLang;
-			string rightLang="en"; if(primLang=="en") rightLang="ga";
-
-			string ret="<div class='prettyEntry'>";
-
-			//permalink:
-			ret +="<a class='permalink' href='/id/"+id+"/'>#</a>";
-
-			//domains:
-			foreach(int? obj in entry.domains) ret+=Prettify.DomainAssig(obj, leftLang, rightLang);
-
-			//draft status:
-			if(entry.dStatus=="0") {
-                var label = new Dictionary<string, string>
-                {
-                    { "ga", "DRÉACHT-IONTRÁIL" },
-                    { "en", "DRAFT ENTRY" }
-                };
-
-                var labelLeft = label.ContainsKey(leftLang) ? label[leftLang] : label["ga"];
-                var labelRight = label.ContainsKey(rightLang) ? label[rightLang] : label["en"];
-
-                ret += "<div class='prettyStatus'>";
-				ret += "<div class='left' lang='" + leftLang + "'>" + labelLeft + "</div>";
-				ret += "<div class='right' lang='" + rightLang + "'>" + labelRight + "</div>";
-				ret += "<div class='clear'></div>";
-				ret += "</div>";
-			}
-
-			//desigs and intros:
-			{
-				string html=""; bool withLangLabel=true;
-				foreach(Models.Data.Desig desig in entry.desigs) {if(desig.term.lang==leftLang) {html+=Prettify.Desig(desig, withLangLabel); withLangLabel=false;}}
-				if(entry.intros.ContainsKey(leftLang) && entry.intros[leftLang]!="")
-                    html +="<div class='intro'><span>("+entry.intros[leftLang]+")</span></div>";
-				ret+="<div class='desigBlock left'>"+html+"</div>";
-			}
-			{
-				string html=""; bool withLangLabel=true;
-				foreach(Models.Data.Desig desig in entry.desigs) {if(desig.term.lang==rightLang) {html+=Prettify.Desig(desig, withLangLabel); withLangLabel=false;}}
-				if(entry.intros.ContainsKey(rightLang) && entry.intros[rightLang]!="")
-					html+="<div class='intro'><span>("+entry.intros[rightLang]+")</span></div>";
-				ret+="<div class='desigBlock right'>"+html+"</div>";
-			}
-			foreach(Models.Home.Language language in Prettify.Lookups.languages) {
-				if(language.abbr!="ga" && language.abbr!="en") {
-					string html=""; bool withLangLabel=true;
-					foreach(Models.Data.Desig desig in entry.desigs) {if(desig.term.lang==language.abbr) {html+=Prettify.Desig(desig, withLangLabel); withLangLabel=false;}}
-					if(html!="") ret+="<div class='desigBlock bottom'>"+html+"</div>";
-				}
-			}
-
-			//definitions:
-			foreach(Models.Data.Definition obj in entry.definitions) ret+=Prettify.Definition(obj, leftLang, rightLang);
-
-			//examples:
-			foreach(Models.Data.Example obj in entry.examples) ret+=Prettify.Example(obj, leftLang, rightLang);
-
-			//xrefs:
-			if(entry.xrefs!=null && entry.xrefs.Count > 0) {
-				string subret="";
-				int count=0;
-				subret+="<div class='prettyXrefs'>";
-				subret+="<div class='title'><span class='title'><span class='ga' lang='ga'>FÉACH FREISIN</span> &middot; <span class='en' lang='en'>SEE ALSO</span></span></div>";
-				foreach(int xrefID in entry.xrefs) {
-					if(xrefTargets.ContainsKey(xrefID)) {
-						string html=EntryLink(xrefID, xrefTargets[xrefID], primLang);
-						subret+=" <span class='xref'>"+html+"</span>";
-						count++;
-					}
-				}
-				subret+="</div>";
-				if(count>0) ret+=subret;
-			}
-
-            ret += "<div class='clear'></div>";
-            
-            ret += "<a class='detailsIcon showDetails' style='display: none' href='javascript:void(null)' onclick='showDetails(this)'><span class='icon fas fa-angle-down'></span> <span class='ga'>Taispeáin breis sonraí</span> &middot; <span class='en'>Show more details</span></a>";
-            ret += "<a class='detailsIcon hideDetails' style='display: none' href='javascript:void(null)' onclick='hideDetails(this)'><span class='icon fas fa-angle-up'></span> <span class='ga'>Folaigh sonraí breise</span> &middot; <span class='en'>Hide details</span></a>";
-
-			ret+="</div>"; //.prettyEntry
-			return ret;
-		}
-
-		public static string Desig(Models.Data.Desig desig, bool withLangLabel) {
-			string grey="";
-			if(desig.accept!=null && desig.accept > 0 && Lookups.acceptLabelsById.ContainsKey((int)desig.accept)) {
-				Models.Home.Metadatum md=Lookups.acceptLabelsById[(int)desig.accept];
-				if(md.level<0) grey=" grey";
-			}
-			string nonessential=(desig.nonessential==1 ? " nonessential" : "");
-			string ret="<div class='prettyDesig"+grey+nonessential+"' data-lang='"+desig.term.lang+"' data-wording='"+HtmlEncoder.Default.Encode(desig.term.wording)+"'>";
-			if(withLangLabel) ret+=Prettify.Lang(desig.term.lang);
-			
-			Dictionary<string,string> sounds=GetSounds(desig.term.lang, desig.term.wording);
-			if (sounds.Count > 0) {
-				ret += "<span class='playme' onclick='playerMenuClick(this)'";
-				foreach(string dialectKey in sounds.Keys)
-				{
-					ret += " data-"+dialectKey+"='"+sounds[dialectKey]+"'";
-				}
-				ret += "><i class=\"fas fa-volume-up\"></i></span> ";
-			}
-
-			ret+=Prettify.Wording(desig.term.lang, desig.term.wording, desig.term.annots);
-			if(desig.term.lang=="ga" || desig.term.lang=="en") ret+="<span class='clickme' onclick='termMenuClick(this)'>▼</span>";
-			ret+="<span class='copyme' onclick='copyClick(this)' title='Cóipeáil &middot; Copy'><i class='far fa-copy'></i><i class='fas fa-check'></i></span>";
-			if(desig.accept!=null && desig.accept>0) ret+=" "+Prettify.Accept(desig.accept ?? 0);
-			if(desig.clarif!=null && desig.clarif!="") ret+=" "+Prettify.Clarif(desig.clarif);
-			if(desig.term.inflects.Count>0){
-				ret+="<div class='inflects'>";
-				bool isFirst=true;
-				foreach(Models.Data.Inflect inflect in desig.term.inflects) {
-					if(!isFirst) ret+=", ";
-					ret+=Prettify.Inflect(inflect);
-					isFirst=false;
-				}
-				ret+="</div>"; //.inflects
-			}
-			ret+="</div>";
-			return ret;
-		}
-
-		public static string Wording(string lang, string wording, List<Models.Data.Annot> annots) {
-			List<Char> chars=new List<Char>(); for(var i=0; i<wording.Length; i++) chars.Add(new Char{character=wording[i].ToString()});
-			int index=0;
-			foreach(Models.Data.Annot annot in annots) {
-				int start=annot.start-1; if(start<0) start=0;
-				int stop=annot.stop; if(stop>chars.Count) stop=chars.Count; if(stop==0) stop=chars.Count;
-				for(int i=start; i<stop; i++) {
-					if(annot.label.type == "posLabel") {
-						if(Lookups.posLabelsById.ContainsKey(int.Parse(annot.label.value))) {
-							chars[i].markupBefore="<span class='char h"+index+"'>"+chars[i].markupBefore;
-							chars[i].markupAfter=chars[i].markupAfter+"</span>";
-							Models.Home.Metadatum label=Lookups.posLabelsById[int.Parse(annot.label.value)];
-							string symbol=label.abbr;
-							if(i==stop-1) chars[i].labelsAfter=chars[i].labelsAfter+" <span class='label "+annot.label.type+" hintable' onmouseover='hon(this, "+index+")' onmouseout='hoff(this, "+index+")' title='"+label.name["ga"]+"/"+label.name["en"]+"'>"+symbol+"</span>";
-						}
-					}
-					else if(annot.label.type == "inflectLabel") {
-						if(Lookups.inflectLabelsById.ContainsKey(int.Parse(annot.label.value))) {
-							chars[i].markupBefore="<span class='char h"+index+"'>"+chars[i].markupBefore;
-							chars[i].markupAfter=chars[i].markupAfter+"</span>";
-							Models.Home.Metadatum label=Lookups.inflectLabelsById[int.Parse(annot.label.value)];
-							string symbol=label.abbr;
-							if(i==stop-1) chars[i].labelsAfter=chars[i].labelsAfter+" <span class='label "+annot.label.type+" hintable' onmouseover='hon(this, "+index+")' onmouseout='hoff(this, "+index+")' title='"+label.name["ga"]+"/"+label.name["en"]+"'>"+symbol+"</span>";
-						}
-					}
-					else if(annot.label.type == "langLabel") {
-						if(Lookups.languagesByAbbr.ContainsKey(annot.label.value)) {
-							chars[i].markupBefore="<span class='char h"+index+"'>"+chars[i].markupBefore;
-							chars[i].markupAfter=chars[i].markupAfter+"</span>";
-							Models.Home.Language label=Lookups.languagesByAbbr[annot.label.value];
-							string symbol=label.abbr.ToUpper();
-							if(i==stop-1) chars[i].labelsAfter=chars[i].labelsAfter+" <span class='label "+annot.label.type+" hintable' onmouseover='hon(this, "+index+")' onmouseout='hoff(this, "+index+")' title='"+label.name["ga"]+"/"+label.name["en"]+"'>"+symbol+"</span>";
-						}
-					}
-					else if(annot.label.type == "symbol" && annot.label.value!="proper") {
-				        chars[i].markupBefore="<span class='char h"+index+"'>"+chars[i].markupBefore;
-						chars[i].markupAfter=chars[i].markupAfter+"</span>";
-						string symbol="";
-						if(annot.label.value=="tm") symbol="<span style='position: relative; top: -5px; font-size: 0.5em'>TM</span>";
-						if(annot.label.value=="regtm") symbol="®";
-						if(annot.label.value=="proper") symbol="¶";
-						string title="";
-						if(annot.label.value=="tm") title="trádmharc/trademark";
-						if(annot.label.value=="regtm") title="trádmharc cláraithe/registered trademark";
-						if(annot.label.value=="proper") title="ainm dílis/proper noun";
-						if(i==stop-1) chars[i].labelsAfter=chars[i].labelsAfter+" <span class='label "+annot.label.type+" hintable' onmouseover='hon(this, "+index+")' onmouseout='hoff(this, "+index+")' title='"+title+"'>"+symbol+"</span>";
-					}
-					else if(annot.label.type == "formatting") {
-						chars[i].markupBefore="<span style='font-style: italic'>"+chars[i].markupBefore;
-						chars[i].markupAfter=chars[i].markupAfter+"</span>";
-					}
-				}
-				index++;
-			}
-			string s=""; foreach(Char c in chars) {
-				s +=c.markupBefore+c.character+c.markupAfter+c.labelsAfter;
-			}
-			return "<a class='prettyWording' href='/q/"+Uri.EscapeDataString(wording.Replace("/", "$forwardslash;").Replace("\\", "$backslash;"))+"/"+lang+"/'>"+s+"</a>";
-		}
-		private class Char {
-			public string character="";
-			public string markupBefore="";
-			public string markupAfter="";
-			public string labelsAfter="";
-		}
-
-		public static string Inflect(Models.Data.Inflect inflect) {
-			string ret="";
-			if(Prettify.Lookups.inflectLabelsById.ContainsKey(inflect.label)) {
-				Models.Home.Metadatum md=Prettify.Lookups.inflectLabelsById[inflect.label];
-				ret+="<span class='inflect'>";
-				ret+="<span class='abbr hintable' title='"+md.name["ga"]+"/"+md.name["en"]+"'>"+md.abbr+"</span>";
-				ret+="&nbsp;";
-				ret+="<span class='wording'>"+inflect.text+"</span>";
-				ret+="</span>";
-			}
-			return ret;
-		}
-
-		public static string Accept(int id) {
-			string ret="";
-			if(Prettify.Lookups.acceptLabelsById.ContainsKey(id)){
-				Models.Home.Metadatum md=Prettify.Lookups.acceptLabelsById[id];
-				ret="<span class='accept'>";
-				ret+=md.name["ga"];
-				ret+="/";
-				ret+=md.name["en"];
-				ret+="</span>";
-			}
-			return ret;
-		}
-
-		public static string Clarif(string s) {
-			string ret="<span class='clarif'>";
-			ret+="("+s+")";
-			ret+="</span>";
-			return ret;
-		}
-
-		public static string Lang(string abbr) {
-			string ret="";
-			if(Lookups.languagesByAbbr.ContainsKey(abbr)){
-				Models.Home.Language language=Lookups.languagesByAbbr[abbr];
-				ret="<span class='prettyLang hintable' title='"+language.name["ga"]+"/"+language.name["en"]+"'>";
-				ret+=abbr.ToUpper();
-				ret+="</span>";
-			}
-			return ret;
-		}
-
-		public static string DomainAssig(int? domID, string leftLang, string rightLang) {
-			string ret = "";
-			if(domID != null && Lookups.domainsById.ContainsKey((int)domID)) {
-				Models.Home.Metadatum domain = Lookups.domainsById[(int)domID];
-				string stepsLeft = "";
-				string stepsRight = "";
-				int recursionCounter=0;
-				while(domain != null) {
-					if(stepsLeft!="") stepsLeft=""+" » "+stepsLeft;
-					if(stepsRight!="") stepsRight=""+" » "+stepsRight;
-
-					stepsLeft  = (domain.name.ContainsKey(leftLang) ? domain.name[leftLang] : domain.name["ga"])   + stepsLeft;
-					stepsRight = (domain.name.ContainsKey(rightLang) ? domain.name[rightLang] : domain.name["en"]) + stepsRight;
-
-					recursionCounter++;
-					domain = Lookups.domainsById.ContainsKey(domain.parentID) && domain.parentID>0 && recursionCounter<10 
-						? Lookups.domainsById[domain.parentID] : null;
-				}
-				ret += "<div class='prettyDomain'>";
-				ret += "<div class='left'><a href='/dom/"+domID+"/"+leftLang+"/'>" + stepsLeft + "</a></div>";
-				ret += "<div class='right'><a href='/dom/"+domID+"/"+rightLang+"/'>" + stepsRight + "</a></div>";
-				ret += "<div class='clear'></div>";
-				ret += "</div>"; //.prettyDomain
-			}
-			return ret;
-		}
-
-		public static string DomainAssig(int? domID, string lang) {
-			string ret = "";
-			if(domID != null & Prettify.Lookups.domainsById.ContainsKey((int)domID)) {
-				Models.Home.Metadatum domain = Prettify.Lookups.domainsById[(int)domID];
-				string steps = "";
-				int recursionCounter=0;
-				while(domain != null) {
-					if(steps!="") steps=""+" » "+steps;
-					steps = (domain.name.ContainsKey(lang) ? domain.name[lang] : domain.name["ga"]) + steps;
-					recursionCounter++;
-					domain = (domain.parentID>0 && recursionCounter<10) ? Prettify.Lookups.domainsById[domain.parentID] : null;
-				}
-				ret += "<span class='prettyDomainInline'>";
-				ret += "<a href='/dom/"+domID+"/"+lang+"/'>" + steps + "</a>";
-				ret += "</span>"; //.prettyDomainInline
-			}
-			return ret;
-		}
-
-		public static string Definition(Models.Data.Definition def, string leftLang, string rightLang) {
-			string ret = "";
-			string nonessential=(def.nonessential==1 ? " nonessential" : "");
-			ret += "<div class='prettyDefinition"+nonessential+"'>";
-			ret += "<div class='left'>";
-				foreach(int? da in def.domains) if(da!=null) ret+=DomainAssig(da, leftLang)+" ";
-                if (def.texts.ContainsKey(leftLang))
-				    ret += def.texts[leftLang];
-			ret += "</div>";
-			ret += "<div class='right'>";
-				foreach(int? da in def.domains) if(da!=null) ret+=DomainAssig(da, rightLang)+" ";
-				ret += def.texts[rightLang];
-			ret += "</div>";
-			ret += "<div class='clear'></div>";
-			ret += "</div>"; //.prettyDefinition
-			return ret;
-		}
-
-		public static string Example(Models.Data.Example ex, string leftLang, string rightLang) {
-			string ret = "";
-			string nonessential=(ex.nonessential==1 ? " nonessential" : "");
-			ret += "<div class='prettyExample"+nonessential+"'>";
-			ret += "<div class='left'>";
-                if (ex.texts.ContainsKey(leftLang))
-				    foreach(string text in ex.texts[leftLang]) ret += "<div class='text'>"+text+"</div>";
-			ret += "</div>";
-			ret += "<div class='right'>";
-                if (ex.texts.ContainsKey(rightLang))
-					foreach(string text in ex.texts[rightLang]) ret += "<div class='text'>"+text+"</div>";
-			ret += "</div>";
-			ret += "<div class='clear'></div>";
-			ret += "</div>"; //.prettyExample
-			return ret;
-		}
-
+		return result;
 	}
 
-	//custom JSON converter to convert partly-faulty integers like "9+" and "1o" into correct integers like 9 and 10
-	//adapted from http://jigarbagadai.blogspot.com/2012/11/custom-json-convertor-for-nullable.html
-	public class IntegerJsonConverter: JsonConverter{
-        public override bool CanConvert(Type objectType){
-            return objectType == typeof(int?) || objectType == typeof(int);
+	// ---------------------------
+	// Entry link
+	// ---------------------------
+	public static string EntryLink(int id, string json, string primLang)
+	{
+		var entry = JsonConvert.DeserializeObject<Models.Data.Entry>(json)
+					?? new Models.Data.Entry();
+
+		var leftLang = primLang;
+		var rightLang = primLang == "en" ? "ga" : "en";
+
+		var html = new System.Text.StringBuilder();
+
+		html.Append("<a class='prettyEntryLink' href='/id/")
+			.Append(id)
+			.Append("/'>");
+
+		html.Append("<span class='bullet'>#</span>&nbsp;");
+
+		var terms = new List<string>();
+
+		foreach (var desig in entry.Desigs)
+			if (desig.Term.Lang == leftLang && desig.Nonessential == 0)
+				terms.Add($"<span class='term left'>{desig.Term.Wording}</span>");
+
+		foreach (var desig in entry.Desigs)
+			if (desig.Term.Lang == rightLang && desig.Nonessential == 0)
+				terms.Add($"<span class='term right'>{desig.Term.Wording}</span>");
+
+		if (terms.Count > 0)
+			html.Append(string.Join(" &middot; ", terms));
+		else
+			html.Append(id);
+
+		html.Append("</a>");
+
+		return html.ToString();
+	}
+
+	// ---------------------------
+	// Entry (full)
+	// ---------------------------
+	public static string Entry(
+		int id,
+		string json,
+		Lookups lookups,
+		string primLang)
+	{
+		return Entry(id, json, lookups, primLang, []);
+	}
+
+	public static string Entry(
+		int id,
+		string json,
+		Lookups lookups,
+		string primLang,
+		Dictionary<int, string> xrefTargets)
+	{
+		var entry = JsonConvert.DeserializeObject<Models.Data.Entry>(json)
+					?? new Models.Data.Entry();
+
+		var leftLang = primLang;
+		var rightLang = primLang == "en" ? "ga" : "en";
+
+		var html = new System.Text.StringBuilder();
+
+		html.Append("<div class='prettyEntry'>");
+
+		// Permalink
+		html.Append("<a class='permalink' href='/id/")
+			.Append(id)
+			.Append("/'>#</a>");
+
+		// Domains
+		foreach (var dom in entry.Domains)
+			html.Append(DomainAssig(dom, leftLang, rightLang, lookups));
+
+		// Draft status
+		if (entry.DStatus == "0")
+		{
+			var labelGa = "DRÉACHT-IONTRÁIL";
+			var labelEn = "DRAFT ENTRY";
+
+			html.Append("<div class='prettyStatus'>")
+				.Append("<div class='left' lang='")
+				.Append(leftLang)
+				.Append("'>")
+				.Append(leftLang == "ga" ? labelGa : labelEn)
+				.Append("</div>")
+				.Append("<div class='right' lang='")
+				.Append(rightLang)
+				.Append("'>")
+				.Append(rightLang == "ga" ? labelGa : labelEn)
+				.Append("</div>")
+				.Append("<div class='clear'></div>")
+				.Append("</div>");
+		}
+
+		// Desigs + intros (left)
+		{
+			var block = BuildDesigBlock(entry, leftLang, lookups);
+			html.Append("<div class='desigBlock left'>").Append(block).Append("</div>");
+		}
+
+		// Desigs + intros (right)
+		{
+			var block = BuildDesigBlock(entry, rightLang, lookups);
+			html.Append("<div class='desigBlock right'>").Append(block).Append("</div>");
+		}
+
+		// Other languages
+		foreach (var lang in lookups.Languages)
+		{
+			if (lang.Abbr is not "ga" and not "en")
+			{
+				var block = BuildDesigBlock(entry, lang.Abbr, lookups);
+				if (!string.IsNullOrEmpty(block))
+					html.Append("<div class='desigBlock bottom'>").Append(block).Append("</div>");
+			}
+		}
+
+		// Definitions
+		foreach (var def in entry.Definitions)
+			html.Append(Definition(def, leftLang, rightLang, lookups));
+
+		// Examples
+		foreach (var ex in entry.Examples)
+			html.Append(Example(ex, leftLang, rightLang));
+
+		// Xrefs
+		if (entry.Xrefs?.Count > 0)
+		{
+			var xrefHtml = BuildXrefs(entry, primLang, xrefTargets);
+			if (!string.IsNullOrEmpty(xrefHtml))
+				html.Append(xrefHtml);
+		}
+
+		html.Append("<div class='clear'></div>");
+
+		html.Append("<a class='detailsIcon showDetails' style='display: none' href='javascript:void(null)' onclick='showDetails(this)'><span class='icon fas fa-angle-down'></span> <span class='ga'>Taispeáin breis sonraí</span> &middot; <span class='en'>Show more details</span></a>");
+		html.Append("<a class='detailsIcon hideDetails' style='display: none' href='javascript:void(null)' onclick='hideDetails(this)'><span class='icon fas fa-angle-up'></span> <span class='ga'>Folaigh sonraí breise</span> &middot; <span class='en'>Hide details</span></a>");
+
+		html.Append("</div>");
+
+		return html.ToString();
+	}
+
+    public static string Desig(Models.Data.Desig desig, bool withLangLabel, Lookups lookups)
+    {
+        if (desig is null || desig.Term is null)
+            return "";
+
+        // Normalise all possibly-null fields up front
+        var lang = desig.Term.Lang ?? "";
+        var wording = desig.Term.Wording ?? "";
+        var annots = desig.Term.Annots ?? [];
+        var inflects = desig.Term.Inflects ?? [];
+        var clarif = desig.Clarif ?? "";
+
+        var sb = new System.Text.StringBuilder();
+
+        // Determine grey class (negative acceptability)
+        var grey = "";
+        if (desig.Accept is int acceptId &&
+            lookups!.AcceptLabelsById.TryGetValue(acceptId, out var acceptMd) &&
+            acceptMd.Level < 0)
+        {
+            grey = " grey";
         }
-		public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer){
-            if(reader.TokenType == JsonToken.Null) return null;
-            if(reader.TokenType == JsonToken.Integer) return reader.Value;
-            if(reader.TokenType == JsonToken.String) {
 
-				string text=(string)reader.Value;
-				text=text.Replace("o", "0");
-				text=text.Replace("O", "0");
-				text=Regex.Replace(text, @"[^0-9]", "");
+        var nonessential = desig.Nonessential == 1 ? " nonessential" : "";
 
-                if(string.IsNullOrEmpty(text)) return null;
-				int num; if(int.TryParse(text, out num)) return num;
+        sb.Append("<div class='prettyDesig")
+          .Append(grey)
+          .Append(nonessential)
+          .Append("' data-lang='")
+          .Append(lang)
+          .Append("' data-wording='")
+          .Append(HtmlEncoder.Default.Encode(wording))
+          .Append("'>");
+
+        // Language label
+        if (withLangLabel)
+            sb.Append(Lang(lang, lookups));
+
+        // Sound files
+        var sounds = GetSounds(lang, wording);
+        if (sounds.Count > 0)
+        {
+            sb.Append("<span class='playme' onclick='playerMenuClick(this)'");
+            foreach (var kvp in sounds)
+            {
+                sb.Append(" data-")
+                  .Append(kvp.Key)
+                  .Append("='")
+                  .Append(kvp.Value)
+                  .Append('\'');
             }
-			return 0;
+            sb.Append("><i class=\"fas fa-volume-up\"></i></span> ");
         }
-		public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer) {
-            writer.WriteValue(value);
+
+        // Wording + annotations
+        sb.Append(Wording(lang, wording, annots, lookups));
+
+        // Term menu
+        if (lang is "ga" or "en")
+            sb.Append("<span class='clickme' onclick='termMenuClick(this)'>▼</span>");
+
+        // Copy icon
+        sb.Append("<span class='copyme' onclick='copyClick(this)' title='Cóipeáil &middot; Copy'><i class='far fa-copy'></i><i class='fas fa-check'></i></span>");
+
+        // Acceptability label
+        if (desig.Accept is int acc)
+            sb.Append(' ').Append(Accept(acc, lookups));
+
+        // Clarification
+        if (!string.IsNullOrWhiteSpace(clarif))
+            sb.Append(' ').Append(Clarif(clarif));
+
+        // Inflections
+        if (inflects.Count > 0)
+        {
+            sb.Append("<div class='inflects'>");
+            var first = true;
+            foreach (var inflect in inflects)
+            {
+                if (!first) sb.Append(", ");
+                sb.Append(Inflect(inflect, lookups));
+                first = false;
+            }
+            sb.Append("</div>");
         }
+
+        sb.Append("</div>");
+        return sb.ToString();
+    }
+
+    private struct CharInfo
+    {
+        public char Character;
+        public string MarkupBefore;
+        public string MarkupAfter;
+        public string LabelsAfter;
+    }
+
+    public static string Wording(
+        string lang,
+        string wording,
+        List<Models.Data.Annot> annots,
+        Lookups lookups)
+    {
+        // Build character list
+        var chars = new CharInfo[wording.Length];
+        for (int i = 0; i < wording.Length; i++)
+            chars[i].Character = wording[i];
+
+        int index = 0;
+
+        foreach (var annot in annots)
+        {
+            if (annot.Label?.Value is not string labelValue)
+            {
+                index++;
+                continue;
+            }
+
+            int start = Math.Max(annot.Start - 1, 0);
+            int stop = annot.Stop;
+            if (stop > chars.Length) stop = chars.Length;
+            if (stop == 0) stop = chars.Length;
+
+            for (int i = start; i < stop; i++)
+            {
+                ref var c = ref chars[i];
+
+                switch (annot.Label.Type)
+                {
+                    case "posLabel":
+                        if (lookups!.PosLabelsById.TryGetValue(int.Parse(labelValue), out var posMd))
+                        {
+                            c.MarkupBefore = $"<span class='char h{index}'>" + c.MarkupBefore;
+                            c.MarkupAfter += "</span>";
+
+                            if (i == stop - 1)
+                            {
+                                c.LabelsAfter +=
+                                    $" <span class='label posLabel hintable' onmouseover='hon(this, {index})' onmouseout='hoff(this, {index})' title='{posMd.Name["ga"]}/{posMd.Name["en"]}'>{posMd.Abbr}</span>";
+                            }
+                        }
+                        break;
+
+                    case "inflectLabel":
+                        if (lookups!.InflectLabelsById.TryGetValue(int.Parse(labelValue), out var inflMd))
+                        {
+                            c.MarkupBefore = $"<span class='char h{index}'>" + c.MarkupBefore;
+                            c.MarkupAfter += "</span>";
+
+                            if (i == stop - 1)
+                            {
+                                c.LabelsAfter +=
+                                    $" <span class='label inflectLabel hintable' onmouseover='hon(this, {index})' onmouseout='hoff(this, {index})' title='{inflMd.Name["ga"]}/{inflMd.Name["en"]}'>{inflMd.Abbr}</span>";
+                            }
+                        }
+                        break;
+
+                    case "langLabel":
+                        if (lookups!.LanguagesByAbbr.TryGetValue(labelValue, out var langMd))
+                        {
+                            c.MarkupBefore = $"<span class='char h{index}'>" + c.MarkupBefore;
+                            c.MarkupAfter += "</span>";
+
+                            if (i == stop - 1)
+                            {
+                                c.LabelsAfter +=
+                                    $" <span class='label langLabel hintable' onmouseover='hon(this, {index})' onmouseout='hoff(this, {index})' title='{langMd.Name["ga"]}/{langMd.Name["en"]}'>{langMd.Abbr.ToUpper()}</span>";
+                            }
+                        }
+                        break;
+
+                    case "symbol":
+                        if (labelValue != "proper")
+                        {
+                            c.MarkupBefore = $"<span class='char h{index}'>" + c.MarkupBefore;
+                            c.MarkupAfter += "</span>";
+
+                            var (symbol, title) = labelValue switch
+                            {
+                                "tm" => ("<span style='position: relative; top: -5px; font-size: 0.5em'>TM</span>", "trádmharc/trademark"),
+                                "regtm" => ("®", "trádmharc cláraithe/registered trademark"),
+                                "proper" => ("¶", "ainm dílis/proper noun"),
+                                _ => ("", "")
+                            };
+
+                            if (i == stop - 1)
+                            {
+                                c.LabelsAfter +=
+                                    $" <span class='label symbol hintable' onmouseover='hon(this, {index})' onmouseout='hoff(this, {index})' title='{title}'>{symbol}</span>";
+                            }
+                        }
+                        break;
+
+                    case "formatting":
+                        c.MarkupBefore = "<span style='font-style: italic'>" + c.MarkupBefore;
+                        c.MarkupAfter += "</span>";
+                        break;
+                }
+            }
+
+            index++;
+        }
+
+        // Build final string
+        var sb = new System.Text.StringBuilder();
+        foreach (var c in chars)
+            sb.Append(c.MarkupBefore).Append(c.Character).Append(c.MarkupAfter).Append(c.LabelsAfter);
+
+        var encoded = Uri.EscapeDataString(
+            wording.Replace("/", "$forwardslash;").Replace("\\", "$backslash;")
+        );
+
+        return $"<a class='prettyWording' href='/q/{encoded}/{lang}/'>{sb}</a>";
+    }
+
+    public static string Inflect(Models.Data.Inflect inflect, Lookups lookups)
+    {
+        if (lookups!.InflectLabelsById.TryGetValue(inflect.Label, out var md))
+        {
+            return $"<span class='inflect'><span class='abbr hintable' title='{md.Name["ga"]}/{md.Name["en"]}'>{md.Abbr}</span>&nbsp;<span class='wording'>{inflect.Text}</span></span>";
+        }
+
+        return "";
+    }
+
+    public static string Accept(int id, Lookups lookups)
+    {
+        if (lookups!.AcceptLabelsById.TryGetValue(id, out var md))
+        {
+            return $"<span class='accept'>{md.Name["ga"]}/{md.Name["en"]}</span>";
+        }
+
+        return "";
+    }
+
+    public static string Clarif(string s)
+    {
+        return $"<span class='clarif'>({s})</span>";
+    }
+
+    public static string Lang(string abbr, Lookups lookups)
+    {
+        if (lookups!.LanguagesByAbbr.TryGetValue(abbr, out var language))
+        {
+            return $"<span class='prettyLang hintable' title='{language.Name["ga"]}/{language.Name["en"]}'>{abbr.ToUpper()}</span>";
+        }
+
+        return "";
+    }
+
+    public static string DomainAssig(int? domID, string leftLang, string rightLang, Lookups lookups)
+    {
+        if (domID is null || !lookups!.DomainsById.TryGetValue(domID.Value, out var domain))
+            return "";
+
+        var stepsLeft = "";
+        var stepsRight = "";
+        var recursionCounter = 0;
+
+        var current = domain;
+
+        while (current != null)
+        {
+            if (!string.IsNullOrEmpty(stepsLeft))
+                stepsLeft = " » " + stepsLeft;
+
+            if (!string.IsNullOrEmpty(stepsRight))
+                stepsRight = " » " + stepsRight;
+
+            stepsLeft =
+                (current.Name.TryGetValue(leftLang, out var leftName) ? leftName : current.Name["ga"])
+                + stepsLeft;
+
+            stepsRight =
+                (current.Name.TryGetValue(rightLang, out var rightName) ? rightName : current.Name["en"])
+                + stepsRight;
+
+            recursionCounter++;
+
+            current =
+                current.ParentID > 0 &&
+                recursionCounter < 10 &&
+                lookups.DomainsById.TryGetValue(current.ParentID, out var parent)
+                    ? parent
+                    : null;
+        }
+
+        return
+            "<div class='prettyDomain'>" +
+                $"<div class='left'><a href='/dom/{domID}/{leftLang}/'>{stepsLeft}</a></div>" +
+                $"<div class='right'><a href='/dom/{domID}/{rightLang}/'>{stepsRight}</a></div>" +
+                "<div class='clear'></div>" +
+            "</div>";
+    }
+
+    public static string DomainAssig(int? domID, string lang, Lookups lookups)
+    {
+        if (domID is null || !lookups!.DomainsById.TryGetValue(domID.Value, out var domain))
+            return "";
+
+        var steps = "";
+        var recursionCounter = 0;
+        var current = domain;
+
+        while (current != null)
+        {
+            if (!string.IsNullOrEmpty(steps))
+                steps = " » " + steps;
+
+            steps =
+                (current.Name.TryGetValue(lang, out var name) ? name : current.Name["ga"])
+                + steps;
+
+            recursionCounter++;
+
+            current =
+                current.ParentID > 0 &&
+                recursionCounter < 10 &&
+                lookups.DomainsById.TryGetValue(current.ParentID, out var parent)
+                    ? parent
+                    : null;
+        }
+
+        return
+            "<span class='prettyDomainInline'>" +
+                $"<a href='/dom/{domID}/{lang}/'>{steps}</a>" +
+            "</span>";
+    }
+
+    public static string Definition(
+        Models.Data.Definition def,
+        string leftLang,
+        string rightLang,
+        Lookups lookups)
+    {
+        var nonessential = def.Nonessential == 1 ? " nonessential" : "";
+
+        var sb = new System.Text.StringBuilder();
+
+        sb.Append("<div class='prettyDefinition").Append(nonessential).Append("'>");
+
+        // Left
+        sb.Append("<div class='left'>");
+        foreach (var da in def.Domains)
+            if (da is int id)
+                sb.Append(DomainAssig(id, leftLang, lookups)).Append(' ');
+
+        if (def.Texts.TryGetValue(leftLang, out var leftText))
+            sb.Append(leftText);
+
+        sb.Append("</div>");
+
+        // Right
+        sb.Append("<div class='right'>");
+        foreach (var da in def.Domains)
+            if (da is int id)
+                sb.Append(DomainAssig(id, rightLang, lookups)).Append(' ');
+
+        if (def.Texts.TryGetValue(rightLang, out var rightText))
+            sb.Append(rightText);
+
+        sb.Append("</div>");
+
+        sb.Append("<div class='clear'></div>");
+        sb.Append("</div>");
+
+        return sb.ToString();
+    }
+
+    public static string Example(Models.Data.Example ex, string leftLang, string rightLang)
+    {
+        var nonessential = ex.Nonessential == 1 ? " nonessential" : "";
+
+        var sb = new System.Text.StringBuilder();
+
+        sb.Append("<div class='prettyExample").Append(nonessential).Append("'>");
+
+        // Left
+        sb.Append("<div class='left'>");
+        if (ex.Texts.TryGetValue(leftLang, out var leftTexts))
+        {
+            foreach (var text in leftTexts)
+                sb.Append("<div class='text'>").Append(text).Append("</div>");
+        }
+        sb.Append("</div>");
+
+        // Right
+        sb.Append("<div class='right'>");
+        if (ex.Texts.TryGetValue(rightLang, out var rightTexts))
+        {
+            foreach (var text in rightTexts)
+                sb.Append("<div class='text'>").Append(text).Append("</div>");
+        }
+        sb.Append("</div>");
+
+        sb.Append("<div class='clear'></div>");
+        sb.Append("</div>");
+
+        return sb.ToString();
+    }
+
+    private static string BuildDesigBlock(Models.Data.Entry entry, string lang, Lookups lookups)
+    {
+        var sb = new System.Text.StringBuilder();
+        var withLabel = true;
+
+        foreach (var desig in entry.Desigs)
+        {
+            if (desig.Term.Lang == lang)
+            {
+                sb.Append(Desig(desig, withLabel, lookups));
+                withLabel = false;
+            }
+        }
+
+        if (entry.Intros.TryGetValue(lang, out var intro) && !string.IsNullOrWhiteSpace(intro))
+            sb.Append("<div class='intro'><span>(").Append(intro).Append(")</span></div>");
+
+        return sb.ToString();
+    }
+
+    private static string BuildXrefs(
+        Models.Data.Entry entry,
+        string primLang,
+        Dictionary<int, string> xrefTargets)
+    {
+        var sb = new System.Text.StringBuilder();
+        var count = 0;
+
+        sb.Append("<div class='prettyXrefs'>")
+          .Append("<div class='title'><span class='title'><span class='ga' lang='ga'>FÉACH FREISIN</span> &middot; <span class='en' lang='en'>SEE ALSO</span></span></div>");
+
+        foreach (var id in entry.Xrefs)
+        {
+            if (xrefTargets.TryGetValue(id, out var json))
+            {
+                sb.Append(" <span class='xref'>")
+                  .Append(EntryLink(id, json, primLang))
+                  .Append("</span>");
+                count++;
+            }
+        }
+
+        sb.Append("</div>");
+
+        return count > 0 ? sb.ToString() : "";
+    }
+}
+
+/// <summary>
+/// Converts "faulty" integers such as "9+", "1o", "1O", "12?" into valid integers.
+/// - Replaces 'o'/'O' with '0'
+/// - Strips all non-digit characters
+/// - Returns null if no digits remain
+/// </summary>
+public class IntegerJsonConverter : JsonConverter<int?>
+{
+    public override bool CanWrite => true;
+    public override bool CanRead => true;
+
+    public override int? ReadJson(
+        JsonReader reader,
+        Type objectType,
+        int? existingValue,
+        bool hasExistingValue,
+        JsonSerializer serializer)
+    {
+        switch (reader.TokenType)
+        {
+            case JsonToken.Null:
+                return null;
+
+            case JsonToken.Integer:
+                return Convert.ToInt32(reader.Value);
+
+            case JsonToken.String:
+                var text = (reader.Value as string) ?? "";
+
+                // Normalise common OCR mistakes
+                text = text.Replace("o", "0").Replace("O", "0");
+
+                // Strip everything except digits
+                text = Regex.Replace(text, @"\D", "");
+
+                if (string.IsNullOrWhiteSpace(text))
+                    return null;
+
+                if (int.TryParse(text, out var num))
+                    return num;
+
+                return null;
+
+            default:
+                // Unexpected token type — safest fallback is null
+                return null;
+        }
+    }
+
+    public override void WriteJson(JsonWriter writer, int? value, JsonSerializer serializer)
+    {
+        if (value.HasValue)
+            writer.WriteValue(value.Value);
+        else
+            writer.WriteNull();
     }
 }

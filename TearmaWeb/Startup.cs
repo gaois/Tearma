@@ -1,143 +1,228 @@
-﻿using Gaois.QueryLogger;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
+﻿using BotDetect.Web;
+using Gaois.QueryLogger;
+using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.AspNetCore.Rewrite;
-using System;
+using Microsoft.AspNetCore.Server.Kestrel.Core;
 using TearmaWeb.Rules;
-using BotDetect.Web;
-using Microsoft.AspNetCore.Http;
-using System.Collections.Generic;
 
-namespace TearmaWeb
+namespace TearmaWeb;
+
+public class Startup(IConfiguration configuration, IWebHostEnvironment environment)
 {
-    public class Startup
+    public void ConfigureServices(IServiceCollection services)
     {
-        private readonly IConfiguration _configuration;
-        private readonly IHostingEnvironment _environment;
+        services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>(); // needed by Captcha
 
-        public Startup(IConfiguration configuration, IHostingEnvironment environment) {
-            _configuration = configuration;
-            _environment = environment;
+        // MVC
+        services.AddRouting(options =>
+        {
+            options.AppendTrailingSlash = true;
+        });
+
+        services.AddControllersWithViews();
+
+        // Session (needed by BotDetect/Captcha)
+        services.AddSession(options =>
+        {
+            options.IdleTimeout = TimeSpan.FromMinutes(20);
+            options.Cookie.IsEssential = true;
+        });
+
+        // Synchronous I/O needed by BotDetect/Captcha (should replace)
+        if (environment.IsDevelopment())
+        {
+            services.Configure<KestrelServerOptions>(options =>
+            {
+                options.AllowSynchronousIO = true;
+            });
+        }
+        else if (environment.IsProduction())
+        {
+            services.Configure<IISServerOptions>(options =>
+            {
+                options.AllowSynchronousIO = true;
+            });
         }
 
-        public void ConfigureServices(IServiceCollection services) {
-            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>(); //needed by Captcha
+        // MiniProfiler
+        services.AddMiniProfiler();
 
-			services.AddMvc();
+        // Output cache
+        services.AddOutputCache(options =>
+        {
+            options.AddBasePolicy(builder => builder.Expire(TimeSpan.FromSeconds(60)));
+            options.AddPolicy("Extended", builder => builder.Expire(TimeSpan.FromHours(1)));
+        });
 
-            // Add Session services. Needed by Captcha.
-            services.AddSession(options => {
-                options.IdleTimeout = TimeSpan.FromMinutes(20);
-                options.Cookie.IsEssential = true;
-            });
+        // Exceptional
+        services.AddExceptional(configuration.GetSection("Exceptional"), settings =>
+        {
+            settings.Ignore.Types =
+            [
+                "System.InvalidOperationException",
+                "Microsoft.AspNetCore.Connections.ConnectionResetException"
+            ];
+        });
 
-            services.AddMiniProfiler();
-            services.AddExceptional(_configuration.GetSection("Exceptional"), settings => {
-                settings.Ignore.Types = new HashSet<string>() {
-                    "System.InvalidOperationException",
-                    "Microsoft.AspNetCore.Connections.ConnectionResetException"
-                };
-            });
-            services.AddWebOptimizer(pipeline =>
-            {
-                pipeline.MinifyCssFiles("furniture/**/*.css");
-                pipeline.MinifyJsFiles("furniture/**/*.js");
-            });
+        // WebOptimizer
+        services.AddWebOptimizer();
 
-            services.AddQueryLogger(_configuration.GetSection("QueryLogger"));
+        // QueryLogger
+        services.AddQueryLogger(configuration.GetSection("QueryLogger"));
 
-            services.AddScoped<Controllers.Broker>();
-            services.AddScoped<Controllers.IateBroker>();
+        // Response compression
+        services.AddResponseCompression(options =>
+        {
+            options.EnableForHttps = true;
+            options.MimeTypes = ResponseCompressionDefaults.MimeTypes.Concat(["text/javascript"]);
+            options.Providers.Add<BrotliCompressionProvider>();
+            options.Providers.Add<GzipCompressionProvider>();
+        });
+
+        services.AddScoped<Controllers.Broker>();
+    }
+
+    public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+    {
+        // Important so that Prettify knows where to look for sound files:
+        Controllers.Prettify.ContentPath = env.ContentRootPath;
+
+        if (env.IsDevelopment())
+        {
+            app.UseDeveloperExceptionPage();
+            app.UseStatusCodePages();
+        }
+        else
+        {
+            app.UseExceptionHandler("/error/");
+            app.UseStatusCodePagesWithReExecute("/error/{0}");
+            app.UseExceptional();
         }
 
-		public void Configure(IApplicationBuilder app, Microsoft.AspNetCore.Hosting.IHostingEnvironment env) {
+        // Session must come before Captcha
+        app.UseSession();
 
-            //important so that Prettify knows where to look for sound files:
-            Controllers.Prettify.ContentPath=env.ContentRootPath;
+        // Captcha middleware (must be after session)
+        app.UseCaptcha(configuration);
 
-            if (_environment.IsDevelopment()) {
-				app.UseDeveloperExceptionPage();
-				app.UseStatusCodePages();
-            } else {
-                app.UseExceptionHandler("/error/");
-                app.UseStatusCodePagesWithReExecute("/error/{0}");
-                app.UseExceptional();
-            }
+        // Rewrite rules
+        var options = new RewriteOptions();
+        options.Rules.Add(new RedirectToWwwRule(environment));
+        app.UseRewriter(options);
 
-            // configures Session middleware
-            app.UseSession();
-            // configure your application pipeline to use Captcha middleware
-            // Important! UseCaptcha(...) must be called after the UseSession() call
-            app.UseCaptcha(_configuration);
+        if (env.IsProduction())
+        {
+            app.UseHsts();
+            app.UseHttpsRedirection();
+            app.UseResponseCompression();
+        }
 
-            var options=new RewriteOptions();
-			options.Rules.Add(new RedirectToWwwRule(_environment));
-			app.UseRewriter(options);
+        app.UseMiniProfiler();
+        app.UseWebOptimizer();
+        app.UseStaticFiles();
+        app.UseRouting();
 
-            if (_environment.IsProduction()) {
-                app.UseHsts();
-                app.UseHttpsRedirection();
-            }
+        if (env.IsProduction())
+            app.UseOutputCache();
 
-            app.UseMiniProfiler();
-            app.UseWebOptimizer();
+        // Endpoint routing (replacement for UseMvc)
+        app.UseEndpoints(endpoints =>
+        {
+            // Home page
+            endpoints.MapControllerRoute(
+                name: "home",
+                pattern: "/",
+                defaults: new { controller = "Home", action = "Index" });
 
-            app.UseStaticFiles(new StaticFileOptions
-            {
-                OnPrepareResponse = context =>
-                {
-                    context.Context.Response.Headers.Add("Cache-Control", "public,max-age=2678400");
-                    context.Context.Response.Headers.Add("Expires", DateTime.UtcNow.AddDays(31).ToString("R"));
-                }
-            });
+            // Error page
+            endpoints.MapControllerRoute(
+                name: "error",
+                pattern: "/error/{code:int?}",
+                defaults: new { controller = "Home", action = "Error" });
 
-			app.UseMvc(routes => {
-				//Home page:
-				routes.MapRoute(name: "", template: "/", defaults: new {controller="Home", action="Index"});
+            // A single entry
+            endpoints.MapControllerRoute(
+                name: "entry",
+                pattern: "/id/{id:int}/",
+                defaults: new { controller = "Home", action = "Entry" });
 
-                //Error page:
-                routes.MapRoute(name: "", template: "/error/{code:int?}", defaults: new { controller = "Home", action = "Error" });
+            // Quick search
+            endpoints.MapControllerRoute(
+                name: "quicksearch",
+                pattern: "/q/{word}/{lang?}",
+                defaults: new { controller = "Home", action = "QuickSearch" });
 
-                //A single entry:
-                routes.MapRoute(name: "", template: "/id/{id:int}/", defaults: new {controller="Home", action="Entry"});
+            // Advanced search
+            endpoints.MapControllerRoute(
+                name: "advsearch",
+                pattern: "/plus/",
+                defaults: new { controller = "Home", action = "AdvSearch" });
 
-				//Quick search:
-				routes.MapRoute(name: "", template: "/q/{word}/{lang?}/", defaults: new {controller="Home", action="QuickSearch", lang=""});
-                routes.MapRoute(name: "", template: "/peekTearma.json/", defaults: new { controller = "Peek", action = "PeekTearma" });
+            endpoints.MapControllerRoute(
+                name: "advsearch2",
+                pattern: "/plus/{word}/{length:regex(^(al|sw|mw)$)}/{extent:regex(^(al|st|ed|pt|md|ft)$)}/lang{lang}/pos{posLabel:int}/dom{domainID:int}/{page:int?}",
+                defaults: new { controller = "Home", action = "AdvSearch" });
 
-                //Iate search:
-                routes.MapRoute(name: "", template: "/iate/{word}/{lang?}/", defaults: new { controller = "Iate", action = "Search", lang = "" });
-                routes.MapRoute(name: "", template: "/peekIate.json/", defaults: new { controller = "Peek", action = "PeekIate" });
+            // Browse by domain
+            endpoints.MapControllerRoute(
+                name: "domains",
+                pattern: "/dom/{lang:regex(^(ga|en)$)}/",
+                defaults: new { controller = "Home", action = "Domains" });
 
-                //Advanced search:
-                routes.MapRoute(name: "", template: "/plus/", defaults: new {controller="Home", action="AdvSearch"});
-				routes.MapRoute(name: "", template: "/plus/{word}/{length:regex(^(al|sw|mw)$)}/{extent:regex(^(al|st|ed|pt|md|ft)$)}/lang{lang}/pos{posLabel:int}/dom{domainID:int}/{page:int?}/", defaults: new {controller="Home", action="AdvSearch", page=1});
+            endpoints.MapControllerRoute(
+                name: "domain",
+                pattern: "/dom/{domID:int}/{lang:regex(^(ga|en)$)}/{page:int?}",
+                defaults: new { controller = "Home", action = "Domain" });
 
-				//Browse by domain:
-				routes.MapRoute(name: "", template: "/dom/{lang:regex(^(ga|en)$)}/", defaults: new {controller="Home", action="Domains"});
-				routes.MapRoute(name: "", template: "/dom/{domID:int}/{lang:regex(^(ga|en)$)}/{page:int?}/", defaults: new {controller="Home", action="Domain", page=1});
+            // Info
+            endpoints.MapControllerRoute(
+                name: "info-topic",
+                pattern: "/eolas/{nickname}.{lang}",
+                defaults: new { controller = "Info", action = "Topic", section = "eolas" });
 
-				//Info:
-				routes.MapRoute(name: "", template: "/eolas/{nickname}.{lang}", defaults: new {controller="Info", action="Topic", section="eolas"});
-				routes.MapRoute(name: "", template: "/eolas/{lang?}/", defaults: new {controller="Info", action="Topic", section="eolas", lang="ga"});
+            endpoints.MapControllerRoute(
+                name: "info-lang",
+                pattern: "/eolas/{lang?}",
+                defaults: new { controller = "Info", action = "Topic", section = "eolas" });
 
-				//cabhair:
-				routes.MapRoute(name: "", template: "/cabhair/{nickname}.{lang}", defaults: new {controller="Info", action="Topic", section="cabhair"});
-				routes.MapRoute(name: "", template: "/cabhair/{lang?}/", defaults: new {controller="Info", action="Topic", section="cabhair", lang="ga"});
+            // Cabhair
+            endpoints.MapControllerRoute(
+                name: "cabhair-topic",
+                pattern: "/cabhair/{nickname}.{lang}",
+                defaults: new { controller = "Info", action = "Topic", section = "cabhair" });
 
-				//Download:
-				routes.MapRoute(name: "", template: "/ioslodail/", defaults: new {controller="Info", action="Download"});
+            endpoints.MapControllerRoute(
+                name: "cabhair-lang",
+                pattern: "/cabhair/{lang?}",
+                defaults: new { controller = "Info", action = "Topic", section = "cabhair" });
 
-				//Widgets:
-				routes.MapRoute(name: "", template: "/breiseain/", defaults: new {controller="Info", action="Widgets"});
-				routes.MapRoute(name: "", template: "/breiseain/bosca/", defaults: new {controller="Widgets", action="Box"});
-				routes.MapRoute(name: "", template: "/breiseain/tearma-an-lae/", defaults: new {controller="Widgets", action="Tod"});
+            // Download
+            endpoints.MapControllerRoute(
+                name: "download",
+                pattern: "/ioslodail/",
+                defaults: new { controller = "Info", action = "Download" });
 
-				//Ask:
-				routes.MapRoute(name: "", template: "/ceist/", defaults: new {controller="Ask", action="Ask"});
-			});
-		}
-	}
+            // Widgets
+            endpoints.MapControllerRoute(
+                name: "widgets",
+                pattern: "/breiseain/",
+                defaults: new { controller = "Info", action = "Widgets" });
+
+            endpoints.MapControllerRoute(
+                name: "widgets-box",
+                pattern: "/breiseain/bosca/",
+                defaults: new { controller = "Widgets", action = "Box" });
+
+            endpoints.MapControllerRoute(
+                name: "widgets-tod",
+                pattern: "/breiseain/tearma-an-lae/",
+                defaults: new { controller = "Widgets", action = "Tod" });
+
+            // Ask
+            endpoints.MapControllerRoute(
+                name: "ask",
+                pattern: "/ceist/",
+                defaults: new { controller = "Ask", action = "Ask" });
+        });
+    }
 }
