@@ -1,5 +1,6 @@
 ﻿using Ansa.Extensions;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.OutputCaching;
 using TearmaWeb.Models.Iate;
 
 namespace TearmaWeb.Controllers;
@@ -19,6 +20,7 @@ public class IateController(IateBroker iateBroker) : Controller
         return text;
     }
 
+    [OutputCache]
     public async Task<IActionResult> Search(string word, string lang)
     {
         if (word.IsNullOrWhiteSpace())
