@@ -41,11 +41,14 @@ public class IateController(IateBroker iateBroker) : Controller
         await iateBroker.DoSearchAsync(model);
 
         // data for Plausible analytics
-        //ViewData["IsTextSearch"] = "true";
-        //ViewData["IsTextSearchResultful"] = (model.exacts.Count>0 || model.relateds.Count>0 ? "true" : "false");
-        //ViewData["SearchText00"] = (model.exacts.Count==0 && model.relateds.Count==0 ? model.word : "");
-        //ViewData["SearchText01"] = (model.exacts.Count==0 && model.relateds.Count>0 ? model.word : "");
-        //ViewData["SearchText1X"] = (model.exacts.Count>0 ? model.word : "");
+        ViewData["IsTextSearch"] = "true";
+        ViewData["IsTextSearchResultful"] =
+            model.Exacts.Count > 0 || model.Relateds.Count > 0 ? "true" :"false";
+        ViewData["SearchText00"] =
+            model.Exacts.Count == 0 && model.Relateds.Count == 0 ? model.Word : "";
+        ViewData["SearchText01"] =
+            model.Exacts.Count == 0 && model.Relateds.Count > 0 ? model.Word : "";
+        ViewData["SearchText1X"] = model.Exacts.Count > 0 ? model.Word : "";
 
         return View("IateSearch", model);
 	}

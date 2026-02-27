@@ -11,13 +11,15 @@
     @if (Model.Exacts.Count>0 || Model.Relateds.Count > 0)
     {
         <div class="kickbox">
-            @if(Model.Langs.Count > 1) {
+            @if (Model.Langs.Count > 1)
+            {
                 <a class="langlink @(Model.Lang == "" ? "selected" : "")" href="~/q/@Model.Word/">
                     <span class="icon">&mdash;</span>
                     <span class="ga" lang="ga">Torthaí i ngach teanga</span>
                     <span class="en" lang="en">Matches in any language</span>
                 </a>
-                @foreach(Language lang in Model.Langs) {
+                @foreach (Language lang in Model.Langs)
+                {
                     <a class="langlink @(Model.Lang == lang.Abbr ? "selected" : "")" href="~/q/@Model.Word/@lang.Abbr/">
                         <span class="icon">@lang.Abbr.ToUpper()</span>
                         <span class="ga" lang="ga">@lang.Name["ga"] amháin</span>

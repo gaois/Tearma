@@ -44,6 +44,17 @@ public class Startup(IConfiguration configuration, IWebHostEnvironment environme
             });
         }
 
+        // Error handling
+        services.AddExceptional(configuration.GetSection("Exceptional"), settings =>
+        {
+            settings.Ignore.Types =
+            [
+                "System.InvalidOperationException",
+                "Microsoft.AspNetCore.Connections.ConnectionResetException"
+            ];
+        });
+
+        // Http client
         services.AddHttpClient("IateClient");
 
         // MiniProfiler
@@ -56,22 +67,6 @@ public class Startup(IConfiguration configuration, IWebHostEnvironment environme
             options.AddPolicy("Extended", builder => builder.Expire(TimeSpan.FromHours(1)));
         });
 
-        // Exceptional
-        services.AddExceptional(configuration.GetSection("Exceptional"), settings =>
-        {
-            settings.Ignore.Types =
-            [
-                "System.InvalidOperationException",
-                "Microsoft.AspNetCore.Connections.ConnectionResetException"
-            ];
-        });
-
-        // WebOptimizer
-        services.AddWebOptimizer();
-
-        // QueryLogger
-        services.AddQueryLogger(configuration.GetSection("QueryLogger"));
-
         // Response compression
         services.AddResponseCompression(options =>
         {
@@ -81,6 +76,13 @@ public class Startup(IConfiguration configuration, IWebHostEnvironment environme
             options.Providers.Add<GzipCompressionProvider>();
         });
 
+        // QueryLogger
+        services.AddQueryLogger(configuration.GetSection("QueryLogger"));
+
+        // WebOptimizer
+        services.AddWebOptimizer();
+
+        // Brokers
         services.AddScoped<Controllers.Broker>();
         services.AddSingleton<Controllers.IateBroker>();
     }

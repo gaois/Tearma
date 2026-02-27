@@ -1,4 +1,6 @@
-﻿using System.Text.Json;
+﻿using System.Net.Http.Headers;
+using System.Text;
+using System.Text.Json;
 using System.Text.Json.Serialization;
 using TearmaWeb.Models;
 using TearmaWeb.Models.Iate;
@@ -40,11 +42,13 @@ public class IateBroker(IConfiguration config, IHttpClientFactory httpClientFact
             var client = httpClientFactory.CreateClient("IATE");
 
             var url =
-                $"uac-api/oauth2/token?grant_type=password&username={Uri.EscapeDataString(_iateUsername)}&password={Uri.EscapeDataString(_iatePassword)}";
+                $"https://iate.europa.eu/uac-api/oauth2/token?grant_type=password&username={Uri.EscapeDataString(_iateUsername)}&password={Uri.EscapeDataString(_iatePassword)}";
 
             using var request = new HttpRequestMessage(HttpMethod.Post, url);
             request.Headers.Add("accept", "application/vnd.iate.token+json; version=2");
-            request.Content = new StringContent("application/x-www-form-urlencoded");
+            request.Content = new StringContent("");
+            request.Content.Headers.ContentType =
+                new MediaTypeHeaderValue("application/x-www-form-urlencoded");
 
             using var response = await client.SendAsync(request);
             response.EnsureSuccessStatusCode();
@@ -172,13 +176,14 @@ public class IateBroker(IConfiguration config, IHttpClientFactory httpClientFact
     {
         var request = new HttpRequestMessage(
             HttpMethod.Post,
-            "em-api/entries/_msearch?fields_set_name=minimal");
+            "https://iate.europa.eu/em-api/entries/_msearch?fields_set_name=minimal");
 
         request.Headers.Add("accept", "application/vnd.iate.entry+json; version=2");
         request.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue(
             "Bearer",
             token);
-        request.Content = JsonContent.Create(payload);
+        var json = JsonSerializer.Serialize(payload);
+        request.Content = new StringContent(json, Encoding.UTF8, "application/json");
 
         return request;
     }
