@@ -53,10 +53,6 @@ public class IateEntry
 
     [JsonPropertyName("language")]
     public Dictionary<string, IateLanguageBlock>? Language { get; set; }
-
-    // Optional: raw JSON if you want to pass it to PrettifyIate
-    [JsonIgnore]
-    public object? RawJson { get; set; }
 }
 
 public class IateLanguageBlock
@@ -71,13 +67,40 @@ public class IateLanguageBlock
 public class IateMultiSearchResponse
 {
     [JsonPropertyName("responses")]
-    public List<IateSearchBlock> Responses { get; set; } = new();
+    public List<IateSearchBlock> Responses { get; set; } = [];
 }
 
 public class IateSearchBlock
 {
     [JsonPropertyName("items")]
     public List<IateEntry>? Items { get; set; }
+}
+
+public class IateSearchRequestBlock
+{
+    [JsonPropertyName("limit")]
+    public int Limit { get; set; }
+
+    [JsonPropertyName("expand")]
+    public bool Expand { get; set; }
+
+    [JsonPropertyName("search_request")]
+    public IateSearchRequest SearchRequest { get; set; } = default!;
+}
+
+public class IateSearchRequest
+{
+    [JsonPropertyName("sources")]
+    public string[] Sources { get; set; } = [];
+
+    [JsonPropertyName("targets")]
+    public string[] Targets { get; set; } = [];
+
+    [JsonPropertyName("query")]
+    public string Query { get; set; } = "";
+
+    [JsonPropertyName("query_operator")]
+    public int QueryOperator { get; set; }
 }
 
 public class IateSelfLink

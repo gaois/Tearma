@@ -78,7 +78,7 @@ public class Broker(IConfiguration configuration)
     }
 
     // ---------------------------
-    // Quick Search
+    // Information retrieval
     // ---------------------------
 
     public async Task DoQuickSearchAsync(QuickSearch model)

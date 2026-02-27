@@ -45,10 +45,13 @@ public class IateBroker(IConfiguration config, IHttpClientFactory httpClientFact
                 $"https://iate.europa.eu/uac-api/oauth2/token?grant_type=password&username={Uri.EscapeDataString(_iateUsername)}&password={Uri.EscapeDataString(_iatePassword)}";
 
             using var request = new HttpRequestMessage(HttpMethod.Post, url);
-            request.Headers.Add("accept", "application/vnd.iate.token+json; version=2");
+
+            const string acceptHeader = "application/vnd.iate.token+json; version=2";
+            const string mediaTypeHeader = "application/x-www-form-urlencoded";
+
+            request.Headers.Add("accept", acceptHeader);
             request.Content = new StringContent("");
-            request.Content.Headers.ContentType =
-                new MediaTypeHeaderValue("application/x-www-form-urlencoded");
+            request.Content.Headers.ContentType = new MediaTypeHeaderValue(mediaTypeHeader);
 
             using var response = await client.SendAsync(request);
             response.EnsureSuccessStatusCode();
@@ -179,64 +182,64 @@ public class IateBroker(IConfiguration config, IHttpClientFactory httpClientFact
             "https://iate.europa.eu/em-api/entries/_msearch?fields_set_name=minimal");
 
         request.Headers.Add("accept", "application/vnd.iate.entry+json; version=2");
-        request.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue(
-            "Bearer",
-            token);
-        var json = JsonSerializer.Serialize(payload);
-        request.Content = new StringContent(json, Encoding.UTF8, new MediaTypeHeaderValue("application/json"));
+        request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
+        request.Content = new StringContent(
+            JsonSerializer.Serialize(payload),
+            Encoding.UTF8,
+            new MediaTypeHeaderValue("application/json"));
 
         return request;
     }
 
-    private static object BuildSearchPayload(string word) => new[]
-    {
-        new
+    private static IateSearchRequestBlock[] BuildSearchPayload(string word) =>
+    [
+        new IateSearchRequestBlock
         {
-            limit = 10,
-            expand = true,
-            search_request = new
+            Limit = 10,
+            Expand = true,
+            SearchRequest = new IateSearchRequest
             {
-                sources = new[]{"ga"},
-                targets = new[]{"en", "de", "fr"},
-                query = word,
-                query_operator = 3
+                Sources = ["ga"],
+                Targets = ["en", "de", "fr"],
+                Query = word,
+                QueryOperator = 3
             }
         },
-        new
+        new IateSearchRequestBlock
         {
-            limit = 10,
-            expand = true,
-            search_request = new
+            Limit = 10,
+            Expand = true,
+            SearchRequest = new IateSearchRequest
             {
-                sources = new[]{"en"},
-                targets = new[]{"ga", "de", "fr"},
-                query = word,
-                query_operator = 3
+                Sources = ["en"],
+                Targets = ["ga", "de", "fr"],
+                Query = word,
+                QueryOperator = 3
             }
         },
-        new
+        new IateSearchRequestBlock
         {
-            limit = 101,
-            expand = true,
-            search_request = new
+            Limit = 101,
+            Expand = true,
+            SearchRequest = new IateSearchRequest
             {
-                sources = new[]{"ga"},
-                targets = new[]{"en", "de", "fr"},
-                query = word,
-                query_operator = 1
+                Sources = ["ga"],
+                Targets = ["en", "de", "fr"],
+                Query = word,
+                QueryOperator = 1
             }
         },
-        new
+        new IateSearchRequestBlock
         {
-            limit = 101,
-            expand = true,
-            search_request = new
+            Limit = 101,
+            Expand = true,
+            SearchRequest = new IateSearchRequest
             {
-                sources = new[]{"en"},
-                targets = new[]{"ga", "de", "fr"},
-                query = word,
-                query_operator = 1
+                Sources = ["en"],
+                Targets = ["ga", "de", "fr"],
+                Query = word,
+                QueryOperator = 1
             }
         }
-    };
+    ];
 }
