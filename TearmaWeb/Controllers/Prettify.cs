@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using System.Text;
 using System.Text.Encodings.Web;
 using System.Text.RegularExpressions;
 using TearmaWeb.Models.Home;
@@ -34,8 +35,8 @@ public static class Prettify
 
 		foreach (var filePath in Directory.GetFiles(dirPath, pattern, SearchOption.AllDirectories))
 		{
-			var webPath = "/sounds" + filePath.Substring(dirPath.Length).Replace("\\", "/");
-			var dialectAbbr = Path.GetFileName(filePath).Substring(0, 1);
+			var webPath = "/sounds" + filePath[dirPath.Length..].Replace("\\", "/");
+			var dialectAbbr = Path.GetFileName(filePath)[..1];
 
 			if (!result.ContainsKey(dialectAbbr))
 				result[dialectAbbr] = webPath;
@@ -50,12 +51,12 @@ public static class Prettify
 	public static string EntryLink(int id, string json, string primLang)
 	{
 		var entry = JsonConvert.DeserializeObject<Models.Data.Entry>(json)
-					?? new Models.Data.Entry();
+			?? new Models.Data.Entry();
 
 		var leftLang = primLang;
 		var rightLang = primLang == "en" ? "ga" : "en";
 
-		var html = new System.Text.StringBuilder();
+		var html = new StringBuilder();
 
 		html.Append("<a class='prettyEntryLink' href='/id/")
 			.Append(id)
@@ -103,12 +104,12 @@ public static class Prettify
 		Dictionary<int, string> xrefTargets)
 	{
 		var entry = JsonConvert.DeserializeObject<Models.Data.Entry>(json)
-					?? new Models.Data.Entry();
+			?? new Models.Data.Entry();
 
 		var leftLang = primLang;
 		var rightLang = primLang == "en" ? "ga" : "en";
 
-		var html = new System.Text.StringBuilder();
+		var html = new StringBuilder();
 
 		html.Append("<div class='prettyEntry'>");
 
@@ -160,8 +161,12 @@ public static class Prettify
 			if (lang.Abbr is not "ga" and not "en")
 			{
 				var block = BuildDesigBlock(entry, lang.Abbr, lookups);
-				if (!string.IsNullOrEmpty(block))
-					html.Append("<div class='desigBlock bottom'>").Append(block).Append("</div>");
+                if (!string.IsNullOrEmpty(block))
+                {
+                    html.Append("<div class='desigBlock bottom'>")
+                        .Append(block)
+                        .Append("</div>");
+                }
 			}
 		}
 
@@ -203,7 +208,7 @@ public static class Prettify
         var inflects = desig.Term.Inflects ?? [];
         var clarif = desig.Clarif ?? "";
 
-        var sb = new System.Text.StringBuilder();
+        var sb = new StringBuilder();
 
         // Determine grey class (negative acceptability)
         var grey = "";
@@ -396,7 +401,7 @@ public static class Prettify
         }
 
         // Build final string
-        var sb = new System.Text.StringBuilder();
+        var sb = new StringBuilder();
         foreach (var c in chars)
             sb.Append(c.MarkupBefore).Append(c.Character).Append(c.MarkupAfter).Append(c.LabelsAfter);
 
@@ -529,7 +534,7 @@ public static class Prettify
     {
         var nonessential = def.Nonessential == 1 ? " nonessential" : "";
 
-        var sb = new System.Text.StringBuilder();
+        var sb = new StringBuilder();
 
         sb.Append("<div class='prettyDefinition").Append(nonessential).Append("'>");
 
@@ -565,7 +570,7 @@ public static class Prettify
     {
         var nonessential = ex.Nonessential == 1 ? " nonessential" : "";
 
-        var sb = new System.Text.StringBuilder();
+        var sb = new StringBuilder();
 
         sb.Append("<div class='prettyExample").Append(nonessential).Append("'>");
 
@@ -595,7 +600,7 @@ public static class Prettify
 
     private static string BuildDesigBlock(Models.Data.Entry entry, string lang, Lookups lookups)
     {
-        var sb = new System.Text.StringBuilder();
+        var sb = new StringBuilder();
         var withLabel = true;
 
         foreach (var desig in entry.Desigs)
@@ -618,7 +623,7 @@ public static class Prettify
         string primLang,
         Dictionary<int, string> xrefTargets)
     {
-        var sb = new System.Text.StringBuilder();
+        var sb = new StringBuilder();
         var count = 0;
 
         sb.Append("<div class='prettyXrefs'>")
@@ -647,8 +652,11 @@ public static class Prettify
 /// - Strips all non-digit characters
 /// - Returns null if no digits remain
 /// </summary>
-public class IntegerJsonConverter : JsonConverter<int?>
+public partial class IntegerJsonConverter : JsonConverter<int?>
 {
+    [GeneratedRegex(@"\D")]
+    private static partial Regex NonDigitRegex();
+
     public override bool CanWrite => true;
     public override bool CanRead => true;
 
@@ -669,23 +677,15 @@ public class IntegerJsonConverter : JsonConverter<int?>
 
             case JsonToken.String:
                 var text = (reader.Value as string) ?? "";
-
-                // Normalise common OCR mistakes
                 text = text.Replace("o", "0").Replace("O", "0");
-
-                // Strip everything except digits
-                text = Regex.Replace(text, @"\D", "");
+                text = NonDigitRegex().Replace(text, "");
 
                 if (string.IsNullOrWhiteSpace(text))
                     return null;
 
-                if (int.TryParse(text, out var num))
-                    return num;
-
-                return null;
+                return int.TryParse(text, out var num) ? num : null;
 
             default:
-                // Unexpected token type — safest fallback is null
                 return null;
         }
     }

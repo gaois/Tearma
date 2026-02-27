@@ -5,17 +5,24 @@ using TearmaWeb.Models.Iate;
 
 namespace TearmaWeb.Controllers;
 
-public class PrettifyIate
+public partial class PrettifyIate
 {
+    const string DisallowedHtmlTags = "<(?!b>|/b>|i>|/i>|strong>|/strong>|em>|/em>)[^>]+>";
+
+    [GeneratedRegex("<[^>]+>")]
+    private static partial Regex AllHtmlTagsRegex();
+
+    [GeneratedRegex(DisallowedHtmlTags, RegexOptions.IgnoreCase, "en-IE")]
+    private static partial Regex DisallowedHtmlTagsRegex();
+
     private static string RemoveSomeHtml(string s)
     {
-        return Regex.Replace(
-            s, "<(?!b>|/b>|i>|/i>|strong>|/strong>|em>|/em>)[^>]+>", "", RegexOptions.IgnoreCase);
+        return DisallowedHtmlTagsRegex().Replace(s, "");
     }
 
     private static string RemoveAllHtml(string s)
     {
-        return Regex.Replace(s, "<[^>]+>", "");
+        return AllHtmlTagsRegex().Replace(s, "");
     }
 
     public static string Entry(IateEntry entry, string leftlang, string rightlang)
