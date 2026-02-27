@@ -63,8 +63,8 @@ public class IateBroker(IConfiguration config, IHttpClientFactory httpClientFact
             // Cache token + expiry
             _cachedToken = token;
 
-            // IATE tokens typically last hours; if not provided, assume 1 hour
-            _tokenExpiry = DateTimeOffset.UtcNow.AddHours(1);
+            // IATE tokens typically last 3 hours; we will use 2 to be safe
+            _tokenExpiry = DateTimeOffset.UtcNow.AddHours(2);
 
             return token;
         }
@@ -79,7 +79,7 @@ public class IateBroker(IConfiguration config, IHttpClientFactory httpClientFact
         var token = await GetAccessTokenAsync();
         var client = httpClientFactory.CreateClient("IATE");
 
-        var payload = BuildSearchPayload(model.Word);
+        var payload = IateSearchPayloadBuilder.Build(model.Word);
         using var request = BuildSearchRequest(token, payload);
 
         using var response = await client.SendAsync(request);
@@ -126,13 +126,14 @@ public class IateBroker(IConfiguration config, IHttpClientFactory httpClientFact
         var token = await GetAccessTokenAsync();
         var client = httpClientFactory.CreateClient("IATE");
 
-        var payload = BuildSearchPayload(model.Word);
+        var payload = IateSearchPayloadBuilder.Build(model.Word);
         using var request = BuildSearchRequest(token, payload);
 
         using var response = await client.SendAsync(request);
         response.EnsureSuccessStatusCode();
 
-        var json = await response.Content.ReadFromJsonAsync<IateMultiSearchResponse>(JsonOptions);
+        var json = await response.Content
+            .ReadFromJsonAsync<IateMultiSearchResponse>(JsonOptions);
         if (json == null) return;
 
         var ids = new HashSet<int>();
@@ -190,56 +191,4 @@ public class IateBroker(IConfiguration config, IHttpClientFactory httpClientFact
 
         return request;
     }
-
-    private static IateSearchRequestBlock[] BuildSearchPayload(string word) =>
-    [
-        new IateSearchRequestBlock
-        {
-            Limit = 10,
-            Expand = true,
-            SearchRequest = new IateSearchRequest
-            {
-                Sources = ["ga"],
-                Targets = ["en", "de", "fr"],
-                Query = word,
-                QueryOperator = 3
-            }
-        },
-        new IateSearchRequestBlock
-        {
-            Limit = 10,
-            Expand = true,
-            SearchRequest = new IateSearchRequest
-            {
-                Sources = ["en"],
-                Targets = ["ga", "de", "fr"],
-                Query = word,
-                QueryOperator = 3
-            }
-        },
-        new IateSearchRequestBlock
-        {
-            Limit = 101,
-            Expand = true,
-            SearchRequest = new IateSearchRequest
-            {
-                Sources = ["ga"],
-                Targets = ["en", "de", "fr"],
-                Query = word,
-                QueryOperator = 1
-            }
-        },
-        new IateSearchRequestBlock
-        {
-            Limit = 101,
-            Expand = true,
-            SearchRequest = new IateSearchRequest
-            {
-                Sources = ["en"],
-                Targets = ["ga", "de", "fr"],
-                Query = word,
-                QueryOperator = 1
-            }
-        }
-    ];
 }

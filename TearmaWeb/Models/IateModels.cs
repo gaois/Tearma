@@ -154,3 +154,49 @@ public class Search
 	public List<string> Exacts = [];
 	public List<string> Relateds = [];
 }
+
+public static class IateSearchPayloadBuilder
+{
+    public static IateSearchRequestBlock[] Build(string word)
+    {
+        return
+        [
+            Exact("ga", "en", word),
+            Exact("en", "ga", word),
+            Related("ga", "en", word),
+            Related("en", "ga", word)
+        ];
+    }
+
+    private static IateSearchRequestBlock Exact(string source, string target, string word)
+    {
+        return new IateSearchRequestBlock
+        {
+            Limit = 10,
+            Expand = true,
+            SearchRequest = new IateSearchRequest
+            {
+                Sources = [source],
+                Targets = [target, "de", "fr"],
+                Query = word,
+                QueryOperator = 3
+            }
+        };
+    }
+
+    private static IateSearchRequestBlock Related(string source, string target, string word)
+    {
+        return new IateSearchRequestBlock
+        {
+            Limit = 101,
+            Expand = true,
+            SearchRequest = new IateSearchRequest
+            {
+                Sources = [source],
+                Targets = [target, "de", "fr"],
+                Query = word,
+                QueryOperator = 1
+            }
+        };
+    }
+}
