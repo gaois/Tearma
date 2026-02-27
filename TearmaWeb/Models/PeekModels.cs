@@ -2,9 +2,9 @@
 
 public class PeekResult
 {
-    public string Word = "";
+    public string Word {get; set;} = "";
 
-    public int Count = 0;
+    public int Count {get; set;} = 0;
 
-    public bool HasMore = false;
+    public bool HasMore {get; set;} = false;
 }

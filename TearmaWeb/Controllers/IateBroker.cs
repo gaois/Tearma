@@ -183,7 +183,7 @@ public class IateBroker(IConfiguration config, IHttpClientFactory httpClientFact
             "Bearer",
             token);
         var json = JsonSerializer.Serialize(payload);
-        request.Content = new StringContent(json, Encoding.UTF8, "application/json");
+        request.Content = new StringContent(json, Encoding.UTF8, new MediaTypeHeaderValue("application/json"));
 
         return request;
     }
