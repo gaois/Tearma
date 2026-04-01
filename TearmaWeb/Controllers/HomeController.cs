@@ -10,8 +10,9 @@ namespace TearmaWeb.Controllers;
 
 public partial class HomeController(IQueryLogger queryLogger, Broker broker) : Controller
 {
+
     [GeneratedRegex(@"^\#[0-9]+$")]
-    private static partial Regex HashIdRegex();
+    private static partial Regex IdRegex();
 
     private static bool IsSuper(HttpRequest request) =>
         request.Host.Host.Equals("super.tearma.ie", StringComparison.OrdinalIgnoreCase);
@@ -64,7 +65,7 @@ public partial class HomeController(IQueryLogger queryLogger, Broker broker) : C
             return RedirectToAction("Index");
 
         // #123 → /id/123
-        if (HashIdRegex().IsMatch(word))
+        if (IdRegex().IsMatch(word))
             return Redirect("/id/" + word.Replace("#", ""));
 
         using var stopwatch = new SimpleTimer();

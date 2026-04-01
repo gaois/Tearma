@@ -44,7 +44,20 @@ public class Startup(IConfiguration configuration, IWebHostEnvironment environme
             });
         }
 
-        // Error handling
+        // Memory cache
+        services.AddMemoryCache();
+
+        // MiniProfiler
+        services.AddMiniProfiler();
+
+        // Output cache
+        services.AddOutputCache(options =>
+        {
+            options.AddBasePolicy(builder => builder.Expire(TimeSpan.FromSeconds(60)));
+            options.AddPolicy("Extended", builder => builder.Expire(TimeSpan.FromHours(1)));
+        });
+
+        // Exceptional
         services.AddExceptional(configuration.GetSection("Exceptional"), settings =>
         {
             settings.Ignore.Types =
