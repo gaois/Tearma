@@ -44,6 +44,9 @@ public class Startup(IConfiguration configuration, IWebHostEnvironment environme
             });
         }
 
+        // Memory cache
+        services.AddMemoryCache();
+
         // MiniProfiler
         services.AddMiniProfiler();
 

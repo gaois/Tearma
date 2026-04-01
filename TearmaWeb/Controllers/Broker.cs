@@ -1,12 +1,15 @@
-﻿using Newtonsoft.Json.Linq;
-using Microsoft.Data.SqlClient;
-using TearmaWeb.Models.Home;
+﻿using Microsoft.Data.SqlClient;
+using Microsoft.Extensions.Caching.Memory;
+using Newtonsoft.Json.Linq;
 using System.Data;
+using System.Security.Cryptography;
+using System.Text;
 using TearmaWeb.Controllers.Scripts;
+using TearmaWeb.Models.Home;
 
 namespace TearmaWeb.Controllers;
 
-public class Broker(IConfiguration configuration)
+public class Broker(IConfiguration configuration, IMemoryCache cache)
 {
     private readonly string _connectionString = 
         configuration.GetConnectionString("DefaultConnection")
@@ -15,6 +18,46 @@ public class Broker(IConfiguration configuration)
     // ---------------------------
     // Shared helpers
     // ---------------------------
+    private async Task<Lookups> GetCachedMetadataAsync(
+        string metadataSql,
+        IReadOnlyDictionary<string, object?>? parameters = null)
+    {
+        // Build a unique cache key based on SQL + parameters
+        var sb = new StringBuilder(metadataSql);
+
+        if (parameters != null)
+            foreach (var kvp in parameters)
+                sb.Append('|').Append(kvp.Key).Append('=').Append(kvp.Value);
+
+        var keyBytes = Encoding.UTF8.GetBytes(sb.ToString());
+        var hash = Convert.ToHexString(SHA256.HashData(keyBytes));
+
+        string cacheKey = "metadata:" + hash;
+
+        return (await cache.GetOrCreateAsync(cacheKey, async entry =>
+        {
+            entry.AbsoluteExpirationRelativeToNow = TimeSpan.FromHours(1);
+
+            await using var conn = new SqlConnection(_connectionString);
+            await conn.OpenAsync();
+
+            await using var cmd = new SqlCommand(metadataSql, conn)
+            {
+                CommandType = CommandType.Text
+            };
+
+            if (parameters != null)
+            {
+                foreach (var kvp in parameters)
+                {
+                    cmd.Parameters.AddWithValue("@" + kvp.Key, kvp.Value ?? DBNull.Value);
+                }
+            }
+
+            await using var reader = await cmd.ExecuteReaderAsync();
+            return await ReadLookupsAsync(reader);
+        }))!;
+    }
 
     private static async Task<Lookups> ReadLookupsAsync(SqlDataReader reader)
     {
@@ -83,6 +126,10 @@ public class Broker(IConfiguration configuration)
 
     public async Task DoQuickSearchAsync(QuickSearch model)
     {
+        // metadata
+        var metadataSql = SqlScripts.Get("pub_tod_metadata.sql");
+        var lookups = await GetCachedMetadataAsync(metadataSql);
+
         await using var conn = new SqlConnection(_connectionString);
         await conn.OpenAsync();
 
@@ -97,11 +144,7 @@ public class Broker(IConfiguration configuration)
 
         await using var reader = await command.ExecuteReaderAsync();
 
-        // Lookups
-        var lookups = await ReadLookupsAsync(reader);
-
         // Similars
-        await reader.NextResultAsync();
         while (await reader.ReadAsync())
         {
             model.Similars.Add((string)reader["similar"]);
@@ -180,17 +223,8 @@ public class Broker(IConfiguration configuration)
 
     public async Task PrepareAdvSearchAsync(AdvSearch model)
     {
-        await using var conn = new SqlConnection(_connectionString);
-        await conn.OpenAsync();
-
-        await using var command = new SqlCommand("dbo.pub_advsearch_prepare", conn)
-        {
-            CommandType = CommandType.StoredProcedure
-        };
-
-        await using var reader = await command.ExecuteReaderAsync();
-
-        var lookups = await ReadLookupsAsync(reader);
+        var metadataSql = SqlScripts.Get("pub_advsearch_prepare.sql");
+        var lookups = await GetCachedMetadataAsync(metadataSql);
 
         foreach (var language in lookups.Languages)
             model.Langs.Add(language);
@@ -204,10 +238,28 @@ public class Broker(IConfiguration configuration)
 
     public async Task DoAdvSearchAsync(AdvSearch model)
     {
+        //------------------------------------------------------------------
+        // Load metadata from cache
+        //------------------------------------------------------------------
+        var metadataSql = SqlScripts.Get("pub_advsearch_metadata.sql");
+        var lookups = await GetCachedMetadataAsync(metadataSql);
+
+        foreach (var language in lookups.Languages)
+            model.Langs.Add(language);
+
+        foreach (var datum in lookups.PosLabels)
+            model.PosLabels.Add(datum);
+
+        foreach (var datum in lookups.Domains)
+            model.Domains.Add(datum);
+
+        //------------------------------------------------------------------
+        // Generate dynamic SQL for query
+        //------------------------------------------------------------------
         var sql = SqlScripts.Get("pub_advsearch.sql");
 
         //------------------------------------------------------------------
-        // build SELECT clause (language-specific ordering)
+        // Build SELECT clause (language-specific ordering)
         //------------------------------------------------------------------
         var selectClause =
             model.Lang == "en"
@@ -217,7 +269,7 @@ public class Broker(IConfiguration configuration)
         sql = sql.Replace("/**select**/", selectClause);
 
         //------------------------------------------------------------------
-        // build first WHERE clause dynamically
+        // Build first WHERE clause dynamically
         //------------------------------------------------------------------
         var where1 = new List<string>
         {
@@ -260,7 +312,7 @@ public class Broker(IConfiguration configuration)
         sql = sql.Replace("/**where1**/", where1Clause);
 
         //------------------------------------------------------------------
-        // build second WHERE clause dynamically
+        // Build second WHERE clause dynamically
         //------------------------------------------------------------------
         var where2 = new List<string>();
 
@@ -282,7 +334,7 @@ public class Broker(IConfiguration configuration)
         sql = sql.Replace("/**where2**/", where2Clause);
 
         //------------------------------------------------------------------
-        // build third WHERE clause dynamically
+        // Build third WHERE clause dynamically
         //------------------------------------------------------------------
         var where3 = new List<string>
         {
@@ -300,7 +352,7 @@ public class Broker(IConfiguration configuration)
         sql = sql.Replace("/**where3**/", where3Clause);
 
         //------------------------------------------------------------------
-        // build third WHERE clause dynamically
+        // Build third WHERE clause dynamically
         //------------------------------------------------------------------
         var where4 = new List<string>();
 
@@ -319,7 +371,7 @@ public class Broker(IConfiguration configuration)
         sql = sql.Replace("/**where4**/", where4Clause);
 
         //------------------------------------------------------------------
-        // execute
+        // Execute and read query results
         //------------------------------------------------------------------
         await using var conn = new SqlConnection(_connectionString);
         await conn.OpenAsync();
@@ -347,24 +399,12 @@ public class Broker(IConfiguration configuration)
 
         await using var reader = await command.ExecuteReaderAsync();
 
-        var lookups = await ReadLookupsAsync(reader);
-
-        foreach (var language in lookups.Languages)
-            model.Langs.Add(language);
-
-        foreach (var datum in lookups.PosLabels)
-            model.PosLabels.Add(datum);
-
-        foreach (var datum in lookups.Domains)
-            model.Domains.Add(datum);
-
         // Sorting language
         model.SortLang = model.Lang;
         if (model.SortLang != "ga" && model.SortLang != "en")
             model.SortLang = "ga";
 
         // Xref targets
-        await reader.NextResultAsync();
         var xrefTargets = await ReadXrefTargetsAsync(reader);
 
         // Matches
@@ -418,6 +458,11 @@ public class Broker(IConfiguration configuration)
 
     public async Task DoIndexAsync(Models.Home.Index model)
     {
+        // Metadata
+        var metadataSql = SqlScripts.Get("pub_quicksearch_metadata.sql");
+        var lookups = await GetCachedMetadataAsync(metadataSql);
+
+        // Main query
         await using var conn = new SqlConnection(_connectionString);
         await conn.OpenAsync();
 
@@ -428,8 +473,6 @@ public class Broker(IConfiguration configuration)
 
         await using var reader = await command.ExecuteReaderAsync();
 
-        var lookups = await ReadLookupsAsync(reader);
-
         // Domains
         foreach (var md in lookups.Domains)
         {
@@ -438,7 +481,6 @@ public class Broker(IConfiguration configuration)
         }
 
         // Term of the day
-        await reader.NextResultAsync();
         if (await reader.ReadAsync())
         {
             int id = (int)reader["id"];
@@ -466,6 +508,11 @@ public class Broker(IConfiguration configuration)
 
     public async Task DoEntryAsync(Entry model)
     {
+        // Metadata
+        var metadataSql = SqlScripts.Get("pub_quicksearch_metadata.sql");
+        var lookups = await GetCachedMetadataAsync(metadataSql);
+
+        // Main query
         await using var conn = new SqlConnection(_connectionString);
         await conn.OpenAsync();
 
@@ -478,10 +525,7 @@ public class Broker(IConfiguration configuration)
 
         await using var reader = await command.ExecuteReaderAsync();
 
-        var lookups = await ReadLookupsAsync(reader);
-
         // Xref targets
-        await reader.NextResultAsync();
         var xrefTargets = await ReadXrefTargetsAsync(reader);
 
         // Entry
@@ -496,6 +540,13 @@ public class Broker(IConfiguration configuration)
 
     public async Task DoDomainAsync(Domain model)
     {
+        // Metadata
+        var metadataSql = SqlScripts.Get("pub_domain_metadata.sql");
+        var lookups = await GetCachedMetadataAsync(
+            metadataSql,
+            new Dictionary<string, object?> { ["lang"] = model.Lang });
+
+        // Main query
         await using var conn = new SqlConnection(_connectionString);
         await conn.OpenAsync();
 
@@ -517,8 +568,6 @@ public class Broker(IConfiguration configuration)
         command.Parameters.Add(totalParam);
 
         await using var reader = await command.ExecuteReaderAsync();
-
-        var lookups = await ReadLookupsAsync(reader);
 
         // Domain + parents + children
         if (lookups.DomainsById.TryGetValue(model.DomID, out var md))
@@ -549,7 +598,6 @@ public class Broker(IConfiguration configuration)
         }
 
         // Xref targets
-        await reader.NextResultAsync();
         var xrefTargets = await ReadXrefTargetsAsync(reader);
 
         // Matches
@@ -576,6 +624,9 @@ public class Broker(IConfiguration configuration)
 
     public async Task DoTodAsync(Models.Widgets.Tod model)
     {
+        var metadataSql = SqlScripts.Get("pub_tod_metadata.sql");
+        var lookups = await GetCachedMetadataAsync(metadataSql);
+
         await using var conn = new SqlConnection(_connectionString);
         await conn.OpenAsync();
 
@@ -586,9 +637,6 @@ public class Broker(IConfiguration configuration)
 
         await using var reader = await command.ExecuteReaderAsync();
 
-        var lookups = await ReadLookupsAsync(reader);
-
-        await reader.NextResultAsync();
         if (await reader.ReadAsync())
         {
             int id = (int)reader["id"];

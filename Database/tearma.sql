@@ -1,3 +1,6 @@
+USE [tearma]
+GO
+/****** Object:  UserDefinedFunction [dbo].[characterize]    Script Date: 01/04/2026 17:13:38 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -25,6 +28,7 @@ begin
 	return
 end
 GO
+/****** Object:  UserDefinedFunction [dbo].[expandDomainID]    Script Date: 01/04/2026 17:13:38 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -59,6 +63,7 @@ begin
     return 
 end
 GO
+/****** Object:  UserDefinedFunction [dbo].[levenshtein]    Script Date: 01/04/2026 17:13:38 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -151,6 +156,7 @@ RETURN @LD
 --print dbo.wrap(@z,3*(@n+1))
 END
 GO
+/****** Object:  UserDefinedFunction [dbo].[min3]    Script Date: 01/04/2026 17:13:38 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -168,6 +174,7 @@ BEGIN
     RETURN @m
 END
 GO
+/****** Object:  UserDefinedFunction [dbo].[substrings]    Script Date: 01/04/2026 17:13:38 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -194,6 +201,35 @@ begin
     return 
 end
 GO
+/****** Object:  UserDefinedFunction [dbo].[substrings_inline]    Script Date: 01/04/2026 17:13:38 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE FUNCTION [dbo].[substrings_inline]
+(
+    @str nvarchar(255),
+    @length int
+)
+RETURNS TABLE
+AS
+RETURN
+(
+    WITH n AS (
+        SELECT TOP (LEN(@str))
+            ROW_NUMBER() OVER (ORDER BY (SELECT NULL)) - 1 AS pos
+        FROM sys.all_objects
+    )
+    SELECT
+        Result   = SUBSTRING(@str, pos + 1, @length) COLLATE Latin1_General_BIN2,
+        Position = pos
+    FROM n
+    WHERE pos + @length <= LEN(@str)
+);
+
+GO
+/****** Object:  UserDefinedFunction [dbo].[spartanize]    Script Date: 01/04/2026 17:13:38 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -817,6 +853,127 @@ begin
 	return @text
 end
 GO
+/****** Object:  Table [dbo].[chars]    Script Date: 01/04/2026 17:13:38 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[chars](
+	[base] [nvarchar](1) COLLATE Latin1_General_BIN2 NOT NULL,
+	[variant] [nvarchar](1) COLLATE Latin1_General_BIN2 NOT NULL
+) ON [PRIMARY]
+GO
+/****** Object:  UserDefinedFunction [dbo].[characterize_inline]    Script Date: 01/04/2026 17:13:38 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE FUNCTION [dbo].[characterize_inline]
+(
+    @text nvarchar(255)
+)
+RETURNS TABLE
+AS
+RETURN
+(
+    WITH base AS (
+        SELECT
+            UPPER(c.base) AS Base,
+            COUNT(t.Result) AS Cnt
+        FROM chars AS c
+        LEFT JOIN dbo.substrings_inline(dbo.spartanize(@text), 1) AS t
+            ON c.variant = t.Result
+        GROUP BY UPPER(c.base)
+    )
+    SELECT
+        SUM(CASE WHEN Base = 'A' THEN Cnt ELSE 0 END) AS A,
+        SUM(CASE WHEN Base = 'B' THEN Cnt ELSE 0 END) AS B,
+        SUM(CASE WHEN Base = 'C' THEN Cnt ELSE 0 END) AS C,
+        SUM(CASE WHEN Base = 'D' THEN Cnt ELSE 0 END) AS D,
+        SUM(CASE WHEN Base = 'E' THEN Cnt ELSE 0 END) AS E,
+        SUM(CASE WHEN Base = 'F' THEN Cnt ELSE 0 END) AS F,
+        SUM(CASE WHEN Base = 'G' THEN Cnt ELSE 0 END) AS G,
+        SUM(CASE WHEN Base = 'H' THEN Cnt ELSE 0 END) AS H,
+        SUM(CASE WHEN Base = 'I' THEN Cnt ELSE 0 END) AS I,
+        SUM(CASE WHEN Base = 'J' THEN Cnt ELSE 0 END) AS J,
+        SUM(CASE WHEN Base = 'K' THEN Cnt ELSE 0 END) AS K,
+        SUM(CASE WHEN Base = 'L' THEN Cnt ELSE 0 END) AS L,
+        SUM(CASE WHEN Base = 'M' THEN Cnt ELSE 0 END) AS M,
+        SUM(CASE WHEN Base = 'N' THEN Cnt ELSE 0 END) AS N,
+        SUM(CASE WHEN Base = 'O' THEN Cnt ELSE 0 END) AS O,
+        SUM(CASE WHEN Base = 'P' THEN Cnt ELSE 0 END) AS P,
+        SUM(CASE WHEN Base = 'Q' THEN Cnt ELSE 0 END) AS Q,
+        SUM(CASE WHEN Base = 'R' THEN Cnt ELSE 0 END) AS R,
+        SUM(CASE WHEN Base = 'S' THEN Cnt ELSE 0 END) AS S,
+        SUM(CASE WHEN Base = 'T' THEN Cnt ELSE 0 END) AS T,
+        SUM(CASE WHEN Base = 'U' THEN Cnt ELSE 0 END) AS U,
+        SUM(CASE WHEN Base = 'V' THEN Cnt ELSE 0 END) AS V,
+        SUM(CASE WHEN Base = 'W' THEN Cnt ELSE 0 END) AS W,
+        SUM(CASE WHEN Base = 'X' THEN Cnt ELSE 0 END) AS X,
+        SUM(CASE WHEN Base = 'Y' THEN Cnt ELSE 0 END) AS Y,
+        SUM(CASE WHEN Base = 'Z' THEN Cnt ELSE 0 END) AS Z
+    FROM base
+);
+
+GO
+/****** Object:  Table [dbo].[metadata]    Script Date: 01/04/2026 17:13:38 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[metadata](
+	[id] [int] NOT NULL,
+	[type] [varchar](255) COLLATE Latin1_General_CI_AI NULL,
+	[json] [nvarchar](3000) COLLATE Latin1_General_CI_AI NULL,
+	[sortkeyGA] [nvarchar](512) COLLATE Latin1_General_CI_AI NULL,
+	[sortkeyEN] [nvarchar](512) COLLATE Latin1_General_CI_AI NULL,
+	[parentID] [int] NULL,
+ CONSTRAINT [PK__metadata__3213E83FD56CDBC2] PRIMARY KEY CLUSTERED 
+(
+	[id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  UserDefinedFunction [dbo].[expandDomainID_inline]    Script Date: 01/04/2026 17:13:38 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+create   function [dbo].[expandDomainID_inline]
+(
+      @domainID int
+    , @level    int = 0
+)
+returns table
+as
+return
+(
+    with cte as (
+        -- anchor: include the starting node, regardless of type
+        select
+              id    = @domainID
+            , level = @level
+
+        union all
+
+        -- recursive: walk domain children while level < 10
+        select
+              m.id
+            , c.level + 1
+        from metadata m
+        join cte c
+            on m.parentID = c.id
+        where m.type = 'domain'
+          and c.level < 10
+    )
+    select
+        id as domainID
+    from cte
+);
+GO
+/****** Object:  Table [dbo].[terms]    Script Date: 01/04/2026 17:13:38 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -826,14 +983,11 @@ CREATE TABLE [dbo].[terms](
 	[json] [nvarchar](max) COLLATE Latin1_General_CI_AI NULL,
 	[lang] [nvarchar](10) COLLATE Latin1_General_CI_AI NULL,
 	[wording] [nvarchar](255) COLLATE Latin1_General_CI_AS NULL,
-	[wordingSpartanized]  AS (([dbo].[spartanize]([wording])) collate Latin1_General_CI_AS) PERSISTED
+	[wordingSpartanized]  AS (([dbo].[spartanize]([wording])) collate Latin1_General_CI_AS) PERSISTED,
+	[wording_rev]  AS (reverse([wording])) PERSISTED
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 GO
-CREATE CLUSTERED INDEX [IX_terms] ON [dbo].[terms]
-(
-	[id] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
-GO
+/****** Object:  Table [dbo].[aux]    Script Date: 01/04/2026 17:13:38 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -849,15 +1003,7 @@ CREATE TABLE [dbo].[aux](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE TABLE [dbo].[chars](
-	[base] [nvarchar](1) COLLATE Latin1_General_BIN2 NOT NULL,
-	[variant] [nvarchar](1) COLLATE Latin1_General_BIN2 NOT NULL
-) ON [PRIMARY]
-GO
+/****** Object:  Table [dbo].[configs]    Script Date: 01/04/2026 17:13:38 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -871,6 +1017,7 @@ PRIMARY KEY CLUSTERED
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 GO
+/****** Object:  Table [dbo].[entries]    Script Date: 01/04/2026 17:13:38 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -890,6 +1037,7 @@ CREATE TABLE [dbo].[entries](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 GO
+/****** Object:  Table [dbo].[entry_domain]    Script Date: 01/04/2026 17:13:38 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -899,12 +1047,7 @@ CREATE TABLE [dbo].[entry_domain](
 	[superdomain] [int] NULL
 ) ON [PRIMARY]
 GO
-CREATE CLUSTERED INDEX [IX_entry_domain] ON [dbo].[entry_domain]
-(
-	[entry_id] ASC,
-	[superdomain] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
-GO
+/****** Object:  Table [dbo].[entry_term]    Script Date: 01/04/2026 17:13:38 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -915,12 +1058,7 @@ CREATE TABLE [dbo].[entry_term](
 	[accept] [int] NULL
 ) ON [PRIMARY]
 GO
-CREATE CLUSTERED INDEX [IX_entry_term] ON [dbo].[entry_term]
-(
-	[entry_id] ASC,
-	[term_id] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
-GO
+/****** Object:  Table [dbo].[entry_xref]    Script Date: 01/04/2026 17:13:38 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -930,12 +1068,7 @@ CREATE TABLE [dbo].[entry_xref](
 	[target_entry_id] [int] NOT NULL
 ) ON [PRIMARY]
 GO
-CREATE CLUSTERED INDEX [IX_entry_xref] ON [dbo].[entry_xref]
-(
-	[source_entry_id] ASC,
-	[target_entry_id] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
-GO
+/****** Object:  Table [dbo].[flex]    Script Date: 01/04/2026 17:13:38 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -947,23 +1080,33 @@ CREATE TABLE [dbo].[flex](
 	[token] [nvarchar](255) COLLATE Latin1_General_CI_AS NOT NULL
 ) ON [PRIMARY]
 GO
+/****** Object:  Table [dbo].[search_text]    Script Date: 01/04/2026 17:13:38 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE TABLE [dbo].[metadata](
-	[id] [int] NOT NULL,
-	[type] [varchar](255) COLLATE Latin1_General_CI_AI NULL,
-	[json] [nvarchar](max) COLLATE Latin1_General_CI_AI NULL,
-	[sortkeyGA] [nvarchar](max) COLLATE Latin1_General_CI_AS NULL,
-	[sortkeyEN] [nvarchar](max) COLLATE Latin1_General_CI_AS NULL,
-	[parentID] [int] NULL,
- CONSTRAINT [PK__metadata__3213E83FD56CDBC2] PRIMARY KEY CLUSTERED 
+CREATE TABLE [dbo].[search_text](
+	[id] [int] IDENTITY(1,1) NOT NULL,
+	[searchText] [nvarchar](255) COLLATE Latin1_General_CI_AI NOT NULL,
+	[created] [datetime] NOT NULL,
+ CONSTRAINT [PK_search_text] PRIMARY KEY CLUSTERED 
 (
 	[id] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
-) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+) ON [PRIMARY]
 GO
+/****** Object:  Table [dbo].[similar]    Script Date: 01/04/2026 17:13:38 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[similar](
+	[searchTextID] [int] NOT NULL,
+	[similar] [nvarchar](255) COLLATE Latin1_General_CI_AI NOT NULL,
+	[diff] [int] NOT NULL
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[spelling]    Script Date: 01/04/2026 17:13:38 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -997,39 +1140,11 @@ CREATE TABLE [dbo].[spelling](
 	[X] [int] NOT NULL,
 	[Y] [int] NOT NULL,
 	[Z] [int] NOT NULL,
-	[length] [int] NOT NULL
+	[length] [int] NOT NULL,
+	[first_char]  AS (left([word],(1))) PERSISTED
 ) ON [PRIMARY]
 GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE TABLE [dbo].[tblSearchText](
-	[ID] [int] IDENTITY(1,1) NOT NULL,
-	[SearchText] [nvarchar](255) COLLATE Latin1_General_CI_AI NOT NULL,
-	[Created] [datetime] NOT NULL,
- CONSTRAINT [PK_tblSearchText] PRIMARY KEY CLUSTERED 
-(
-	[ID] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
-) ON [PRIMARY]
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE TABLE [dbo].[tblSimilar](
-	[SearchTextID] [int] NOT NULL,
-	[Similar] [nvarchar](255) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
-	[Diff] [int] NOT NULL
-) ON [PRIMARY]
-GO
-CREATE CLUSTERED INDEX [IX_tblSimilar] ON [dbo].[tblSimilar]
-(
-	[SearchTextID] ASC,
-	[Diff] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
-GO
+/****** Object:  Table [dbo].[term_pos]    Script Date: 01/04/2026 17:13:38 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -1039,12 +1154,7 @@ CREATE TABLE [dbo].[term_pos](
 	[pos_id] [int] NOT NULL
 ) ON [PRIMARY]
 GO
-CREATE CLUSTERED INDEX [IX_term_pos] ON [dbo].[term_pos]
-(
-	[term_id] ASC,
-	[pos_id] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
-GO
+/****** Object:  Table [dbo].[words]    Script Date: 01/04/2026 17:13:38 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -1054,226 +1164,16 @@ CREATE TABLE [dbo].[words](
 	[word] [nvarchar](255) COLLATE Latin1_General_CI_AS NULL
 ) ON [PRIMARY]
 GO
-SET ANSI_PADDING ON
+ALTER TABLE [dbo].[search_text] ADD  CONSTRAINT [DF_search_text_created]  DEFAULT (getdate()) FOR [created]
 GO
-CREATE CLUSTERED INDEX [IX_words] ON [dbo].[words]
-(
-	[term_id] ASC,
-	[word] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
-GO
-CREATE NONCLUSTERED INDEX [IX_entries_dateStamp] ON [dbo].[entries]
-(
-	[dateStamp] ASC
-)
-INCLUDE([pStatus],[json]) WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
-GO
-SET ANSI_PADDING ON
-GO
-CREATE NONCLUSTERED INDEX [IX_entries_sortkeyEN] ON [dbo].[entries]
-(
-	[sortkeyEN] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
-GO
-SET ANSI_PADDING ON
-GO
-CREATE NONCLUSTERED INDEX [IX_entries_sortkeyGA] ON [dbo].[entries]
-(
-	[sortkeyGA] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
-GO
-CREATE NONCLUSTERED INDEX [IX_entries_tod] ON [dbo].[entries]
-(
-	[tod] ASC
-)
-INCLUDE([dateStamp],[pStatus],[json]) WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
-GO
-CREATE NONCLUSTERED INDEX [IX_entry_domain_entry_id] ON [dbo].[entry_domain]
-(
-	[entry_id] ASC
-)
-INCLUDE([superdomain]) WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
-GO
-CREATE NONCLUSTERED INDEX [IX_entry_domain_superdomain] ON [dbo].[entry_domain]
-(
-	[superdomain] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
-GO
-CREATE NONCLUSTERED INDEX [IX_entry_term_1] ON [dbo].[entry_term]
-(
-	[entry_id] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
-GO
-CREATE NONCLUSTERED INDEX [IX_entry_term_2] ON [dbo].[entry_term]
-(
-	[term_id] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
-GO
-CREATE NONCLUSTERED INDEX [IX_entry_xref_source] ON [dbo].[entry_xref]
-(
-	[source_entry_id] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
-GO
-CREATE NONCLUSTERED INDEX [IX_entry_xref_target] ON [dbo].[entry_xref]
-(
-	[target_entry_id] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
-GO
-SET ANSI_PADDING ON
-GO
-CREATE NONCLUSTERED INDEX [IX_flex_lemma] ON [dbo].[flex]
-(
-	[lemma] ASC,
-	[lang] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
-GO
-SET ANSI_PADDING ON
-GO
-CREATE NONCLUSTERED INDEX [IX_flex_lemma_INC_token_lang] ON [dbo].[flex]
-(
-	[lemma] ASC
-)
-INCLUDE([token],[lang]) WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
-GO
-SET ANSI_PADDING ON
-GO
-CREATE NONCLUSTERED INDEX [IX_flex_token] ON [dbo].[flex]
-(
-	[token] ASC,
-	[lang] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
-GO
-SET ANSI_PADDING ON
-GO
-CREATE NONCLUSTERED INDEX [IX_flex_token_INC_lemma_lang] ON [dbo].[flex]
-(
-	[token] ASC
-)
-INCLUDE([lemma],[lang]) WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
-GO
-CREATE NONCLUSTERED INDEX [IX_metadata_parentID] ON [dbo].[metadata]
-(
-	[parentID] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
-GO
-SET ANSI_PADDING ON
-GO
-CREATE NONCLUSTERED INDEX [IX_metadata_parentID_type] ON [dbo].[metadata]
-(
-	[parentID] ASC,
-	[type] ASC
-)
-INCLUDE([id]) WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
-GO
-SET ANSI_PADDING ON
-GO
-CREATE NONCLUSTERED INDEX [IX_spelling_length] ON [dbo].[spelling]
-(
-	[length] ASC,
-	[A] ASC,
-	[B] ASC,
-	[C] ASC,
-	[D] ASC,
-	[E] ASC,
-	[F] ASC,
-	[G] ASC,
-	[H] ASC,
-	[I] ASC,
-	[J] ASC,
-	[K] ASC,
-	[L] ASC,
-	[M] ASC,
-	[N] ASC,
-	[O] ASC,
-	[P] ASC,
-	[Q] ASC,
-	[R] ASC,
-	[S] ASC,
-	[T] ASC,
-	[U] ASC,
-	[V] ASC,
-	[W] ASC,
-	[X] ASC,
-	[Y] ASC,
-	[Z] ASC,
-	[word] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
-GO
-SET ANSI_PADDING ON
-GO
-CREATE NONCLUSTERED INDEX [IX_spelling_word_length] ON [dbo].[spelling]
-(
-	[word] ASC,
-	[length] ASC
-)
-INCLUDE([A],[B],[C],[D],[E],[F],[G],[H],[I],[J],[K],[L],[M],[N],[O],[P],[Q],[R],[S],[T],[U],[V],[W],[X],[Y],[Z]) WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
-GO
-CREATE NONCLUSTERED INDEX [IX_tblSearchText_Created] ON [dbo].[tblSearchText]
-(
-	[Created] DESC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
-GO
-CREATE NONCLUSTERED INDEX [IX_term_pos_pos_id] ON [dbo].[term_pos]
-(
-	[pos_id] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
-GO
-CREATE NONCLUSTERED INDEX [IX_term_pos_term_id] ON [dbo].[term_pos]
-(
-	[term_id] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
-GO
-SET ANSI_PADDING ON
-GO
-CREATE NONCLUSTERED INDEX [IX_terms_1] ON [dbo].[terms]
-(
-	[id] ASC,
-	[lang] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
-GO
-SET ANSI_PADDING ON
-GO
-CREATE NONCLUSTERED INDEX [IX_terms_2] ON [dbo].[terms]
-(
-	[wording] ASC,
-	[lang] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
-GO
-SET ARITHABORT ON
-SET CONCAT_NULL_YIELDS_NULL ON
-SET QUOTED_IDENTIFIER ON
-SET ANSI_NULLS ON
-SET ANSI_PADDING ON
-SET ANSI_WARNINGS ON
-SET NUMERIC_ROUNDABORT OFF
-GO
-CREATE NONCLUSTERED INDEX [IX_terms_3] ON [dbo].[terms]
-(
-	[wordingSpartanized] ASC,
-	[lang] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
-GO
-CREATE NONCLUSTERED INDEX [IX_words_1] ON [dbo].[words]
-(
-	[term_id] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
-GO
-SET ANSI_PADDING ON
-GO
-CREATE NONCLUSTERED INDEX [IX_words_2] ON [dbo].[words]
-(
-	[word] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
-GO
-ALTER TABLE [dbo].[tblSearchText] ADD  CONSTRAINT [DF_tblSearchText_Created]  DEFAULT (getdate()) FOR [Created]
-GO
-ALTER TABLE [dbo].[tblSimilar]  WITH CHECK ADD  CONSTRAINT [FK_tblSimilar_tblSearchText] FOREIGN KEY([SearchTextID])
-REFERENCES [dbo].[tblSearchText] ([ID])
+ALTER TABLE [dbo].[similar]  WITH CHECK ADD  CONSTRAINT [FK_similar_search_text] FOREIGN KEY([searchTextID])
+REFERENCES [dbo].[search_text] ([id])
 ON UPDATE CASCADE
 ON DELETE CASCADE
 GO
-ALTER TABLE [dbo].[tblSimilar] CHECK CONSTRAINT [FK_tblSimilar_tblSearchText]
+ALTER TABLE [dbo].[similar] CHECK CONSTRAINT [FK_similar_search_text]
 GO
+/****** Object:  StoredProcedure [dbo].[propag_deleteEntry]    Script Date: 01/04/2026 17:13:38 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -1303,6 +1203,7 @@ delete from spelling where term_id in (select id from @orphs)
 
 end
 GO
+/****** Object:  StoredProcedure [dbo].[propag_deleteMetadatum]    Script Date: 01/04/2026 17:13:38 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -1318,6 +1219,7 @@ delete from metadata where id=@id
 
 end
 GO
+/****** Object:  StoredProcedure [dbo].[propag_saveConfig]    Script Date: 01/04/2026 17:13:38 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -1341,6 +1243,7 @@ end
 
 end
 GO
+/****** Object:  StoredProcedure [dbo].[propag_saveEntry]    Script Date: 01/04/2026 17:13:38 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -1473,6 +1376,7 @@ begin
 end
 end
 GO
+/****** Object:  StoredProcedure [dbo].[propag_saveMetadatum]    Script Date: 01/04/2026 17:13:38 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -1503,606 +1407,946 @@ where id=@id
 
 end
 GO
+/****** Object:  StoredProcedure [dbo].[pub_domain]    Script Date: 01/04/2026 17:13:38 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE procedure [dbo].[pub_advsearch]
-  @word nvarchar(255)
-, @length nvarchar(2)
-, @extent nvarchar(2)
-, @lang nvarchar(255) --empty string means any language
-, @pos int = 0 --zero means any pos
-, @dom int = 0 --zero means any domain
-, @page int = 1
-, @total int output
-as
-begin
 
---return lingo and metadata:
-select * from configs where id='lingo'
-select id, type, json, sortkeyGA, 0 as hasChildren from metadata where type in('acceptLabel', 'inflectLabel', 'posLabel')
-union
-select m.id, m.type, m.json, m.sortkeyGA, count(ch.id) as hasChildren
-from metadata as m
-left outer join metadata as ch on ch.parentID=m.id
-where m.type='domain'
-group by m.id, m.type, m.json, m.sortkeyGA
-order by sortkeyGA
-
---get all matching entry IDs:
-declare @matches table(entry_id int, rownum int)
-if(@extent<>'ft')
-begin
-	insert into @matches(entry_id, rownum)
-	select distinct ret.id, ROW_NUMBER() over(order by case when @lang='en' then ret.sortkeyEN else ret.sortkeyGA end)
-	from (
-		select distinct e.id, e.sortkeyEN, e.sortkeyGA
-		from entries as e
-		inner join entry_term as et on et.entry_id=e.id
-		inner join terms as t on t.id=et.term_id
-		left outer join term_pos as tp on tp.term_id=t.id
-		left outer join entry_domain as ed on ed.entry_id=e.id
-		where (@lang='' or @lang=t.lang)
-		and (@pos=0 or tp.pos_id=@pos)
-		and (@dom=0 or ed.superdomain in (select domainID from [dbo].[expandDomainID](@dom, default)))
-		and e.pStatus=1
-		and (
-			   (@length='sw' and t.wording not like '% %')
-			or (@length='mw' and t.wording like '% %')
-			or (@length='al')
-		)
-		and (
-			   (@extent='al' and t.wording like @word escape '\')
-			or (@extent='st' and t.wording like @word+'%' escape '\')
-			or (@extent='ed' and t.wording like '%'+@word escape '\')
-			or (@extent='pt' and t.wording like '%'+@word+'%' escape '\')
-			or (@extent='md' and t.wording like '_%'+@word+'%_' escape '\')
-		)
-	) as ret
-end
-else
-begin
-	declare @words table(word nvarchar(max))
-	insert into @words(word) select display_term
-		from sys.dm_fts_parser(N'"'+replace(@word, '"', ' ')+'"', 0, null, 1)
-		where special_term in ('Noise Word', 'Exact Match')
-	declare @relateds table(entry_id int, lang nvarchar(10), term_id int)
-	declare @temp table(entry_id int, term_id int)
-	declare @tokens table(token nvarchar(255), lang nvarchar(10))
-	--first word:
-	declare @word1 nvarchar(max); select top 1 @word1=word from @words
-	delete from @tokens; insert into @tokens(token, lang) values(@word1, ''); insert into @tokens(token, lang) select token, lang from flex where lemma=@word1
-	insert into @relateds(entry_id, lang, term_id) select distinct e.id, t.lang, t.id from entries as e
-		inner join entry_term as et on et.entry_id=e.id
-		inner join terms as t on t.id=et.term_id
-		inner join words as w on w.term_id=t.id and w.word in (select token collate Latin1_General_CI_AS from @tokens)
-		inner join @tokens as tok on tok.token=w.word collate Latin1_General_CI_AS and (tok.lang=t.lang or tok.lang='')
-		where (@lang='' or @lang=t.lang)
-		and (
-			   (@length='sw' and t.wording not like '% %')
-			or (@length='mw' and t.wording like '% %')
-			or (@length='al')
-		)
-	--second word:
-	declare @word2 nvarchar(max); select top 2 @word2=word from @words
-	if(@word2<>@word1)
-	begin
-		delete from @temp; insert into @temp(entry_id, term_id) select entry_id, term_id from @relateds; delete from @relateds
-		delete from @tokens; insert into @tokens(token, lang) values(@word2, ''); insert into @tokens(token, lang) select token, lang from flex where lemma=@word2
-		insert into @relateds(entry_id, lang, term_id) select distinct e.id, t.lang, t.id from entries as e
-			inner join @temp as temp on temp.entry_id=e.id
-			inner join entry_term as et on et.entry_id=e.id
-			inner join terms as t on t.id=et.term_id
-			inner join words as w on w.term_id=t.id and w.word in (select token collate Latin1_General_CI_AS from @tokens)
-			inner join @tokens as tok on tok.token=w.word collate Latin1_General_CI_AS and (tok.lang=t.lang or tok.lang='')
-			where (@lang='' or @lang=t.lang) and exists( select * from @temp as temp where temp.term_id=t.id and temp.entry_id=e.id )
-	end
-	--third word:
-	declare @word3 nvarchar(max); select top 3 @word3=word from @words
-	if(@word3<>@word2 and @word3<>@word1)
-	begin
-		delete from @temp; insert into @temp(entry_id, term_id) select entry_id, term_id from @relateds; delete from @relateds
-		delete from @tokens; insert into @tokens(token, lang) values(@word3, ''); insert into @tokens(token, lang) select token, lang from flex where lemma=@word3
-		insert into @relateds(entry_id, lang, term_id) select distinct e.id, t.lang, t.id from entries as e
-			inner join @temp as temp on temp.entry_id=e.id
-			inner join entry_term as et on et.entry_id=e.id
-			inner join terms as t on t.id=et.term_id
-			inner join words as w on w.term_id=t.id and w.word in (select token collate Latin1_General_CI_AS from @tokens)
-			inner join @tokens as tok on tok.token=w.word collate Latin1_General_CI_AS and (tok.lang=t.lang or tok.lang='')
-			where (@lang='' or @lang=t.lang) and exists( select * from @temp as temp where temp.term_id=t.id and temp.entry_id=e.id )
-	end
-	--return:
-	insert into @matches(entry_id, rownum)
-	select distinct ret.id, ROW_NUMBER() over(order by case when @lang='en' then ret.sortkeyEN else ret.sortkeyGA end)
-	from (
-		select distinct e.id, e.sortkeyEN, e.sortkeyGA
-		from entries as e
-		inner join @relateds as ids on ids.entry_id=e.id
-
-		left outer join term_pos as tp on tp.term_id=ids.term_id
-		left outer join entry_domain as ed on ed.entry_id=ids.entry_id
-
-		where (@pos=0 or tp.pos_id=@pos)
-		and (@dom=0 or ed.superdomain in (select domainID from [dbo].[expandDomainID](@dom, default)))
-	) as ret
-end
-
---compute paging data:
-declare @lastRow int; select @lastRow=count(*) from @matches
-declare @maxPage int; set @maxPage=@lastRow/100; if(@lastRow%100 > 0) set @maxPage=@maxPage+1
-if(@page>@maxPage) set @page=@maxPage
-declare @firstRow int; set @firstRow=(@page*100)-99
-
---return xtref targets:
-select * from entries as trg
-	inner join entry_xref as x on x.target_entry_id=trg.id
-	inner join @matches as src on src.entry_id=x.source_entry_id
-
---return matches:
-select @total=count(*) from @matches
-select top 100 e.*
-from entries as e
-inner join @matches as m on m.entry_id=e.id
-where m.rownum>=@firstRow
-order by m.rownum
-
---return pager:
-select @page as [currentPage], @maxPage as [maxPage]
-
-end
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE procedure [dbo].[pub_advsearch_prepare]
-as
-begin
-
---return lingo and metadata:
-select * from configs where id='lingo'
-select id, type, json, sortkeyGA, 0 as hasChildren from metadata where type ='posLabel'
-union
-select m.id, m.type, m.json, m.sortkeyGA, count(ch.id) as hasChildren
-from metadata as m
-left outer join metadata as ch on ch.parentID=m.id
-where m.type='domain'
-group by m.id, m.type, m.json, m.sortkeyGA
-order by sortkeyGA
-
-end
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
 CREATE procedure [dbo].[pub_domain]
-  @lang nvarchar(255) --empty string means any language
-, @domID int
-, @page int = 1
-, @total int output
+    @lang nvarchar(255),
+    @domID int,
+    @page int = 1,
+    @total int output
 as
 begin
+    set nocount on;
 
---return lingo and metadata:
-select * from configs where id='lingo'
-if @lang='ga'
-	select id, type, json, sortkeyGA, 0 as hasChildren from metadata where type in ('acceptLabel', 'inflectLabel', 'posLabel')
-	union
-	select m.id, m.type, m.json, m.sortkeyGA, count(ch.id) as hasChildren
-	from metadata as m
-	left outer join metadata as ch on ch.parentID=m.id
-	where m.type='domain'
-	group by m.id, m.type, m.json, m.sortkeyGA
-	order by sortkeyGA
-else if @lang='en'
-	select id, type, json, sortkeyEN, 0 as hasChildren from metadata where type in ('acceptLabel', 'inflectLabel', 'posLabel')
-	union
-	select m.id, m.type, m.json, m.sortkeyEN, count(ch.id) as hasChildren
-	from metadata as m
-	left outer join metadata as ch on ch.parentID=m.id
-	where m.type='domain'
-	group by m.id, m.type, m.json, m.sortkeyEN
-	order by sortkeyEN
+    -------------------------------------------------------------------------
+    -- expand domain IDs
+    -------------------------------------------------------------------------
+    create table #domainIDs (domainID int);
 
+    insert into #domainIDs(domainID)
+		select domainID
+		from dbo.expandDomainID_inline(@domID, default);
 
---get all matching entry IDs:
-declare @domainIDs table(domainID int)
-insert into @domainIDs(domainID)
-	select domainID from [dbo].[expandDomainID](@domID, default)
-	
-declare @matches table(entry_id int, rownum int)
-insert into @matches(entry_id, rownum)
-	select distinct e.id, ROW_NUMBER() over(order by case when @lang='en' then e.sortkeyEN else e.sortkeyGA end)
-	from entries as e
-	inner join entry_domain as ed on ed.entry_id=e.id
-	inner join @domainIDs as di on di.domainID=ed.superdomain
-	where e.pStatus=1
+    create index ix_domainIDs on #domainIDs(domainID);
 
---compute paging data:
-declare @lastRow int; select @lastRow=count(*) from @matches
-declare @maxPage int; set @maxPage=@lastRow/100; if(@lastRow%100 > 0) set @maxPage=@maxPage+1
-if(@page>@maxPage) set @page=@maxPage
-declare @firstRow int; set @firstRow=(@page*100)-99
+    -------------------------------------------------------------------------
+    -- match entries
+    -------------------------------------------------------------------------
+    create table #matches (
+        entry_id int,
+        rownum int
+    );
+    create index ix_matches_entry on #matches(entry_id);
+	create index ix_matches_rownum on #matches(rownum) include (entry_id);
 
---return xtref targets:
-select * from entries as trg
-	inner join entry_xref as x on x.target_entry_id=trg.id
-	inner join @matches as src on src.entry_id=x.source_entry_id
+	if @lang = 'ga'
+	begin
+		insert into #matches(entry_id, rownum)
+			select e.id, row_number() over (order by e.sortkeyGA)
+			from entries e
+			join entry_domain ed on ed.entry_id = e.id
+			join #domainIDs di on di.domainID = ed.superdomain
+			where e.pStatus = 1;
+	end
+	else
+	begin
+		insert into #matches(entry_id, rownum)
+			select e.id, row_number() over (order by e.sortkeyEN)
+			from entries e
+			join entry_domain ed on ed.entry_id = e.id
+			join #domainIDs di on di.domainID = ed.superdomain
+			where e.pStatus = 1;
+	end
 
---return matches:
-select @total=count(*) from @matches
-select top 100 e.*
-from entries as e
-inner join @matches as m on m.entry_id=e.id
-where m.rownum>=@firstRow
-order by m.rownum
+    -------------------------------------------------------------------------
+    -- paging
+    -------------------------------------------------------------------------
+    declare @lastRow int = (select count(*) from #matches);
+    declare @maxPage int = @lastRow / 100 + case when @lastRow % 100 > 0 then 1 else 0 end;
 
---return pager:
-select @page as [currentPage], @maxPage as [maxPage]
+    if @page > @maxPage set @page = @maxPage;
+    declare @firstRow int = (@page * 100) - 99;
 
+    -------------------------------------------------------------------------
+    -- xrefs
+    -------------------------------------------------------------------------
+    select trg.*
+    from entries trg
+    join entry_xref x on x.target_entry_id = trg.id
+    join #matches src on src.entry_id = x.source_entry_id;
+
+    -------------------------------------------------------------------------
+    -- matches
+    -------------------------------------------------------------------------
+    select @total = count(*) from #matches;
+
+    select top (100) e.*
+    from entries e
+    join #matches m on m.entry_id = e.id
+    where m.rownum >= @firstRow
+    order by m.rownum;
+
+    -------------------------------------------------------------------------
+    -- pager
+    -------------------------------------------------------------------------
+    select @page as currentPage,
+           @maxPage as maxPage;
 end
 GO
+/****** Object:  StoredProcedure [dbo].[pub_domains]    Script Date: 01/04/2026 17:13:38 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
+
 CREATE procedure [dbo].[pub_domains]
-  @lang nvarchar(255)
+    @lang nvarchar(255)
 as
 begin
+    set nocount on;
 
---return lingo and metadata:
-select * from configs where id='lingo'
---if(@lang='en') select *, 0 as hasChildren from metadata where [type]='domain' order by sortkeyEN else select *, 0 as hasChildren from metadata where [type]='domain' order by sortkeyGA
-if @lang='ga'
-	select m.id, m.type, m.json, m.sortkeyGA, count(ch.id) as hasChildren
-	from metadata as m
-	left outer join metadata as ch on ch.parentID=m.id
-	where m.type='domain'
-	group by m.id, m.type, m.json, m.sortkeyGA
-	order by sortkeyGA
-else if @lang='en'
-	select m.id, m.type, m.json, m.sortkeyEN, count(ch.id) as hasChildren
-	from metadata as m
-	left outer join metadata as ch on ch.parentID=m.id
-	where m.type='domain'
-	group by m.id, m.type, m.json, m.sortkeyEN
-	order by sortkeyEN
+    -------------------------------------------------------------------------
+    -- lingo
+    -------------------------------------------------------------------------
+    select *
+    from configs
+    where id = 'lingo';
 
-
-
+    -------------------------------------------------------------------------
+    -- domains (ga or en ordering)
+    -------------------------------------------------------------------------
+    if @lang = 'ga'
+    begin
+        select
+            m.id,
+            m.type,
+            m.json,
+            m.sortkeyGA as sortkey,
+            count(ch.id) as hasChildren
+        from metadata m
+        left join metadata ch on ch.parentID = m.id
+        where m.type = 'domain'
+        group by m.id, m.type, m.json, m.sortkeyGA
+        order by m.sortkeyGA;
+    end
+    else if @lang = 'en'
+    begin
+        select
+            m.id,
+            m.type,
+            m.json,
+            m.sortkeyEN as sortkey,
+            count(ch.id) as hasChildren
+        from metadata m
+        left join metadata ch on ch.parentID = m.id
+        where m.type = 'domain'
+        group by m.id, m.type, m.json, m.sortkeyEN
+        order by m.sortkeyEN;
+    end
 end
+
 GO
+/****** Object:  StoredProcedure [dbo].[pub_entry]    Script Date: 01/04/2026 17:13:38 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
+
 CREATE procedure [dbo].[pub_entry]
-  @id int
+    @id int
 as
 begin
+    set nocount on;
 
---return lingo and metadata:
-select * from configs where id='lingo'
-select *, 0 as hasChildren from metadata where type in ('acceptLabel', 'inflectLabel', 'posLabel', 'domain') order by sortkeyGA
+    -------------------------------------------------------------------------
+    -- xref targets
+    -------------------------------------------------------------------------
+    select trg.*
+    from entries trg
+    join entry_xref x on x.target_entry_id = trg.id
+    where x.source_entry_id = @id;
 
---return xtref targets:
-select * from entries as trg
-	inner join entry_xref as x on x.target_entry_id=trg.id
-	where x.source_entry_id=@id
-
---return entry:
-select * from entries where pStatus=1 and id=@id
-
+    -------------------------------------------------------------------------
+    -- entry
+    -------------------------------------------------------------------------
+    select *
+    from entries
+    where pStatus = 1
+      and id = @id;
 end
+
 GO
+/****** Object:  StoredProcedure [dbo].[pub_index]    Script Date: 01/04/2026 17:13:38 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
+
 CREATE procedure [dbo].[pub_index]
 as
 begin
+    set nocount on;
 
---return lingo and metadata:
-select * from configs where id='lingo'
-select *, 0 as hasChildren from metadata where type in ('acceptLabel', 'inflectLabel', 'posLabel', 'domain') order by sortkeyGA
+    -------------------------------------------------------------------------
+    -- entry of the day
+    -------------------------------------------------------------------------
+    select top (1) id, json
+    from entries
+    where pStatus = 1
+      and tod = convert(date, getdate())
+    order by dateStamp desc, id desc;
 
---return entry of the day:
-select top 1 id, json from entries where pStatus=1 and tod=convert(date, getdate()) order by dateStamp desc, ID desc
+    -------------------------------------------------------------------------
+    -- recently changed entries
+    -------------------------------------------------------------------------
+    select top (20) id, json
+    from entries
+    where pStatus = 1
+    order by dateStamp desc;
 
---return recently changed entries:
-select top 20 id, json from entries where pStatus=1 and dateStamp>'1900-01-01' order by dateStamp desc
+    -------------------------------------------------------------------------
+    -- announcement
+    -------------------------------------------------------------------------
+    declare @now datetime = getdate();
 
---return announcement:
-declare @now datetime
-set @now=getdate()
-select
-  JSON_VALUE(json, '$.text.ga') as TextGA
-, JSON_VALUE(json, '$.text.en') as TextEN
-from configs
-where id='news'
-and convert(date, JSON_VALUE(json, '$.from.date'))<=convert(date, @now)
-and (JSON_VALUE(json, '$.from.time')='' or convert(time, JSON_VALUE(json, '$.from.time'))<=convert(time, @now))
-and convert(date, JSON_VALUE(json, '$.till.date'))>=convert(date, @now)
-and (JSON_VALUE(json, '$.till.time')='' or convert(time, JSON_VALUE(json, '$.till.time'))>=convert(time, @now))
-
+    select
+        json_value(json, '$.text.ga') as textGA,
+        json_value(json, '$.text.en') as textEN
+    from configs
+    where id = 'news'
+      and convert(date, json_value(json, '$.from.date')) <= convert(date, @now)
+      and (json_value(json, '$.from.time') = ''
+           or convert(time, json_value(json, '$.from.time')) <= convert(time, @now))
+      and convert(date, json_value(json, '$.till.date')) >= convert(date, @now)
+      and (json_value(json, '$.till.time') = ''
+           or convert(time, json_value(json, '$.till.time')) >= convert(time, @now));
 end
 GO
+/****** Object:  StoredProcedure [dbo].[pub_peek]    Script Date: 01/04/2026 17:13:38 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
+
 CREATE procedure [dbo].[pub_peek]
-  @word nvarchar(255)
+    @word nvarchar(255)
 as
 begin
+    set nocount on;
 
-declare @wordSpartanized nvarchar(255)
-set @wordSpartanized=dbo.spartanize(@word)
+    -------------------------------------------------------------------------
+    -- preprocess input
+    -------------------------------------------------------------------------
+    declare @wordSpartanized nvarchar(255) = dbo.spartanize(@word);
 
---find exact matches:
-declare @exacts table(entry_id int, lang nvarchar(10))
-insert into @exacts(entry_id, lang) select e.id, t.lang from entries as e
-	inner join entry_term as et on et.entry_id=e.id
-	inner join terms as t on t.id=et.term_id
-	--where t.wording=@word and e.pStatus=1
-	where t.wordingSpartanized=@wordSpartanized and e.pStatus=1
+    -------------------------------------------------------------------------
+    -- exact matches
+    -------------------------------------------------------------------------
+    create table #exacts (entry_id int, lang nvarchar(10) collate Latin1_General_CI_AI);
+    create clustered index ix_exacts on #exacts(entry_id, lang);
 
---find related matches:
-declare @words table(word nvarchar(max))
-insert into @words(word) select dbo.spartanize(display_term)
-	from sys.dm_fts_parser(N'"'+replace(replace(@word, '-', ' '), '"', ' ')+'"', 0, null, 1)
-	where special_term in ('Noise Word', 'Exact Match')
-	order by len(display_term) desc
-declare @relateds table(entry_id int, lang nvarchar(10), term_id int)
-declare @temp table(entry_id int, term_id int)
-declare @tokens table(token nvarchar(255), lang nvarchar(10))
---first word:
-declare @word1 nvarchar(max); select top 1 @word1=word from @words;
-delete from @tokens; insert into @tokens(token, lang) values(@word1, ''); insert into @tokens(token, lang) select token, lang from flex where lemma=@word1; insert into @tokens(token, lang) select lemma, lang from flex where token=@word1
-insert into @relateds(entry_id, lang, term_id) select distinct e.id, t.lang, t.id from entries as e
-	inner join entry_term as et on et.entry_id=e.id
-	inner join terms as t on t.id=et.term_id
-	inner join words as w on w.term_id=t.id
-	inner join @tokens as tok on tok.token=w.word collate Latin1_General_CI_AS and (tok.lang=t.lang or tok.lang='')
---second word:
-declare @word2 nvarchar(max); select top 2 @word2=word from @words
-if(@word2<>@word1)
-begin
-	delete from @temp; insert into @temp(entry_id, term_id) select entry_id, term_id from @relateds; delete from @relateds
-	delete from @tokens; insert into @tokens(token, lang) values(@word2, ''); insert into @tokens(token, lang) select token, lang from flex where lemma=@word2; insert into @tokens(token, lang) select lemma, lang from flex where token=@word2
-	insert into @relateds(entry_id, lang, term_id) select distinct e.id, t.lang, t.id from entries as e
-		inner join @temp as temp on temp.entry_id=e.id and temp.entry_id=e.id
-		inner join entry_term as et on et.entry_id=e.id
-		inner join terms as t on t.id=et.term_id
-		inner join words as w on w.term_id=t.id
-		inner join @tokens as tok on tok.token=w.word collate Latin1_General_CI_AS and (tok.lang=t.lang or tok.lang='')
-end
---third word:
-declare @word3 nvarchar(max); select top 3 @word3=word from @words
-if(@word3<>@word2 and @word3<>@word1)
-begin
-	delete from @temp; insert into @temp(entry_id, term_id) select entry_id, term_id from @relateds; delete from @relateds
-	delete from @tokens; insert into @tokens(token, lang) values(@word3, ''); insert into @tokens(token, lang) select token, lang from flex where lemma=@word3; insert into @tokens(token, lang) select lemma, lang from flex where token=@word3
-	insert into @relateds(entry_id, lang, term_id) select distinct e.id, t.lang, t.id from entries as e
-		inner join @temp as temp on temp.entry_id=e.id and temp.entry_id=e.id
-		inner join entry_term as et on et.entry_id=e.id
-		inner join terms as t on t.id=et.term_id
-		inner join words as w on w.term_id=t.id
-		inner join @tokens as tok on tok.token=w.word collate Latin1_General_CI_AS and (tok.lang=t.lang or tok.lang='')
-end
+    insert into #exacts(entry_id, lang)
+		select e.id, t.lang
+		from entries e
+		join entry_term et on et.entry_id = e.id
+		join terms t on t.id = et.term_id
+		where t.wordingSpartanized = @wordSpartanized
+		  and e.pStatus = 1;
 
+    -------------------------------------------------------------------------
+    -- tokenise input
+    -------------------------------------------------------------------------
+    create table #words (word nvarchar(255) collate Latin1_General_CI_AI);
+    create index ix_words on #words(word);
 
-declare @count_exacts int
-select @count_exacts = count(distinct entry_id) from @exacts
+    insert into #words(word)
+    select dbo.spartanize(display_term)
+    from sys.dm_fts_parser(N'"' + replace(replace(@word, '-', ' '), '"', ' ') + '"', 0, null, 1)
+    where special_term in ('Noise Word', 'Exact Match')
+    order by len(display_term) desc;
 
-declare @count_relateds int
-select @count_relateds = count(distinct entry_id) from @relateds as r where r.entry_id not in (select entry_id from @exacts)
+    -------------------------------------------------------------------------
+    -- related matches
+    -------------------------------------------------------------------------
+    create table #relateds (
+        entry_id int,
+        lang nvarchar(10) collate Latin1_General_CI_AI,
+        term_id int
+    );
+    create index ix_relateds on #relateds(entry_id);
 
-select @count_exacts as [CountExacts], @count_relateds as [CountRelateds]
+    create table #tokens (
+        token nvarchar(255) collate Latin1_General_CI_AI,
+        lang  nvarchar(10) collate Latin1_General_CI_AI
+    );
+    create index ix_tokens on #tokens(token, lang);
 
+    create table #temp (entry_id int, term_id int);
+    create index ix_temp on #temp(entry_id);
+
+    -------------------------------------------------------------------------
+    -- first token
+    -------------------------------------------------------------------------
+    declare @word1 nvarchar(255);
+    select top (1) @word1 = word from #words;
+
+    if @word1 is not null and @word1 <> ''
+    begin
+        delete from #tokens;
+        insert into #tokens(token, lang) values(@word1, '');
+
+        insert into #tokens(token, lang)
+			select token, lang from flex where lemma = @word1;
+
+        insert into #tokens(token, lang)
+			select lemma, lang from flex where token = @word1;
+
+        insert into #relateds(entry_id, lang, term_id)
+			select distinct e.id, t.lang, t.id
+			from entries e
+			join entry_term et on et.entry_id = e.id
+			join terms t on t.id = et.term_id
+			join words w on w.term_id = t.id
+			join #tokens tok on tok.token = w.word
+			where tok.lang = t.lang
+			union all
+			select distinct e.id, t.lang, t.id
+			from entries e
+			join entry_term et on et.entry_id = e.id
+			join terms t on t.id = et.term_id
+			join words w on w.term_id = t.id
+			join #tokens tok on tok.token = w.word
+			where tok.lang = '';
+    end
+
+    -------------------------------------------------------------------------
+    -- second token
+    -------------------------------------------------------------------------
+    declare @word2 nvarchar(255);
+    select top (2) @word2 = word from #words;
+
+    if @word2 is not null and @word2 <> @word1
+    begin
+        delete from #temp;
+        insert into #temp select entry_id, term_id from #relateds;
+
+        delete from #relateds;
+        delete from #tokens;
+
+        insert into #tokens(token, lang) values(@word2, '');
+
+        insert into #tokens(token, lang)
+			select token, lang from flex where lemma = @word2;
+
+        insert into #tokens(token, lang)
+			select lemma, lang from flex where token = @word2;
+
+        insert into #relateds(entry_id, lang, term_id)
+			select distinct e.id, t.lang, t.id
+			from entries e
+			join #temp temp on temp.entry_id = e.id
+			join entry_term et on et.entry_id = e.id
+			join terms t on t.id = et.term_id
+			join words w on w.term_id = t.id
+			join #tokens tok on tok.token = w.word
+			where tok.lang = t.lang
+			union all
+			select distinct e.id, t.lang, t.id
+			from entries e
+			join #temp temp on temp.entry_id = e.id
+			join entry_term et on et.entry_id = e.id
+			join terms t on t.id = et.term_id
+			join words w on w.term_id = t.id
+			join #tokens tok on tok.token = w.word
+			where tok.lang = '';
+    end
+
+    -------------------------------------------------------------------------
+    -- third token
+    -------------------------------------------------------------------------
+    declare @word3 nvarchar(255);
+    select top (3) @word3 = word from #words;
+
+    if @word3 is not null and @word3 <> @word2 and @word3 <> @word1
+    begin
+        delete from #temp;
+        insert into #temp select entry_id, term_id from #relateds;
+
+        delete from #relateds;
+        delete from #tokens;
+
+        insert into #tokens(token, lang) values(@word3, '');
+
+        insert into #tokens(token, lang)
+			select token, lang from flex where lemma = @word3;
+
+        insert into #tokens(token, lang)
+			select lemma, lang from flex where token = @word3;
+
+        insert into #relateds(entry_id, lang, term_id)
+			select distinct e.id, t.lang, t.id
+			from entries e
+			join #temp temp on temp.entry_id = e.id
+			join entry_term et on et.entry_id = e.id
+			join terms t on t.id = et.term_id
+			join words w on w.term_id = t.id
+			join #tokens tok on tok.token = w.word
+			where tok.lang = t.lang
+			union all
+			select distinct e.id, t.lang, t.id
+			from entries e
+			join #temp temp on temp.entry_id = e.id
+			join entry_term et on et.entry_id = e.id
+			join terms t on t.id = et.term_id
+			join words w on w.term_id = t.id
+			join #tokens tok on tok.token = w.word
+			where tok.lang = '';
+    end
+
+    -------------------------------------------------------------------------
+    -- return counts
+    -------------------------------------------------------------------------
+    declare @count_exacts int =
+        (select count(distinct entry_id) from #exacts);
+
+    declare @count_relateds int =
+        (select count(distinct r.entry_id)
+         from #relateds r
+         where not exists (select 1 from #exacts ex where ex.entry_id = r.entry_id));
+
+    select @count_exacts as countExacts,
+           @count_relateds as countRelateds;
 end
 GO
+/****** Object:  StoredProcedure [dbo].[pub_quicksearch]    Script Date: 01/04/2026 17:13:38 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
 
 CREATE procedure [dbo].[pub_quicksearch]
-  @word nvarchar(255)
-, @lang nvarchar(10) = '' --empty string means any language
-, @super bit = 0 --superuser mode (with auxilliary glossary etc.)
+      @word nvarchar(255)
+    , @lang nvarchar(10) = '' 
+    , @super bit = 0
 as
 begin
+    set nocount on;
 
-declare @wordSpartanized nvarchar(255)
-set @wordSpartanized=dbo.spartanize(@word)
+	-------------------------------------------------------------------------
+    -- Preprocess input
+    -------------------------------------------------------------------------
+    declare @wordSpartanized nvarchar(255);
+    set @wordSpartanized = dbo.spartanize(@word);
 
---return lingo and metadata:
-select * from configs where id='lingo'
-select *, 0 as hasChildren from metadata where type in ('acceptLabel', 'inflectLabel', 'posLabel', 'domain')
+    -------------------------------------------------------------------------
+    -- SIMILAR TERMS (cached in search_text / similar)
+    -------------------------------------------------------------------------
+    if (@word = '')
+    begin
+        select top (0) *
+        from spelling;
+    end
+    else
+    begin
+        ---------------------------------------------------------------------
+        -- Ensure a single searchTextID exists for this @word (concurrency-safe)
+        ---------------------------------------------------------------------
+        declare @searchtextId int;
+        declare @newId table (id int);
 
---return similars:
---purge from similarity cache anything older that three days:
-declare @cutoff datetime
-set @cutoff = DATEADD(day, -3, getdate())
-delete from tblSearchText where Created < @cutoff
+        ;with src as (
+            select @word as searchText
+        )
+        merge search_text with (holdlock) as t
+        using src
+            on t.searchText = src.searchText
+        when not matched then
+            insert (searchText)
+            values (src.searchText)
+        output inserted.id into @newId;
 
-declare @searchtextID int
-select @searchtextID = ID from tblSearchText where SearchText = @word
-if @searchtextID is null
-begin
-	insert into tblSearchText(SearchText) values(@word)
-	set @searchtextID = @@IDENTITY
+        select @searchtextId = id
+        from @newId;
 
-	declare @wordStart nvarchar(1); set @wordStart=substring(@word,1,1)
-	declare @maxWordLength int; set @maxWordLength=LEN(@word)+5
-	declare @minWordLength int; set @minWordLength=LEN(@word)-5
-	declare @chars table(A int, B int, C int, D int, E int,
-							F int, G int, H int, I int, J int,
-							K int, L int, M int, N int, O int,
-							P int, Q int, R int, S int, T int,
-							U int, V int, W int, X int, Y int,
-							Z int)
-	insert into @chars
-		select [A],[B],[C],[D],[E],[F],[G],[H],[I],[J],[K],[L],[M],[N],[O],[P],[Q],[R],[S],[T],[U],[V],[W],[X],[Y],[Z]
-		from dbo.characterize(@word)
-	insert into tblSimilar(SearchTextID, Similar, Diff)
-	select distinct top 5
-	  @searchtextID
-	, t.word as similar
-	, case when t.word=@word collate Latin1_General_CI_AI then 0
-			else convert(int, dbo.levenshtein(t.word, @word))
-		end as Diff
-	from (
-		select top 50 s.word
-				, abs(s.A-c.A)+abs(s.B-c.B)+abs(s.C-c.C)+abs(s.D-c.D)+abs(s.E-c.E)+abs(s.F-c.F)
-				+abs(s.G-c.G)+abs(s.H-c.H)+abs(s.I-c.I)+abs(s.J-c.J)+abs(s.K-c.K)+abs(s.L-c.L)
-				+abs(s.M-c.M)+abs(s.N-c.N)+abs(s.O-c.O)+abs(s.P-c.P)+abs(s.Q-c.Q)+abs(s.R-c.R)
-				+abs(s.S-c.S)+abs(s.T-c.T)+abs(s.U-c.U)+abs(s.V-c.V)+abs(s.W-c.W)+abs(s.X-c.X)
-				+abs(s.Y-c.Y)+abs(s.Z-c.Z) as Diff
-			, case when @wordStart=substring(s.word,1,1) then 0 else 1 end as Start
-		from spelling as s
-		inner join @chars as c on 1=1
-		where s.[length]<@maxWordLength and s.[length]>@minWordLength
-		and s.word<>@word
-		and s.A between c.A-2 and c.A+2
-		and s.B between c.B-2 and c.B+2
-		and s.C between c.C-2 and c.C+2
-		and s.D between c.D-2 and c.D+2
-		and s.E between c.E-2 and c.E+2
-		and s.F between c.F-2 and c.F+2
-		and s.G between c.G-2 and c.G+2
-		and s.H between c.H-2 and c.H+2
-		and s.I between c.I-2 and c.I+2
-		and s.J between c.J-2 and c.J+2
-		and s.K between c.K-2 and c.K+2
-		and s.L between c.L-2 and c.L+2
-		and s.M between c.M-2 and c.M+2
-		and s.N between c.N-2 and c.N+2
-		and s.O between c.O-2 and c.O+2
-		and s.P between c.P-2 and c.P+2
-		and s.Q between c.Q-2 and c.Q+2
-		and s.R between c.R-2 and c.R+2
-		and s.S between c.S-2 and c.S+2
-		and s.T between c.T-2 and c.T+2
-		and s.U between c.U-2 and c.U+2
-		and s.V between c.V-2 and c.V+2
-		and s.W between c.W-2 and c.W+2
-		and s.X between c.X-2 and c.X+2
-		and s.Y between c.Y-2 and c.Y+2
-		and s.Z between c.Z-2 and c.Z+2
-		order by Diff asc, Start asc
-	) as t
-	where convert(int, dbo.levenshtein(t.word, @word))<=4
-	order by Diff
-end
-select Similar as similar, Diff from tblSimilar where SearchTextID=@searchtextID order by Diff
---end returning similars
+        if (@searchtextId is null)
+        begin
+            select @searchtextId = ID
+            from search_text
+            where searchText = @word;
+        end
 
---find exact matches:
-declare @exacts table(entry_id int, lang nvarchar(10))
-insert into @exacts(entry_id, lang) select e.id, t.lang from entries as e
-	inner join entry_term as et on et.entry_id=e.id
-	inner join terms as t on t.id=et.term_id
-	--where t.wording=@word and e.pStatus=1
-	where t.wordingSpartanized=@wordSpartanized and e.pStatus=1
+        ---------------------------------------------------------------------
+        -- Only compute similars if not already cached
+        ---------------------------------------------------------------------
+        if not exists (
+            select 1
+            from similar st
+            where st.searchTextID = @searchtextId
+        )
+        begin
+            -----------------------------------------------------------------
+            -- Prepare A–Z vector for similarity matching
+            -----------------------------------------------------------------
+            declare @searchtextStart nvarchar(1) = substring(@word, 1, 1);
+            declare @maxWordLength int = len(@word) + 5;
+            declare @minWordLength int = len(@word) - 5;
 
---find related matches:
-declare @words table(word nvarchar(max))
-insert into @words(word) select dbo.spartanize(display_term)
-	from sys.dm_fts_parser(N'"'+replace(replace(@word, '-', ' '), '"', ' ')+'"', 0, null, 1)
-	where special_term in ('Noise Word', 'Exact Match')
-	order by len(display_term) desc
-declare @relateds table(entry_id int, lang nvarchar(10), term_id int)
-declare @temp table(entry_id int, term_id int)
-declare @tokens table(token nvarchar(255), lang nvarchar(10))
---first word:
-declare @word1 nvarchar(max); select top 1 @word1=word from @words;
-delete from @tokens; insert into @tokens(token, lang) values(@word1, ''); insert into @tokens(token, lang) select token, lang from flex where lemma=@word1; insert into @tokens(token, lang) select lemma, lang from flex where token=@word1
-insert into @relateds(entry_id, lang, term_id) select distinct e.id, t.lang, t.id from entries as e
-	inner join entry_term as et on et.entry_id=e.id
-	inner join terms as t on t.id=et.term_id
-	inner join words as w on w.term_id=t.id
-	inner join @tokens as tok on tok.token=w.word collate Latin1_General_CI_AS and (tok.lang=t.lang or tok.lang='')
---second word:
-declare @word2 nvarchar(max); select top 2 @word2=word from @words
-if(@word2<>@word1)
-begin
-	delete from @temp; insert into @temp(entry_id, term_id) select entry_id, term_id from @relateds; delete from @relateds
-	delete from @tokens; insert into @tokens(token, lang) values(@word2, ''); insert into @tokens(token, lang) select token, lang from flex where lemma=@word2; insert into @tokens(token, lang) select lemma, lang from flex where token=@word2
-	insert into @relateds(entry_id, lang, term_id) select distinct e.id, t.lang, t.id from entries as e
-		inner join @temp as temp on temp.entry_id=e.id and temp.entry_id=e.id
-		inner join entry_term as et on et.entry_id=e.id
-		inner join terms as t on t.id=et.term_id
-		inner join words as w on w.term_id=t.id
-		inner join @tokens as tok on tok.token=w.word collate Latin1_General_CI_AS and (tok.lang=t.lang or tok.lang='')
-end
---third word:
-declare @word3 nvarchar(max); select top 3 @word3=word from @words
-if(@word3<>@word2 and @word3<>@word1)
-begin
-	delete from @temp; insert into @temp(entry_id, term_id) select entry_id, term_id from @relateds; delete from @relateds
-	delete from @tokens; insert into @tokens(token, lang) values(@word3, ''); insert into @tokens(token, lang) select token, lang from flex where lemma=@word3; insert into @tokens(token, lang) select lemma, lang from flex where token=@word3
-	insert into @relateds(entry_id, lang, term_id) select distinct e.id, t.lang, t.id from entries as e
-		inner join @temp as temp on temp.entry_id=e.id and temp.entry_id=e.id
-		inner join entry_term as et on et.entry_id=e.id
-		inner join terms as t on t.id=et.term_id
-		inner join words as w on w.term_id=t.id
-		inner join @tokens as tok on tok.token=w.word collate Latin1_General_CI_AS and (tok.lang=t.lang or tok.lang='')
-end
+            declare @chars table (
+                A int, B int, C int, D int, E int,
+                F int, G int, H int, I int, J int,
+                K int, L int, M int, N int, O int,
+                P int, Q int, R int, S int, T int,
+                U int, V int, W int, X int, Y int,
+                Z int
+            );
 
---return languages in which exact and/or related matches have been found:
-select t.lang from (
-	select entry_id, lang from @exacts union select entry_id, lang from @relateds
-) as t
-group by lang
-order by count(*) desc
+            insert into @chars
+                select [A],[B],[C],[D],[E],[F],[G],[H],[I],[J],
+                       [K],[L],[M],[N],[O],[P],[Q],[R],[S],[T],
+                       [U],[V],[W],[X],[Y],[Z]
+                from dbo.characterize_inline(@word);
 
---determine sortlang:
-declare @sortlang nvarchar(10)
-set @sortlang=@lang
-if @sortlang='' select top 1 @sortlang=t.lang from (
-	select entry_id, lang from @exacts union select entry_id, lang from @relateds
-) as t
-group by lang
-order by count(*) desc
+            -----------------------------------------------------------------
+            -- STRICT CANDIDATES (first_char + length + A–Z bounds)
+            -----------------------------------------------------------------
+            declare @Strict table (
+                word nvarchar(255),
+                diffAZ int
+            );
 
---return xtref targets:
-select * from entries as trg
-	inner join entry_xref as x on x.target_entry_id=trg.id
-	inner join (
-		select entry_id from @exacts
-		union
-		select entry_id from @relateds
-	) as src on src.entry_id=x.source_entry_id
+            ;with StrictCandidates as (
+                select top (50)
+                    s.word,
+                    abs(s.A - c.A) + abs(s.B - c.B) + abs(s.C - c.C) + abs(s.D - c.D) + abs(s.E - c.E)
+                    + abs(s.F - c.F) + abs(s.G - c.G) + abs(s.H - c.H) + abs(s.I - c.I) + abs(s.J - c.J)
+                    + abs(s.K - c.K) + abs(s.L - c.L) + abs(s.M - c.M) + abs(s.N - c.N) + abs(s.O - c.O)
+                    + abs(s.P - c.P) + abs(s.Q - c.Q) + abs(s.R - c.R) + abs(s.S - c.S) + abs(s.T - c.T)
+                    + abs(s.U - c.U) + abs(s.V - c.V) + abs(s.W - c.W) + abs(s.X - c.X) + abs(s.Y - c.Y)
+                    + abs(s.Z - c.Z) as diffAZ
+                from spelling s
+                cross join @chars c
+                where s.first_char = @searchtextStart
+                  and s.[length] between @minWordLength and @maxWordLength
+                  and s.word <> @word
+                  and s.A between c.A - 2 and c.A + 2
+                  and s.B between c.B - 2 and c.B + 2
+                  and s.C between c.C - 2 and c.C + 2
+                  and s.D between c.D - 2 and c.D + 2
+                  and s.E between c.E - 2 and c.E + 2
+                  and s.F between c.F - 2 and c.F + 2
+                  and s.G between c.G - 2 and c.G + 2
+                  and s.H between c.H - 2 and c.H + 2
+                  and s.I between c.I - 2 and c.I + 2
+                  and s.J between c.J - 2 and c.J + 2
+                  and s.K between c.K - 2 and c.K + 2
+                  and s.L between c.L - 2 and c.L + 2
+                  and s.M between c.M - 2 and c.M + 2
+                  and s.N between c.N - 2 and c.N + 2
+                  and s.O between c.O - 2 and c.O + 2
+                  and s.P between c.P - 2 and c.P + 2
+                  and s.Q between c.Q - 2 and c.Q + 2
+                  and s.R between c.R - 2 and c.R + 2
+                  and s.S between c.S - 2 and c.S + 2
+                  and s.T between c.T - 2 and c.T + 2
+                  and s.U between c.U - 2 and c.U + 2
+                  and s.V between c.V - 2 and c.V + 2
+                  and s.W between c.W - 2 and c.W + 2
+                  and s.X between c.X - 2 and c.X + 2
+                  and s.Y between c.Y - 2 and c.Y + 2
+                  and s.Z between c.Z - 2 and c.Z + 2
+                order by diffAZ asc
+            )
+            insert into @Strict(word, diffAZ)
+                select word, diffAZ
+                from StrictCandidates;
 
---return exact matches:
-select distinct e.*, case when @sortlang='en' then e.sortkeyEN else e.sortkeyGA end as sortkey
-	from entries as e
-	inner join @exacts as ids on ids.entry_id=e.id
-	where @lang='' or @lang=ids.lang
-	order by sortkey, e.id
+            declare @strictCount int = (select count(*) from @Strict);
 
---return related matches:
-select distinct top 101 e.*, case when @sortlang='en' then e.sortkeyEN else e.sortkeyGA end as sortkey
-	from entries as e
-	inner join @relateds as ids on ids.entry_id=e.id
-	where (@lang='' or @lang=ids.lang) and e.id not in (select entry_id from @exacts) and e.pStatus=1
-	order by sortkey, e.id
+            -----------------------------------------------------------------
+            -- LOOSE CANDIDATES (no first_char filter) if strict too small
+            -----------------------------------------------------------------
+            declare @Loose table (
+                word nvarchar(255),
+                diffAZ int
+            );
 
---return auxilliary matches:
-if @super=1
-	select top 500 *
-	from aux
-	where en like '%'+@word+'%' or ga like '%'+@word+'%'
-	order by coll, id
+            if (@strictCount < 10)
+            begin
+                ;with LooseCandidates as (
+                    select top (50)
+                        s.word,
+                        abs(s.A - c.A) + abs(s.B - c.B) + abs(s.C - c.C) + abs(s.D - c.D) + abs(s.E - c.E)
+                        + abs(s.F - c.F) + abs(s.G - c.G) + abs(s.H - c.H) + abs(s.I - c.I) + abs(s.J - c.J)
+                        + abs(s.K - c.K) + abs(s.L - c.L) + abs(s.M - c.M) + abs(s.N - c.N) + abs(s.O - c.O)
+                        + abs(s.P - c.P) + abs(s.Q - c.Q) + abs(s.R - c.R) + abs(s.S - c.S) + abs(s.T - c.T)
+                        + abs(s.U - c.U) + abs(s.V - c.V) + abs(s.W - c.W) + abs(s.X - c.X) + abs(s.Y - c.Y)
+                        + abs(s.Z - c.Z) as diffAZ
+                    from spelling s
+                    cross join @chars c
+                    where s.[length] between @minWordLength and @maxWordLength
+                      and s.word <> @word
+                      and s.A between c.A - 2 and c.A + 2
+                      and s.B between c.B - 2 and c.B + 2
+                      and s.C between c.C - 2 and c.C + 2
+                      and s.D between c.D - 2 and c.D + 2
+                      and s.E between c.E - 2 and c.E + 2
+                      and s.F between c.F - 2 and c.F + 2
+                      and s.G between c.G - 2 and c.G + 2
+                      and s.H between c.H - 2 and c.H + 2
+                      and s.I between c.I - 2 and c.I + 2
+                      and s.J between c.J - 2 and c.J + 2
+                      and s.K between c.K - 2 and c.K + 2
+                      and s.L between c.L - 2 and c.L + 2
+                      and s.M between c.M - 2 and c.M + 2
+                      and s.N between c.N - 2 and c.N + 2
+                      and s.O between c.O - 2 and c.O + 2
+                      and s.P between c.P - 2 and c.P + 2
+                      and s.Q between c.Q - 2 and c.Q + 2
+                      and s.R between c.R - 2 and c.R + 2
+                      and s.S between c.S - 2 and c.S + 2
+                      and s.T between c.T - 2 and c.T + 2
+                      and s.U between c.U - 2 and c.U + 2
+                      and s.V between c.V - 2 and c.V + 2
+                      and s.W between c.W - 2 and c.W + 2
+                      and s.X between c.X - 2 and c.X + 2
+                      and s.Y between c.Y - 2 and c.Y + 2
+                      and s.Z between c.Z - 2 and c.Z + 2
+                    order by diffAZ asc
+                )
+                insert into @Loose(word, diffAZ)
+                    select word, diffAZ
+                    from LooseCandidates;
+            end
 
+            -----------------------------------------------------------------
+            -- FINAL SIMILAR SET: dedupe, compute Levenshtein, apply <= 4
+            -----------------------------------------------------------------
+            declare @src table(word nvarchar(255), diff int);
+
+            ;with u as (
+                select word, src,
+                       row_number() over (partition by word order by src) as rn
+                from (
+                    select word, 1 as src from @Strict
+                    union all
+                    select word, 2 as src from @Loose where @strictCount < 10
+                ) as q
+            )
+            insert into @src(word, diff)
+                select top (7)
+                    word,
+                    case
+                        when word = @word collate Latin1_General_CI_AI then 0
+                        else d.dist
+                    end
+                from u
+				cross apply (select dbo.levenshtein(word, @word) as dist) d
+                where rn = 1
+                  and d.dist <= 4
+                order by 2;
+
+            -----------------------------------------------------------------
+            -- Merge similars into cache
+            -----------------------------------------------------------------
+            merge similar with (holdlock) as target
+            using @src as src
+                on target.searchTextID = @searchtextId
+               and target.similar = src.word collate Latin1_General_CI_AS
+            when not matched then
+                insert (searchTextID, similar, diff)
+                values (@searchtextId, src.word, src.diff);
+        end
+    
+        ---------------------------------------------------------------------
+        -- Return similars
+        ---------------------------------------------------------------------
+        select
+            similar,
+            diff
+        from similar
+        where searchTextID = @searchtextId
+        order by diff;
+    end
+
+    -------------------------------------------------------------------------
+    -- EXACT MATCHES
+    -------------------------------------------------------------------------
+    create table #exacts (entry_id int, lang nvarchar(10) collate Latin1_General_CI_AI);
+	create clustered index IX_exacts on #exacts(entry_id, lang);
+
+    insert into #exacts(entry_id, lang)
+        select e.id, t.lang
+        from entries as e
+        inner join entry_term as et on et.entry_id = e.id
+        inner join terms as t on t.id = et.term_id
+        where t.wordingSpartanized = @wordSpartanized
+          and e.pStatus = 1;
+
+    -------------------------------------------------------------------------
+    -- TOKENISE INPUT (FTS parser) FOR RELATED MATCHES
+    -------------------------------------------------------------------------
+    create table #words (word nvarchar(255) collate Latin1_General_CI_AI);
+	create index IX_words on #words(word);
+
+    insert into #words(word)
+        select dbo.spartanize(display_term)
+        from sys.dm_fts_parser(N'"' + replace(replace(@word, '-', ' '), '"', ' ') + '"', 0, null, 1)
+        where special_term in ('Noise Word', 'Exact Match')
+        order by len(display_term) desc;
+
+    -------------------------------------------------------------------------
+    -- RELATED MATCHES (flex-expanded token matching)
+    -------------------------------------------------------------------------
+    create table #relateds (entry_id int, lang nvarchar(10) collate Latin1_General_CI_AI, term_id int);
+	create index IX_relateds on #relateds(entry_id, lang);
+
+    create table #tokens (
+		token nvarchar(255) collate Latin1_General_CI_AS,
+		lang nvarchar(10) collate Latin1_General_CI_AI
+	);
+	create index IX_tokens on #tokens(token, lang);
+	
+    declare @temp table(entry_id int, term_id int);
+
+    -------------------------------------------------------------------------
+    -- FIRST TOKEN
+    -------------------------------------------------------------------------
+    declare @word1 nvarchar(255);
+    
+    select top (1) @word1 = word
+    from #words;
+
+    if (@word1 is not null and @word1 <> '')
+    begin
+        delete from #tokens;
+        insert into #tokens(token, lang) values(@word1, '');
+
+        insert into #tokens(token, lang)
+            select token, lang
+            from flex
+            where lemma = @word1;
+            
+        insert into #tokens(token, lang)
+            select lemma, lang
+            from flex
+            where token = @word1;
+
+		insert into #relateds(entry_id, lang, term_id)
+			-- branch 1: language-specific
+			select e.id, t.lang, t.id
+			from entries as e
+			inner join entry_term as et on et.entry_id = e.id
+			inner join terms as t on t.id = et.term_id
+			inner join words as w on w.term_id = t.id
+			inner join #tokens as tok on tok.token = w.word
+			where tok.lang = t.lang
+			union all
+			-- branch 2: language-agnostic
+			select e.id, t.lang, t.id
+			from entries e
+			inner join entry_term et on et.entry_id = e.id
+			inner join terms t on t.id = et.term_id
+			inner join words w on w.term_id = t.id
+			inner join #tokens tok on tok.token = w.word
+			where tok.lang = '';
+    end
+
+    -------------------------------------------------------------------------
+    -- SECOND TOKEN
+    -------------------------------------------------------------------------
+    declare @word2 nvarchar(255);
+
+    select top (2) @word2 = word
+    from #words;
+    
+    if (@word2 is not null and @word2 <> @word1)
+    begin
+        delete from @temp;
+
+        insert into @temp(entry_id, term_id)
+            select entry_id, term_id
+            from #relateds;
+            
+        delete from #relateds;
+        
+        delete from #tokens;
+        insert into #tokens(token, lang) values(@word2, '');
+        
+        insert into #tokens(token, lang)
+            select token, lang
+            from flex
+            where lemma = @word2;
+
+        insert into #tokens(token, lang)
+            select lemma, lang
+            from flex
+            where token = @word2;
+
+        insert into #relateds(entry_id, lang, term_id)
+            select e.id, t.lang, t.id
+            from entries as e
+            inner join @temp as temp on temp.entry_id = e.id
+            inner join entry_term as et on et.entry_id = e.id
+            inner join terms as t on t.id = et.term_id
+            inner join words as w on w.term_id = t.id
+            inner join #tokens as tok on tok.token = w.word
+            where tok.lang = t.lang
+			union all
+            select e.id, t.lang, t.id
+            from entries as e
+            inner join @temp as temp on temp.entry_id = e.id
+            inner join entry_term as et on et.entry_id = e.id
+            inner join terms as t on t.id = et.term_id
+            inner join words as w on w.term_id = t.id
+            inner join #tokens as tok on tok.token = w.word
+            where tok.lang = '';
+    end
+
+    -------------------------------------------------------------------------
+    -- THIRD TOKEN
+    -------------------------------------------------------------------------
+    declare @word3 nvarchar(255);
+
+    select top (3) @word3 = word
+    from #words;
+
+    if (@word3 is not null and @word3 <> @word2 and @word3 <> @word1)
+    begin
+        delete from @temp;
+
+        insert into @temp(entry_id, term_id)
+            select entry_id, term_id
+            from #relateds;
+            
+        delete from #relateds;
+
+        delete from #tokens;
+        insert into #tokens(token, lang) values(@word3, '');
+        
+        insert into #tokens(token, lang)
+            select token, lang
+            from flex
+            where lemma = @word3;
+            
+        insert into #tokens(token, lang)
+            select lemma, lang
+            from flex
+            where token = @word3;
+
+        insert into #relateds(entry_id, lang, term_id)
+            select e.id, t.lang, t.id
+            from entries as e
+            inner join @temp as temp on temp.entry_id = e.id
+            inner join entry_term as et on et.entry_id = e.id
+            inner join terms as t on t.id = et.term_id
+            inner join words as w on w.term_id = t.id
+            inner join #tokens as tok on tok.token = w.word
+            where tok.lang = t.lang
+			union all
+            select e.id, t.lang, t.id
+            from entries as e
+            inner join @temp as temp on temp.entry_id = e.id
+            inner join entry_term as et on et.entry_id = e.id
+            inner join terms as t on t.id = et.term_id
+            inner join words as w on w.term_id = t.id
+            inner join #tokens as tok on tok.token = w.word
+            where tok.lang = '';
+    end
+
+    -------------------------------------------------------------------------
+    -- RETURN LANGUAGES FOUND IN EXACT OR RELATED MATCHES
+    -------------------------------------------------------------------------
+    select t.lang
+    from (
+        select entry_id, lang
+        from #exacts
+        union
+        select entry_id, lang
+        from #relateds
+    ) as t
+    group by lang
+    order by count(*) desc;
+
+    -------------------------------------------------------------------------
+    -- DETERMINE SORT LANGUAGE
+    -------------------------------------------------------------------------
+    declare @sortlang nvarchar(10);
+    set @sortlang = @lang;
+    
+    if (@sortlang = '')
+    begin
+        select top (1) @sortlang = t.lang
+        from (
+            select entry_id, lang
+            from #exacts
+            union
+            select entry_id, lang
+            from #relateds
+        ) as t
+        group by lang
+        order by count(*) desc;
+    end
+
+	-------------------------------------------------------------------------
+    -- RETURN XREF TARGETS
+    -------------------------------------------------------------------------
+    select *
+    from entries as trg
+    inner join entry_xref as x on x.target_entry_id = trg.id
+    inner join (
+        select entry_id from #exacts
+        union
+        select entry_id from #relateds
+    ) as src on src.entry_id = x.source_entry_id;
+
+	if (@lang = '')
+	begin
+		select distinct e.*, case when @sortlang = 'en' then e.sortkeyEN else e.sortkeyGA end as sortkey
+		from entries as e
+		inner join #exacts as ids on ids.entry_id = e.id
+		order by sortkey, e.id;
+
+		select distinct top (101) e.*, case when @sortlang = 'en' then e.sortkeyEN else e.sortkeyGA end as sortkey
+		from entries as e
+		inner join #relateds as ids on ids.entry_id = e.id
+		where not exists (select 1 from #exacts as ex where ex.entry_id = e.id)
+			and e.pStatus = 1
+		order by sortkey, e.id;
+	end
+	else
+	begin
+		select distinct e.*, case when @sortlang = 'en' then e.sortkeyEN else e.sortkeyGA end as sortkey
+		from entries as e
+		inner join #exacts as ids on ids.entry_id = e.id
+		where ids.lang = @lang
+		order by sortkey, e.id;
+
+		select distinct top (101) e.*, case when @sortlang = 'en' then e.sortkeyEN else e.sortkeyGA end as sortkey
+		from entries as e
+		inner join #relateds as ids on ids.entry_id = e.id
+		where ids.lang = @lang
+			and not exists (select 1 from #exacts as ex where ex.entry_id = e.id)
+			and e.pStatus = 1
+		order by sortkey, e.id;
+	end
+
+	-------------------------------------------------------------------------
+    -- AUXILIARY RESULTS (for super.tearma.ie)
+    -------------------------------------------------------------------------
+    if (@super = 1)
+    begin
+        select top (500) *
+        from aux
+        where en like '%' + @word + '%' or ga like '%' + @word + '%'
+        order by coll, id;
+    end
 end
 GO
+/****** Object:  StoredProcedure [dbo].[pub_subdoms]    Script Date: 01/04/2026 17:13:38 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -2113,11 +2357,12 @@ as
 begin
 
 --return lingo and metadata:
-select * from configs where id='lingo'
-select *, 0 as hasChildren from metadata where type='domain' and id=@domID
+select * from configs where id = 'lingo';
+select *, 0 as hasChildren from metadata where type = 'domain' and id = @domID;
 
 end
 GO
+/****** Object:  StoredProcedure [dbo].[pub_tod]    Script Date: 01/04/2026 17:13:38 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -2125,13 +2370,15 @@ GO
 CREATE procedure [dbo].[pub_tod]
 as
 begin
+    set nocount on;
 
---return lingo and metadata:
-select * from configs where id='lingo'
-select *, 0 as hasChildren from metadata where type in ('acceptLabel', 'inflectLabel', 'posLabel', 'domain') order by sortkeyGA
+    declare @today date = CAST(GETDATE() AS date);
 
---return entry of the day:
-select top 1 id, json from entries where pStatus=1 and tod=convert(date, getdate()) order by dateStamp desc, ID desc
-
+    select top 1 id, json
+    from entries
+    where pStatus = 1
+      and tod = @today
+    order by dateStamp desc, id desc;
 end
+
 GO

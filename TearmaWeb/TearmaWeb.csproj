@@ -20,10 +20,16 @@
 
   <ItemGroup>
     <None Remove="Controllers\Scripts\pub_advsearch.sql" />
+    <None Remove="Controllers\Scripts\pub_advsearch_metadata.sql" />
   </ItemGroup>
 
   <ItemGroup>
+    <EmbeddedResource Include="Controllers\Scripts\pub_domain_metadata.sql" />
+    <EmbeddedResource Include="Controllers\Scripts\pub_advsearch_prepare.sql" />
+    <EmbeddedResource Include="Controllers\Scripts\pub_quicksearch_metadata.sql" />
+    <EmbeddedResource Include="Controllers\Scripts\pub_tod_metadata.sql" />
     <EmbeddedResource Include="Controllers\Scripts\pub_advsearch.sql" />
+    <EmbeddedResource Include="Controllers\Scripts\pub_advsearch_metadata.sql" />
   </ItemGroup>
 
   <ItemGroup>
