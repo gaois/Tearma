@@ -2,6 +2,7 @@
 using Microsoft.Data.SqlClient;
 using TearmaWeb.Models.Home;
 using System.Data;
+using TearmaWeb.Controllers.Scripts;
 
 namespace TearmaWeb.Controllers;
 
@@ -203,12 +204,129 @@ public class Broker(IConfiguration configuration)
 
     public async Task DoAdvSearchAsync(AdvSearch model)
     {
+        var sql = SqlScripts.Get("pub_advsearch.sql");
+
+        //------------------------------------------------------------------
+        // build SELECT clause (language-specific ordering)
+        //------------------------------------------------------------------
+        var selectClause =
+            model.Lang == "en"
+            ? "select distinct ret.id, row_number() over (order by ret.sortkeyen)"
+            : "select distinct ret.id, row_number() over (order by ret.sortkeyga)";
+
+        sql = sql.Replace("/**select**/", selectClause);
+
+        //------------------------------------------------------------------
+        // build first WHERE clause dynamically
+        //------------------------------------------------------------------
+        var where1 = new List<string>
+        {
+            "(e.pStatus = 1)"
+        };
+
+        // language
+        if (!string.IsNullOrEmpty(model.Lang))
+            where1.Add("(t.lang = @lang)");
+
+        // pos
+        if (model.PosLabel != 0)
+            where1.Add("(tp.pos_id = @pos)");
+
+        // domain
+        if (model.DomainID != 0)
+            where1.Add("(ed.superdomain in (select domainid from expanddomainid_inline(@dom, default)))");
+
+        // length
+        switch (model.Length)
+        {
+            case "sw": where1.Add("(t.wording not like '% %')"); break;
+            case "mw": where1.Add("(t.wording like '% %')"); break;
+        }
+
+        // extent
+        switch (model.Extent)
+        {
+            case "st": where1.Add("(t.wording like @word + '%' escape '\\')"); break;
+            case "ed": where1.Add("(t.wording_rev like reverse(@word) + '%' escape '\\')"); break;
+            case "pt": where1.Add("(t.wording like '%' + @word + '%' escape '\\')"); break;
+            case "md": where1.Add("(t.wording like '_%' + @word + '%_' escape '\\')"); break;
+            case "al": where1.Add("(t.wording like @word escape '\\')"); break;
+        }
+
+        var where1Clause = where1.Count > 0
+            ? "where " + string.Join(" and ", where1)
+            : "";
+
+        sql = sql.Replace("/**where1**/", where1Clause);
+
+        //------------------------------------------------------------------
+        // build second WHERE clause dynamically
+        //------------------------------------------------------------------
+        var where2 = new List<string>();
+
+        // language
+        if (!string.IsNullOrEmpty(model.Lang))
+            where2.Add("(t.lang = @lang)");
+
+        // length
+        switch (model.Length)
+        {
+            case "sw": where2.Add("(t.wording not like '% %')"); break;
+            case "mw": where2.Add("(t.wording like '% %')"); break;
+        }
+
+        var where2Clause = where2.Count > 0
+            ? "where " + string.Join(" and ", where2)
+            : "";
+
+        sql = sql.Replace("/**where2**/", where2Clause);
+
+        //------------------------------------------------------------------
+        // build third WHERE clause dynamically
+        //------------------------------------------------------------------
+        var where3 = new List<string>
+        {
+            "(temp.term_id = t.id)"
+        };
+
+        // language
+        if (!string.IsNullOrEmpty(model.Lang))
+            where3.Add("(t.lang = @lang)");
+
+        var where3Clause = where3.Count > 0
+            ? "where " + string.Join(" and ", where3)
+            : "";
+
+        sql = sql.Replace("/**where3**/", where3Clause);
+
+        //------------------------------------------------------------------
+        // build third WHERE clause dynamically
+        //------------------------------------------------------------------
+        var where4 = new List<string>();
+
+        // pos
+        if (model.PosLabel != 0)
+            where4.Add("(tp.pos_id = @pos)");
+
+        // domain
+        if (model.DomainID != 0)
+            where4.Add("(ed.superdomain in (select domainid from expanddomainid_inline(@dom, default)))");
+
+        var where4Clause = where4.Count > 0
+            ? "where " + string.Join(" and ", where4)
+            : "";
+
+        sql = sql.Replace("/**where4**/", where4Clause);
+
+        //------------------------------------------------------------------
+        // execute
+        //------------------------------------------------------------------
         await using var conn = new SqlConnection(_connectionString);
         await conn.OpenAsync();
 
-        await using var command = new SqlCommand("dbo.pub_advsearch", conn)
+        await using var command = new SqlCommand(sql, conn)
         {
-            CommandType = CommandType.StoredProcedure
+            CommandType = CommandType.Text
         };
 
         command.Parameters.Add("@word", SqlDbType.NVarChar, 255).Value = model.Word;
