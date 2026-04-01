@@ -67,11 +67,18 @@ public class Startup(IConfiguration configuration, IWebHostEnvironment environme
             ];
         });
 
-        // WebOptimizer
-        services.AddWebOptimizer();
+        // Http client
+        services.AddHttpClient("IateClient");
 
-        // QueryLogger
-        services.AddQueryLogger(configuration.GetSection("QueryLogger"));
+        // MiniProfiler
+        services.AddMiniProfiler();
+
+        // Output cache
+        services.AddOutputCache(options =>
+        {
+            options.AddBasePolicy(builder => builder.Expire(TimeSpan.FromSeconds(60)));
+            options.AddPolicy("Extended", builder => builder.Expire(TimeSpan.FromHours(1)));
+        });
 
         // Response compression
         services.AddResponseCompression(options =>
@@ -82,7 +89,15 @@ public class Startup(IConfiguration configuration, IWebHostEnvironment environme
             options.Providers.Add<GzipCompressionProvider>();
         });
 
+        // QueryLogger
+        services.AddQueryLogger(configuration.GetSection("QueryLogger"));
+
+        // WebOptimizer
+        services.AddWebOptimizer();
+
+        // Brokers
         services.AddScoped<Controllers.Broker>();
+        services.AddSingleton<Controllers.IateBroker>();
     }
 
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -154,6 +169,22 @@ public class Startup(IConfiguration configuration, IWebHostEnvironment environme
                 name: "quicksearch",
                 pattern: "/q/{word}/{lang?}",
                 defaults: new { controller = "Home", action = "QuickSearch" });
+
+            endpoints.MapControllerRoute(
+                name: "peaktearma",
+                pattern: "/peekTearma.json",
+                defaults: new { controller = "Peek", action = "PeekTearma" });
+
+            // Iate search
+            endpoints.MapControllerRoute(
+                name: "iatesearch",
+                pattern: "/iate/{word}/{lang?}/",
+                defaults: new { controller = "Iate", action = "Search" });
+
+            endpoints.MapControllerRoute(
+                name: "peakeiate",
+                pattern: "/peekIate.json/",
+                defaults: new { controller = "Peek", action = "PeekIate" });
 
             // Advanced search
             endpoints.MapControllerRoute(
