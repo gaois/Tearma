@@ -7,25 +7,25 @@ SET QUOTED_IDENTIFIER ON
 GO
 create function [dbo].[characterize](@text nvarchar(255))
 returns @chars table(A int, B int, C int, D int, E int,
-					 F int, G int, H int, I int, J int,
-					 K int, L int, M int, N int, O int,
-					 P int, Q int, R int, S int, T int,
-					 U int, V int, W int, X int, Y int,
-					 Z int)
+                     F int, G int, H int, I int, J int,
+                     K int, L int, M int, N int, O int,
+                     P int, Q int, R int, S int, T int,
+                     U int, V int, W int, X int, Y int,
+                     Z int)
 begin
-	declare @temp table(Base nvarchar(1), [Count] int)
-	insert into @temp(Base, [Count])
-	select c.base, COUNT(t.Result) as [Count]
-	from chars as c
-	left outer join dbo.substrings(dbo.spartanize(@text), 1) as t on c.variant=t.Result
-	group by c.Base
+    declare @temp table(Base nvarchar(1), [Count] int)
+    insert into @temp(Base, [Count])
+    select c.base, COUNT(t.Result) as [Count]
+    from chars as c
+    left outer join dbo.substrings(dbo.spartanize(@text), 1) as t on c.variant=t.Result
+    group by c.Base
 
-	insert into @chars
-	select [A],[B],[C],[D],[E],[F],[G],[H],[I],[J],[K],[L],[M],[N],[O],[P],[Q],[R],[S],[T],[U],[V],[W],[X],[Y],[Z]
-	from (select [Base], [Count] from @temp) as src
-	pivot(sum([Count]) for Base in([A],[B],[C],[D],[E],[F],[G],[H],[I],[J],[K],[L],[M],[N],[O],[P],[Q],[R],[S],[T],[U],[V],[W],[X],[Y],[Z])) as piv
+    insert into @chars
+    select [A],[B],[C],[D],[E],[F],[G],[H],[I],[J],[K],[L],[M],[N],[O],[P],[Q],[R],[S],[T],[U],[V],[W],[X],[Y],[Z]
+    from (select [Base], [Count] from @temp) as src
+    pivot(sum([Count]) for Base in([A],[B],[C],[D],[E],[F],[G],[H],[I],[J],[K],[L],[M],[N],[O],[P],[Q],[R],[S],[T],[U],[V],[W],[X],[Y],[Z])) as piv
 
-	return
+    return
 end
 GO
 /****** Object:  UserDefinedFunction [dbo].[expandDomainID]    Script Date: 01/04/2026 17:13:38 ******/
@@ -42,24 +42,24 @@ CREATE function [dbo].[expandDomainID]
 returns @ret table(domainID int) 
 as
 begin
-	insert into @ret(domainID) values(@domainID)
-	if @level<10
-	begin
-		declare @subdomainID int
-		DECLARE crsr CURSOR FAST_FORWARD FOR
-			select m.id
-			from metadata as m
-			where m.type='domain' and m.parentID=@domainID
-		OPEN crsr
-		FETCH NEXT FROM crsr INTO @subdomainID
-		WHILE @@FETCH_STATUS = 0  
-		BEGIN  
-			insert into @ret(domainID) select domainID from dbo.expandDomainID(@subdomainID, @level+1)
-			FETCH NEXT FROM crsr INTO @subdomainID
-		END 
-		CLOSE crsr
-		DEALLOCATE crsr
-	end
+    insert into @ret(domainID) values(@domainID)
+    if @level<10
+    begin
+        declare @subdomainID int
+        DECLARE crsr CURSOR FAST_FORWARD FOR
+            select m.id
+            from metadata as m
+            where m.type='domain' and m.parentID=@domainID
+        OPEN crsr
+        FETCH NEXT FROM crsr INTO @subdomainID
+        WHILE @@FETCH_STATUS = 0  
+        BEGIN  
+            insert into @ret(domainID) select domainID from dbo.expandDomainID(@subdomainID, @level+1)
+            FETCH NEXT FROM crsr INTO @subdomainID
+        END 
+        CLOSE crsr
+        DEALLOCATE crsr
+    end
     return 
 end
 GO
@@ -83,55 +83,55 @@ SET @n=LEN(@s)
 SET @m=LEN(@t)
 SET @d=replicate(CHAR(0),2500)
 If @n = 0
-	BEGIN
-	SET @LD = @m
-	GOTO done
-	END
+    BEGIN
+    SET @LD = @m
+    GOTO done
+    END
 If @m = 0
-	BEGIN
-	SET @LD = @n
-	GOTO done
-	END
+    BEGIN
+    SET @LD = @n
+    GOTO done
+    END
 --Step 2
 SET @i=0
 WHILE @i<=@n
-	BEGIN
-	SET @d=STUFF(@d,@i+1,1,CHAR(@i))--d(i, 0) = i
-	SET @i=@i+1
-	END
+    BEGIN
+    SET @d=STUFF(@d,@i+1,1,CHAR(@i))--d(i, 0) = i
+    SET @i=@i+1
+    END
 
 SET @i=0
 WHILE @i<=@m
-	BEGIN
-	SET @d=STUFF(@d,@i*(@n+1)+1,1,CHAR(@i))--d(0, j) = j
-	SET @i=@i+1
-	END
+    BEGIN
+    SET @d=STUFF(@d,@i*(@n+1)+1,1,CHAR(@i))--d(0, j) = j
+    SET @i=@i+1
+    END
 --goto done
 --Step 3
-	SET @i=1
-	WHILE @i<=@n
-		BEGIN
-		SET @s_i=(substring(@s,@i,1))
+    SET @i=1
+    WHILE @i<=@n
+        BEGIN
+        SET @s_i=(substring(@s,@i,1))
 --Step 4
-	SET @j=1
-	WHILE @j<=@m
-		BEGIN
-		SET @t_j=(substring(@t,@j,1))
-		--Step 5
-		If @s_i = @t_j
-			SET @cost=0
-		ELSE
-			SET @cost=1
+    SET @j=1
+    WHILE @j<=@m
+        BEGIN
+        SET @t_j=(substring(@t,@j,1))
+        --Step 5
+        If @s_i = @t_j
+            SET @cost=0
+        ELSE
+            SET @cost=1
 --Step 6
-		SET @d=STUFF(@d,@j*(@n+1)+@i+1,1,CHAR(dbo.MIN3(
-		ASCII(substring(@d,@j*(@n+1)+@i-1+1,1))+1,
-		ASCII(substring(@d,(@j-1)*(@n+1)+@i+1,1))+1,
-		ASCII(substring(@d,(@j-1)*(@n+1)+@i-1+1,1))+@cost)
-		))
-		SET @j=@j+1
-		END
-	SET @i=@i+1
-	END      
+        SET @d=STUFF(@d,@j*(@n+1)+@i+1,1,CHAR(dbo.MIN3(
+        ASCII(substring(@d,@j*(@n+1)+@i-1+1,1))+1,
+        ASCII(substring(@d,(@j-1)*(@n+1)+@i+1,1))+1,
+        ASCII(substring(@d,(@j-1)*(@n+1)+@i-1+1,1))+@cost)
+        ))
+        SET @j=@j+1
+        END
+    SET @i=@i+1
+    END      
 --Step 7
 SET @LD = ASCII(substring(@d,@n*(@m+1)+@m+1,1))
 done:
@@ -188,8 +188,8 @@ create function [dbo].[substrings]
 returns @Results table( Result nvarchar(50) collate Latin1_General_BIN2, Position int ) 
 AS
 begin
-	declare @pos int
-	set @pos=0
+    declare @pos int
+    set @pos=0
     declare @s nvarchar(50)
     while len(@str) > 0
     begin
@@ -238,619 +238,619 @@ CREATE function [dbo].[spartanize](@text nvarchar(255))
 returns nvarchar(255)
 with schemabinding
 begin
-	set @text=LOWER(@text);
+    set @text=LOWER(@text);
 
-	set @text=TRIM(REPLACE(@text+' ', 'ize ', 'ise '))
-	set @text=TRIM(REPLACE(@text+' ', 'izing ', 'ising '))
-	set @text=TRIM(REPLACE(@text+' ', 'izes ', 'ises '))
-	set @text=TRIM(REPLACE(@text+' ', 'ized ', 'ised '))
-	set @text=TRIM(REPLACE(@text+' ', 'izer ', 'iser '))
-	set @text=TRIM(REPLACE(@text+' ', 'ization ', 'isation '))
+    set @text=TRIM(REPLACE(@text+' ', 'ize ', 'ise '))
+    set @text=TRIM(REPLACE(@text+' ', 'izing ', 'ising '))
+    set @text=TRIM(REPLACE(@text+' ', 'izes ', 'ises '))
+    set @text=TRIM(REPLACE(@text+' ', 'ized ', 'ised '))
+    set @text=TRIM(REPLACE(@text+' ', 'izer ', 'iser '))
+    set @text=TRIM(REPLACE(@text+' ', 'ization ', 'isation '))
 
-	set @text=REPLACE(@text, NCHAR(0x005F), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x203F), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x2040), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x2054), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0xFE33), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0xFE34), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0xFE4D), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0xFE4E), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0xFE4F), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0xFF3F), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x002D), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x058A), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x05BE), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x1400), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x1806), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x2010), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x2011), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x2012), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x2013), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x2014), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x2015), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x2E17), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x2E1A), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x2E3A), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x2E3B), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x301C), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x3030), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x30A0), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0xFE31), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0xFE32), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0xFE58), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0xFE63), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0xFF0D), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x0029), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x005D), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x007D), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x0F3B), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x0F3D), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x169C), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x2046), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x207E), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x208E), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x232A), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x2769), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x276B), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x276D), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x276F), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x2771), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x2773), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x2775), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x27C6), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x27E7), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x27E9), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x27EB), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x27ED), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x27EF), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x2984), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x2986), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x2988), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x298A), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x298C), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x298E), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x2990), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x2992), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x2994), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x2996), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x2998), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x29D9), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x29DB), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x29FD), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x2E23), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x2E25), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x2E27), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x2E29), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x3009), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x300B), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x300D), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x300F), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x3011), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x3015), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x3017), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x3019), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x301B), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x301E), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x301F), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0xFD3F), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0xFE18), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0xFE36), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0xFE38), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0xFE3A), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0xFE3C), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0xFE3E), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0xFE40), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0xFE42), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0xFE44), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0xFE48), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0xFE5A), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0xFE5C), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0xFE5E), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0xFF09), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0xFF3D), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0xFF5D), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0xFF60), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0xFF63), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x00BB), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x2019), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x201D), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x203A), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x2E03), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x2E05), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x2E0A), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x2E0D), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x2E1D), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x2E21), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x00AB), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x2018), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x201B), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x201C), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x201F), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x2039), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x2E02), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x2E04), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x2E09), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x2E0C), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x2E1C), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x2E20), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x0021), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x0022), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x0023), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x0025), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x0026), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x0027), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x002A), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x002C), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x002E), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x002F), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x003A), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x003B), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x003F), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x0040), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x005C), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x00A1), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x00A7), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x00B6), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x00B7), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x00BF), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x037E), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x0387), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x055A), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x055B), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x055C), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x055D), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x055E), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x055F), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x0589), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x05C0), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x05C3), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x05C6), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x05F3), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x05F4), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x0609), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x060A), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x060C), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x060D), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x061B), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x061E), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x061F), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x066A), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x066B), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x066C), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x066D), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x06D4), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x0700), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x0701), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x0702), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x0703), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x0704), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x0705), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x0706), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x0707), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x0708), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x0709), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x070A), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x070B), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x070C), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x070D), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x07F7), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x07F8), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x07F9), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x0830), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x0831), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x0832), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x0833), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x0834), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x0835), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x0836), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x0837), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x0838), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x0839), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x083A), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x083B), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x083C), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x083D), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x083E), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x085E), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x0964), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x0965), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x0970), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x0AF0), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x0DF4), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x0E4F), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x0E5A), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x0E5B), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x0F04), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x0F05), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x0F06), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x0F07), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x0F08), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x0F09), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x0F0A), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x0F0B), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x0F0C), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x0F0D), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x0F0E), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x0F0F), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x0F10), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x0F11), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x0F12), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x0F14), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x0F85), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x0FD0), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x0FD1), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x0FD2), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x0FD3), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x0FD4), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x0FD9), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x0FDA), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x104A), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x104B), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x104C), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x104D), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x104E), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x104F), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x10FB), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x1360), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x1361), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x1362), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x1363), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x1364), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x1365), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x1366), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x1367), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x1368), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x166D), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x166E), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x16EB), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x16EC), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x16ED), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x1735), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x1736), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x17D4), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x17D5), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x17D6), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x17D8), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x17D9), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x17DA), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x1800), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x1801), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x1802), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x1803), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x1804), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x1805), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x1807), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x1808), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x1809), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x180A), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x1944), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x1945), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x1A1E), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x1A1F), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x1AA0), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x1AA1), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x1AA2), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x1AA3), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x1AA4), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x1AA5), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x1AA6), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x1AA8), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x1AA9), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x1AAA), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x1AAB), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x1AAC), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x1AAD), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x1B5A), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x1B5B), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x1B5C), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x1B5D), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x1B5E), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x1B5F), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x1B60), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x1BFC), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x1BFD), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x1BFE), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x1BFF), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x1C3B), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x1C3C), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x1C3D), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x1C3E), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x1C3F), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x1C7E), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x1C7F), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x1CC0), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x1CC1), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x1CC2), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x1CC3), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x1CC4), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x1CC5), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x1CC6), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x1CC7), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x1CD3), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x2016), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x2017), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x2020), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x2021), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x2022), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x2023), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x2024), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x2025), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x2026), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x2027), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x2030), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x2031), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x2032), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x2033), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x2034), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x2035), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x2036), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x2037), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x2038), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x203B), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x203C), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x203D), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x203E), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x2041), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x2042), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x2043), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x2047), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x2048), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x2049), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x204A), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x204B), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x204C), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x204D), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x204E), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x204F), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x2050), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x2051), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x2053), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x2055), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x2056), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x2057), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x2058), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x2059), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x205A), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x205B), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x205C), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x205D), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x205E), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x2CF9), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x2CFA), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x2CFB), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x2CFC), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x2CFE), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x2CFF), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x2D70), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x2E00), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x2E01), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x2E06), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x2E07), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x2E08), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x2E0B), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x2E0E), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x2E0F), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x2E10), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x2E11), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x2E12), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x2E13), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x2E14), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x2E15), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x2E16), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x2E18), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x2E19), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x2E1B), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x2E1E), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x2E1F), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x2E2A), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x2E2B), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x2E2C), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x2E2D), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x2E2E), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x2E30), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x2E31), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x2E32), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x2E33), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x2E34), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x2E35), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x2E36), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x2E37), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x2E38), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x2E39), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x3001), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x3002), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x3003), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x303D), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x30FB), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0xA4FE), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0xA4FF), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0xA60D), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0xA60E), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0xA60F), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0xA673), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0xA67E), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0xA6F2), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0xA6F3), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0xA6F4), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0xA6F5), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0xA6F6), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0xA6F7), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0xA874), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0xA875), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0xA876), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0xA877), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0xA8CE), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0xA8CF), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0xA8F8), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0xA8F9), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0xA8FA), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0xA92E), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0xA92F), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0xA95F), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0xA9C1), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0xA9C2), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0xA9C3), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0xA9C4), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0xA9C5), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0xA9C6), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0xA9C7), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0xA9C8), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0xA9C9), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0xA9CA), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0xA9CB), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0xA9CC), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0xA9CD), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0xA9DE), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0xA9DF), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0xAA5C), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0xAA5D), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0xAA5E), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0xAA5F), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0xAADE), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0xAADF), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0xAAF0), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0xAAF1), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0xABEB), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0xFE10), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0xFE11), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0xFE12), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0xFE13), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0xFE14), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0xFE15), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0xFE16), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0xFE19), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0xFE30), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0xFE45), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0xFE46), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0xFE49), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0xFE4A), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0xFE4B), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0xFE4C), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0xFE50), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0xFE51), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0xFE52), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0xFE54), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0xFE55), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0xFE56), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0xFE57), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0xFE5F), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0xFE60), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0xFE61), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0xFE68), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0xFE6A), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0xFE6B), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0xFF01), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0xFF02), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0xFF03), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0xFF05), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0xFF06), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0xFF07), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0xFF0A), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0xFF0C), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0xFF0E), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0xFF0F), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0xFF1A), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0xFF1B), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0xFF1F), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0xFF20), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0xFF3C), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0xFF61), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0xFF64), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0xFF65), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x0028), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x005B), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x007B), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x0F3A), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x0F3C), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x169B), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x201A), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x201E), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x2045), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x207D), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x208D), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x2329), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x2768), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x276A), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x276C), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x276E), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x2770), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x2772), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x2774), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x27C5), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x27E6), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x27E8), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x27EA), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x27EC), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x27EE), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x2983), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x2985), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x2987), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x2989), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x298B), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x298D), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x298F), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x2991), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x2993), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x2995), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x2997), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x29D8), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x29DA), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x29FC), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x2E22), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x2E24), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x2E26), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x2E28), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x3008), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x300A), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x300C), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x300E), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x3010), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x3014), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x3016), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x3018), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x301A), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x301D), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0xFD3E), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0xFE17), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0xFE35), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0xFE37), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0xFE39), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0xFE3B), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0xFE3D), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0xFE3F), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0xFE41), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0xFE43), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0xFE47), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0xFE59), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0xFE5B), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0xFE5D), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0xFF08), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0xFF3B), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0xFF5B), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0xFF5F), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0xFF62), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x0020), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x00A0), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x1680), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x180E), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x2000), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x2001), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x2002), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x2003), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x2004), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x2005), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x2006), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x2007), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x2008), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x2009), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x200A), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x202F), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x205F), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x3000), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x2029), '' collate Latin1_General_BIN2)
-	set @text=REPLACE(@text, NCHAR(0x2028), '' collate Latin1_General_BIN2)
-	
-	return @text
+    set @text=REPLACE(@text, NCHAR(0x005F), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x203F), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x2040), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x2054), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0xFE33), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0xFE34), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0xFE4D), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0xFE4E), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0xFE4F), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0xFF3F), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x002D), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x058A), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x05BE), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x1400), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x1806), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x2010), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x2011), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x2012), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x2013), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x2014), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x2015), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x2E17), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x2E1A), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x2E3A), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x2E3B), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x301C), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x3030), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x30A0), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0xFE31), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0xFE32), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0xFE58), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0xFE63), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0xFF0D), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x0029), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x005D), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x007D), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x0F3B), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x0F3D), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x169C), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x2046), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x207E), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x208E), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x232A), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x2769), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x276B), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x276D), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x276F), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x2771), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x2773), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x2775), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x27C6), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x27E7), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x27E9), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x27EB), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x27ED), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x27EF), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x2984), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x2986), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x2988), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x298A), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x298C), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x298E), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x2990), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x2992), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x2994), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x2996), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x2998), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x29D9), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x29DB), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x29FD), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x2E23), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x2E25), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x2E27), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x2E29), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x3009), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x300B), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x300D), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x300F), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x3011), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x3015), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x3017), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x3019), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x301B), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x301E), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x301F), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0xFD3F), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0xFE18), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0xFE36), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0xFE38), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0xFE3A), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0xFE3C), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0xFE3E), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0xFE40), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0xFE42), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0xFE44), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0xFE48), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0xFE5A), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0xFE5C), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0xFE5E), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0xFF09), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0xFF3D), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0xFF5D), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0xFF60), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0xFF63), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x00BB), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x2019), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x201D), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x203A), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x2E03), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x2E05), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x2E0A), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x2E0D), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x2E1D), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x2E21), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x00AB), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x2018), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x201B), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x201C), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x201F), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x2039), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x2E02), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x2E04), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x2E09), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x2E0C), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x2E1C), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x2E20), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x0021), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x0022), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x0023), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x0025), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x0026), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x0027), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x002A), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x002C), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x002E), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x002F), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x003A), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x003B), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x003F), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x0040), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x005C), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x00A1), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x00A7), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x00B6), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x00B7), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x00BF), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x037E), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x0387), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x055A), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x055B), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x055C), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x055D), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x055E), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x055F), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x0589), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x05C0), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x05C3), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x05C6), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x05F3), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x05F4), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x0609), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x060A), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x060C), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x060D), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x061B), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x061E), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x061F), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x066A), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x066B), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x066C), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x066D), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x06D4), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x0700), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x0701), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x0702), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x0703), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x0704), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x0705), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x0706), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x0707), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x0708), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x0709), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x070A), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x070B), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x070C), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x070D), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x07F7), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x07F8), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x07F9), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x0830), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x0831), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x0832), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x0833), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x0834), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x0835), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x0836), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x0837), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x0838), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x0839), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x083A), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x083B), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x083C), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x083D), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x083E), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x085E), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x0964), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x0965), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x0970), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x0AF0), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x0DF4), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x0E4F), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x0E5A), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x0E5B), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x0F04), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x0F05), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x0F06), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x0F07), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x0F08), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x0F09), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x0F0A), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x0F0B), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x0F0C), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x0F0D), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x0F0E), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x0F0F), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x0F10), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x0F11), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x0F12), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x0F14), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x0F85), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x0FD0), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x0FD1), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x0FD2), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x0FD3), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x0FD4), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x0FD9), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x0FDA), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x104A), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x104B), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x104C), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x104D), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x104E), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x104F), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x10FB), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x1360), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x1361), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x1362), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x1363), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x1364), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x1365), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x1366), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x1367), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x1368), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x166D), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x166E), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x16EB), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x16EC), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x16ED), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x1735), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x1736), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x17D4), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x17D5), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x17D6), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x17D8), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x17D9), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x17DA), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x1800), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x1801), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x1802), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x1803), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x1804), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x1805), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x1807), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x1808), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x1809), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x180A), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x1944), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x1945), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x1A1E), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x1A1F), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x1AA0), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x1AA1), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x1AA2), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x1AA3), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x1AA4), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x1AA5), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x1AA6), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x1AA8), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x1AA9), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x1AAA), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x1AAB), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x1AAC), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x1AAD), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x1B5A), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x1B5B), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x1B5C), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x1B5D), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x1B5E), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x1B5F), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x1B60), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x1BFC), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x1BFD), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x1BFE), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x1BFF), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x1C3B), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x1C3C), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x1C3D), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x1C3E), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x1C3F), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x1C7E), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x1C7F), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x1CC0), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x1CC1), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x1CC2), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x1CC3), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x1CC4), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x1CC5), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x1CC6), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x1CC7), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x1CD3), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x2016), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x2017), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x2020), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x2021), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x2022), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x2023), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x2024), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x2025), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x2026), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x2027), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x2030), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x2031), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x2032), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x2033), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x2034), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x2035), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x2036), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x2037), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x2038), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x203B), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x203C), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x203D), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x203E), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x2041), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x2042), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x2043), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x2047), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x2048), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x2049), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x204A), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x204B), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x204C), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x204D), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x204E), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x204F), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x2050), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x2051), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x2053), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x2055), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x2056), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x2057), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x2058), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x2059), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x205A), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x205B), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x205C), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x205D), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x205E), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x2CF9), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x2CFA), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x2CFB), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x2CFC), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x2CFE), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x2CFF), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x2D70), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x2E00), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x2E01), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x2E06), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x2E07), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x2E08), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x2E0B), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x2E0E), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x2E0F), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x2E10), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x2E11), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x2E12), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x2E13), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x2E14), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x2E15), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x2E16), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x2E18), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x2E19), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x2E1B), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x2E1E), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x2E1F), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x2E2A), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x2E2B), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x2E2C), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x2E2D), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x2E2E), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x2E30), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x2E31), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x2E32), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x2E33), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x2E34), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x2E35), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x2E36), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x2E37), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x2E38), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x2E39), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x3001), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x3002), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x3003), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x303D), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x30FB), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0xA4FE), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0xA4FF), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0xA60D), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0xA60E), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0xA60F), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0xA673), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0xA67E), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0xA6F2), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0xA6F3), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0xA6F4), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0xA6F5), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0xA6F6), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0xA6F7), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0xA874), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0xA875), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0xA876), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0xA877), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0xA8CE), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0xA8CF), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0xA8F8), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0xA8F9), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0xA8FA), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0xA92E), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0xA92F), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0xA95F), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0xA9C1), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0xA9C2), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0xA9C3), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0xA9C4), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0xA9C5), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0xA9C6), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0xA9C7), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0xA9C8), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0xA9C9), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0xA9CA), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0xA9CB), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0xA9CC), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0xA9CD), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0xA9DE), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0xA9DF), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0xAA5C), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0xAA5D), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0xAA5E), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0xAA5F), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0xAADE), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0xAADF), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0xAAF0), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0xAAF1), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0xABEB), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0xFE10), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0xFE11), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0xFE12), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0xFE13), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0xFE14), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0xFE15), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0xFE16), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0xFE19), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0xFE30), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0xFE45), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0xFE46), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0xFE49), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0xFE4A), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0xFE4B), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0xFE4C), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0xFE50), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0xFE51), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0xFE52), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0xFE54), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0xFE55), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0xFE56), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0xFE57), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0xFE5F), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0xFE60), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0xFE61), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0xFE68), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0xFE6A), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0xFE6B), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0xFF01), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0xFF02), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0xFF03), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0xFF05), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0xFF06), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0xFF07), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0xFF0A), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0xFF0C), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0xFF0E), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0xFF0F), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0xFF1A), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0xFF1B), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0xFF1F), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0xFF20), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0xFF3C), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0xFF61), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0xFF64), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0xFF65), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x0028), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x005B), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x007B), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x0F3A), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x0F3C), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x169B), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x201A), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x201E), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x2045), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x207D), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x208D), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x2329), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x2768), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x276A), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x276C), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x276E), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x2770), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x2772), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x2774), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x27C5), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x27E6), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x27E8), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x27EA), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x27EC), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x27EE), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x2983), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x2985), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x2987), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x2989), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x298B), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x298D), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x298F), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x2991), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x2993), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x2995), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x2997), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x29D8), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x29DA), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x29FC), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x2E22), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x2E24), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x2E26), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x2E28), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x3008), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x300A), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x300C), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x300E), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x3010), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x3014), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x3016), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x3018), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x301A), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x301D), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0xFD3E), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0xFE17), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0xFE35), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0xFE37), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0xFE39), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0xFE3B), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0xFE3D), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0xFE3F), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0xFE41), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0xFE43), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0xFE47), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0xFE59), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0xFE5B), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0xFE5D), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0xFF08), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0xFF3B), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0xFF5B), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0xFF5F), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0xFF62), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x0020), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x00A0), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x1680), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x180E), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x2000), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x2001), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x2002), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x2003), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x2004), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x2005), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x2006), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x2007), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x2008), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x2009), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x200A), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x202F), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x205F), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x3000), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x2029), '' collate Latin1_General_BIN2)
+    set @text=REPLACE(@text, NCHAR(0x2028), '' collate Latin1_General_BIN2)
+    
+    return @text
 end
 GO
 /****** Object:  Table [dbo].[chars]    Script Date: 01/04/2026 17:13:38 ******/
@@ -859,8 +859,8 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 CREATE TABLE [dbo].[chars](
-	[base] [nvarchar](1) COLLATE Latin1_General_BIN2 NOT NULL,
-	[variant] [nvarchar](1) COLLATE Latin1_General_BIN2 NOT NULL
+    [base] [nvarchar](1) COLLATE Latin1_General_BIN2 NOT NULL,
+    [variant] [nvarchar](1) COLLATE Latin1_General_BIN2 NOT NULL
 ) ON [PRIMARY]
 GO
 /****** Object:  UserDefinedFunction [dbo].[characterize_inline]    Script Date: 01/04/2026 17:13:38 ******/
@@ -923,15 +923,15 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 CREATE TABLE [dbo].[metadata](
-	[id] [int] NOT NULL,
-	[type] [varchar](255) COLLATE Latin1_General_CI_AI NULL,
-	[json] [nvarchar](3000) COLLATE Latin1_General_CI_AI NULL,
-	[sortkeyGA] [nvarchar](512) COLLATE Latin1_General_CI_AI NULL,
-	[sortkeyEN] [nvarchar](512) COLLATE Latin1_General_CI_AI NULL,
-	[parentID] [int] NULL,
+    [id] [int] NOT NULL,
+    [type] [varchar](255) COLLATE Latin1_General_CI_AI NULL,
+    [json] [nvarchar](3000) COLLATE Latin1_General_CI_AI NULL,
+    [sortkeyGA] [nvarchar](512) COLLATE Latin1_General_CI_AI NULL,
+    [sortkeyEN] [nvarchar](512) COLLATE Latin1_General_CI_AI NULL,
+    [parentID] [int] NULL,
  CONSTRAINT [PK__metadata__3213E83FD56CDBC2] PRIMARY KEY CLUSTERED 
 (
-	[id] ASC
+    [id] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
@@ -979,12 +979,12 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 CREATE TABLE [dbo].[terms](
-	[id] [int] NOT NULL,
-	[json] [nvarchar](max) COLLATE Latin1_General_CI_AI NULL,
-	[lang] [nvarchar](10) COLLATE Latin1_General_CI_AI NULL,
-	[wording] [nvarchar](255) COLLATE Latin1_General_CI_AS NULL,
-	[wordingSpartanized]  AS (([dbo].[spartanize]([wording])) collate Latin1_General_CI_AS) PERSISTED,
-	[wording_rev]  AS (reverse([wording])) PERSISTED
+    [id] [int] NOT NULL,
+    [json] [nvarchar](max) COLLATE Latin1_General_CI_AI NULL,
+    [lang] [nvarchar](10) COLLATE Latin1_General_CI_AI NULL,
+    [wording] [nvarchar](255) COLLATE Latin1_General_CI_AS NULL,
+    [wordingSpartanized]  AS (([dbo].[spartanize]([wording])) collate Latin1_General_CI_AS) PERSISTED,
+    [wording_rev]  AS (reverse([wording])) PERSISTED
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 GO
 /****** Object:  Table [dbo].[aux]    Script Date: 01/04/2026 17:13:38 ******/
@@ -993,13 +993,13 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 CREATE TABLE [dbo].[aux](
-	[coll] [nchar](10) COLLATE Latin1_General_CI_AI NOT NULL,
-	[en] [nvarchar](max) COLLATE Latin1_General_CI_AI NOT NULL,
-	[ga] [nvarchar](max) COLLATE Latin1_General_CI_AI NOT NULL,
-	[id] [int] IDENTITY(1,1) NOT NULL,
+    [coll] [nchar](10) COLLATE Latin1_General_CI_AI NOT NULL,
+    [en] [nvarchar](max) COLLATE Latin1_General_CI_AI NOT NULL,
+    [ga] [nvarchar](max) COLLATE Latin1_General_CI_AI NOT NULL,
+    [id] [int] IDENTITY(1,1) NOT NULL,
  CONSTRAINT [PK_aux] PRIMARY KEY CLUSTERED 
 (
-	[id] ASC
+    [id] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 GO
@@ -1009,11 +1009,11 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 CREATE TABLE [dbo].[configs](
-	[id] [nvarchar](255) COLLATE Latin1_General_CI_AI NOT NULL,
-	[json] [nvarchar](max) COLLATE Latin1_General_CI_AI NULL,
+    [id] [nvarchar](255) COLLATE Latin1_General_CI_AI NOT NULL,
+    [json] [nvarchar](max) COLLATE Latin1_General_CI_AI NULL,
 PRIMARY KEY CLUSTERED 
 (
-	[id] ASC
+    [id] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 GO
@@ -1023,17 +1023,17 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 CREATE TABLE [dbo].[entries](
-	[id] [int] NOT NULL,
-	[json] [nvarchar](max) COLLATE Latin1_General_CI_AI NULL,
-	[cStatus] [int] NULL,
-	[pStatus] [int] NULL,
-	[dateStamp] [date] NULL,
-	[tod] [date] NULL,
-	[sortkeyGA] [nvarchar](255) COLLATE Latin1_General_CI_AS NULL,
-	[sortkeyEN] [nvarchar](255) COLLATE Latin1_General_CI_AS NULL,
+    [id] [int] NOT NULL,
+    [json] [nvarchar](max) COLLATE Latin1_General_CI_AI NULL,
+    [cStatus] [int] NULL,
+    [pStatus] [int] NULL,
+    [dateStamp] [date] NULL,
+    [tod] [date] NULL,
+    [sortkeyGA] [nvarchar](255) COLLATE Latin1_General_CI_AS NULL,
+    [sortkeyEN] [nvarchar](255) COLLATE Latin1_General_CI_AS NULL,
  CONSTRAINT [PK__entries__3213E83FB84A5A39] PRIMARY KEY CLUSTERED 
 (
-	[id] ASC
+    [id] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 GO
@@ -1043,8 +1043,8 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 CREATE TABLE [dbo].[entry_domain](
-	[entry_id] [int] NULL,
-	[superdomain] [int] NULL
+    [entry_id] [int] NULL,
+    [superdomain] [int] NULL
 ) ON [PRIMARY]
 GO
 /****** Object:  Table [dbo].[entry_term]    Script Date: 01/04/2026 17:13:38 ******/
@@ -1053,9 +1053,9 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 CREATE TABLE [dbo].[entry_term](
-	[entry_id] [int] NULL,
-	[term_id] [int] NULL,
-	[accept] [int] NULL
+    [entry_id] [int] NULL,
+    [term_id] [int] NULL,
+    [accept] [int] NULL
 ) ON [PRIMARY]
 GO
 /****** Object:  Table [dbo].[entry_xref]    Script Date: 01/04/2026 17:13:38 ******/
@@ -1064,8 +1064,8 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 CREATE TABLE [dbo].[entry_xref](
-	[source_entry_id] [int] NOT NULL,
-	[target_entry_id] [int] NOT NULL
+    [source_entry_id] [int] NOT NULL,
+    [target_entry_id] [int] NOT NULL
 ) ON [PRIMARY]
 GO
 /****** Object:  Table [dbo].[flex]    Script Date: 01/04/2026 17:13:38 ******/
@@ -1074,10 +1074,10 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 CREATE TABLE [dbo].[flex](
-	[term_id] [int] NULL,
-	[lang] [nvarchar](10) COLLATE Latin1_General_CI_AI NOT NULL,
-	[lemma] [nvarchar](255) COLLATE Latin1_General_CI_AS NOT NULL,
-	[token] [nvarchar](255) COLLATE Latin1_General_CI_AS NOT NULL
+    [term_id] [int] NULL,
+    [lang] [nvarchar](10) COLLATE Latin1_General_CI_AI NOT NULL,
+    [lemma] [nvarchar](255) COLLATE Latin1_General_CI_AS NOT NULL,
+    [token] [nvarchar](255) COLLATE Latin1_General_CI_AS NOT NULL
 ) ON [PRIMARY]
 GO
 /****** Object:  Table [dbo].[search_text]    Script Date: 01/04/2026 17:13:38 ******/
@@ -1086,12 +1086,12 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 CREATE TABLE [dbo].[search_text](
-	[id] [int] IDENTITY(1,1) NOT NULL,
-	[searchText] [nvarchar](255) COLLATE Latin1_General_CI_AI NOT NULL,
-	[created] [datetime] NOT NULL,
+    [id] [int] IDENTITY(1,1) NOT NULL,
+    [searchText] [nvarchar](255) COLLATE Latin1_General_CI_AI NOT NULL,
+    [created] [datetime] NOT NULL,
  CONSTRAINT [PK_search_text] PRIMARY KEY CLUSTERED 
 (
-	[id] ASC
+    [id] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
@@ -1101,9 +1101,9 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 CREATE TABLE [dbo].[similar](
-	[searchTextID] [int] NOT NULL,
-	[similar] [nvarchar](255) COLLATE Latin1_General_CI_AI NOT NULL,
-	[diff] [int] NOT NULL
+    [searchTextID] [int] NOT NULL,
+    [similar] [nvarchar](255) COLLATE Latin1_General_CI_AI NOT NULL,
+    [diff] [int] NOT NULL
 ) ON [PRIMARY]
 GO
 /****** Object:  Table [dbo].[spelling]    Script Date: 01/04/2026 17:13:38 ******/
@@ -1112,36 +1112,36 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 CREATE TABLE [dbo].[spelling](
-	[term_id] [int] NOT NULL,
-	[word] [nvarchar](255) COLLATE Latin1_General_CI_AS NOT NULL,
-	[A] [int] NOT NULL,
-	[B] [int] NOT NULL,
-	[C] [int] NOT NULL,
-	[D] [int] NOT NULL,
-	[E] [int] NOT NULL,
-	[F] [int] NOT NULL,
-	[G] [int] NOT NULL,
-	[H] [int] NOT NULL,
-	[I] [int] NOT NULL,
-	[J] [int] NOT NULL,
-	[K] [int] NOT NULL,
-	[L] [int] NOT NULL,
-	[M] [int] NOT NULL,
-	[N] [int] NOT NULL,
-	[O] [int] NOT NULL,
-	[P] [int] NOT NULL,
-	[Q] [int] NOT NULL,
-	[R] [int] NOT NULL,
-	[S] [int] NOT NULL,
-	[T] [int] NOT NULL,
-	[U] [int] NOT NULL,
-	[V] [int] NOT NULL,
-	[W] [int] NOT NULL,
-	[X] [int] NOT NULL,
-	[Y] [int] NOT NULL,
-	[Z] [int] NOT NULL,
-	[length] [int] NOT NULL,
-	[first_char]  AS (left([word],(1))) PERSISTED
+    [term_id] [int] NOT NULL,
+    [word] [nvarchar](255) COLLATE Latin1_General_CI_AS NOT NULL,
+    [A] [int] NOT NULL,
+    [B] [int] NOT NULL,
+    [C] [int] NOT NULL,
+    [D] [int] NOT NULL,
+    [E] [int] NOT NULL,
+    [F] [int] NOT NULL,
+    [G] [int] NOT NULL,
+    [H] [int] NOT NULL,
+    [I] [int] NOT NULL,
+    [J] [int] NOT NULL,
+    [K] [int] NOT NULL,
+    [L] [int] NOT NULL,
+    [M] [int] NOT NULL,
+    [N] [int] NOT NULL,
+    [O] [int] NOT NULL,
+    [P] [int] NOT NULL,
+    [Q] [int] NOT NULL,
+    [R] [int] NOT NULL,
+    [S] [int] NOT NULL,
+    [T] [int] NOT NULL,
+    [U] [int] NOT NULL,
+    [V] [int] NOT NULL,
+    [W] [int] NOT NULL,
+    [X] [int] NOT NULL,
+    [Y] [int] NOT NULL,
+    [Z] [int] NOT NULL,
+    [length] [int] NOT NULL,
+    [first_char]  AS (left([word],(1))) PERSISTED
 ) ON [PRIMARY]
 GO
 /****** Object:  Table [dbo].[term_pos]    Script Date: 01/04/2026 17:13:38 ******/
@@ -1150,8 +1150,8 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 CREATE TABLE [dbo].[term_pos](
-	[term_id] [int] NOT NULL,
-	[pos_id] [int] NOT NULL
+    [term_id] [int] NOT NULL,
+    [pos_id] [int] NOT NULL
 ) ON [PRIMARY]
 GO
 /****** Object:  Table [dbo].[words]    Script Date: 01/04/2026 17:13:38 ******/
@@ -1160,8 +1160,8 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 CREATE TABLE [dbo].[words](
-	[term_id] [int] NULL,
-	[word] [nvarchar](255) COLLATE Latin1_General_CI_AS NULL
+    [term_id] [int] NULL,
+    [word] [nvarchar](255) COLLATE Latin1_General_CI_AS NULL
 ) ON [PRIMARY]
 GO
 ALTER TABLE [dbo].[search_text] ADD  CONSTRAINT [DF_search_text_created]  DEFAULT (getdate()) FOR [created]
@@ -1193,10 +1193,10 @@ delete from entry_term where entry_id=@entryID
 --delete orphaned terms:
 declare @orphs table(id int)
 insert into @orphs(id)
-	select t.id
-	from terms as t
-	left outer join entry_term as et on et.term_id=t.id
-	where et.entry_id is null
+    select t.id
+    from terms as t
+    left outer join entry_term as et on et.term_id=t.id
+    where et.entry_id is null
 delete from terms where id in (select id from @orphs)
 delete from words where term_id in (select id from @orphs)
 delete from spelling where term_id in (select id from @orphs)
@@ -1234,11 +1234,11 @@ begin
 
 if (select count(*) from configs where id=@id) = 0
 begin
-	insert into configs(id, [json]) values(@id, @json)
+    insert into configs(id, [json]) values(@id, @json)
 end
 else
 begin
-	update configs set [json]=@json where id=@id
+    update configs set [json]=@json where id=@id
 end
 
 end
@@ -1258,120 +1258,120 @@ as
 begin
 
 if(JSON_VALUE(@json, '$.pStatus')='0')
-	exec propag_deleteEntry @entryID=@entryID
+    exec propag_deleteEntry @entryID=@entryID
 else
 begin
 
-	if (select count(*) from entries where id=@entryID) = 0 insert into entries(id, [json]) values(@entryID, @json)
-	else update entries set [json]=@json where id=@entryID
+    if (select count(*) from entries where id=@entryID) = 0 insert into entries(id, [json]) values(@entryID, @json)
+    else update entries set [json]=@json where id=@entryID
 
-	update entries set
-	  cStatus=JSON_VALUE(json, '$.cStatus')
-	, pStatus=JSON_VALUE(json, '$.pStatus')
-	, dateStamp=JSON_VALUE(json, '$.dateStamp')
-	, tod=JSON_VALUE(json, '$.tod')
-	where id=@entryID
+    update entries set
+      cStatus=JSON_VALUE(json, '$.cStatus')
+    , pStatus=JSON_VALUE(json, '$.pStatus')
+    , dateStamp=JSON_VALUE(json, '$.dateStamp')
+    , tod=JSON_VALUE(json, '$.tod')
+    where id=@entryID
 
-	delete from entry_xref where source_entry_id=@entryID
-	insert into entry_xref(source_entry_id, target_entry_id)
-	select e.id as source_id, target_id
-	from entries as e
-	cross apply openjson(e.json, '$.xrefs') with(
-	  target_id int '$'
-	  ) as pj
-	where e.id=@entryID
+    delete from entry_xref where source_entry_id=@entryID
+    insert into entry_xref(source_entry_id, target_entry_id)
+    select e.id as source_id, target_id
+    from entries as e
+    cross apply openjson(e.json, '$.xrefs') with(
+      target_id int '$'
+      ) as pj
+    where e.id=@entryID
 
-	delete from entry_domain where entry_id=@entryID
-	insert into entry_domain(entry_id, superdomain)
-	select e.id, pj.superdomain
-	from entries as e
-	cross apply openjson(e.json, '$.domains') with(
-	  superdomain int '$'
-	) as pj
-	where e.id=@entryID
+    delete from entry_domain where entry_id=@entryID
+    insert into entry_domain(entry_id, superdomain)
+    select e.id, pj.superdomain
+    from entries as e
+    cross apply openjson(e.json, '$.domains') with(
+      superdomain int '$'
+    ) as pj
+    where e.id=@entryID
 
-	delete from entry_term where entry_id=@entryID
-	insert into entry_term(entry_id, term_id, accept)
-	select e.id as entryID, pj.termID, pj.accept
-	from entries as e
-	cross apply openjson(e.json, '$.desigs') with(
-	  termID int '$.term.id'
-	, accept int '$.accept'
-	) as pj
-	where e.id=@entryID
+    delete from entry_term where entry_id=@entryID
+    insert into entry_term(entry_id, term_id, accept)
+    select e.id as entryID, pj.termID, pj.accept
+    from entries as e
+    cross apply openjson(e.json, '$.desigs') with(
+      termID int '$.term.id'
+    , accept int '$.accept'
+    ) as pj
+    where e.id=@entryID
 
-	declare @termIDs table(id int)
-	insert into @termIDs select term_id from entry_term where entry_id=@entryID
+    declare @termIDs table(id int)
+    insert into @termIDs select term_id from entry_term where entry_id=@entryID
 
-	delete from terms where id in (select id from @termIDs)
-	insert into terms(id, lang, wording)
-	select distinct id, lang, wording from(
-		select
-		  convert(int, json_value(ext.value, '$.term.id')) as id
-		--, json_query(ext.value, '$.term') as json
-		, json_value(ext.value, '$.term.lang') as lang
-		, json_value(ext.value, '$.term.wording') as wording
-		from entries as e
-		cross apply openjson(e.json, '$.desigs') as ext
-		where e.id=@entryID
-	) as t
+    delete from terms where id in (select id from @termIDs)
+    insert into terms(id, lang, wording)
+    select distinct id, lang, wording from(
+        select
+          convert(int, json_value(ext.value, '$.term.id')) as id
+        --, json_query(ext.value, '$.term') as json
+        , json_value(ext.value, '$.term.lang') as lang
+        , json_value(ext.value, '$.term.wording') as wording
+        from entries as e
+        cross apply openjson(e.json, '$.desigs') as ext
+        where e.id=@entryID
+    ) as t
 
-	delete from term_pos where term_id in (select id from @termIDs)
-	insert into term_pos(term_id, pos_id)
-	select distinct term_id, pos_id from(
-		select
-		  convert(int, json_value(ext.value, '$.term.id')) as term_id
-		, json_value(annot.value, '$.label.value') as pos_id
-		from entries as e
-		cross apply openjson(e.json, '$.desigs') as ext
-		cross apply openjson(ext.value, '$.term.annots') as annot
-		where e.id=@entryID
-		and json_value(annot.value, '$.label.type')='posLabel'
-	) as t
+    delete from term_pos where term_id in (select id from @termIDs)
+    insert into term_pos(term_id, pos_id)
+    select distinct term_id, pos_id from(
+        select
+          convert(int, json_value(ext.value, '$.term.id')) as term_id
+        , json_value(annot.value, '$.label.value') as pos_id
+        from entries as e
+        cross apply openjson(e.json, '$.desigs') as ext
+        cross apply openjson(ext.value, '$.term.annots') as annot
+        where e.id=@entryID
+        and json_value(annot.value, '$.label.type')='posLabel'
+    ) as t
 
-	delete from words where term_id in (select id from @termIDs)
-	insert into words(term_id, word)
-	select t.id, dbo.spartanize(w.display_term)
-	from terms as t
-	cross apply (
-		select display_term
-		from sys.dm_fts_parser(N'"'+replace(t.wording, '"', ' ')+'"', 0, null, 1)
-		where special_term in ('Noise Word', 'Exact Match')
-	) as w
-	where t.id in (select id from @termIDs)
+    delete from words where term_id in (select id from @termIDs)
+    insert into words(term_id, word)
+    select t.id, dbo.spartanize(w.display_term)
+    from terms as t
+    cross apply (
+        select display_term
+        from sys.dm_fts_parser(N'"'+replace(t.wording, '"', ' ')+'"', 0, null, 1)
+        where special_term in ('Noise Word', 'Exact Match')
+    ) as w
+    where t.id in (select id from @termIDs)
 
-	delete from spelling where term_id in (select id from @termIDs)
-	insert into spelling(term_id, word, [A],[B],[C],[D],[E],[F],[G],[H],[I],[J],[K],[L],[M],[N],[O],[P],[Q],[R],[S],[T],[U],[V],[W],[X],[Y],[Z], [length])
-	select t.id, t.wording, [A],[B],[C],[D],[E],[F],[G],[H],[I],[J],[K],[L],[M],[N],[O],[P],[Q],[R],[S],[T],[U],[V],[W],[X],[Y],[Z], LEN(t.wording)
-	from terms as t
-	cross apply (
-		select [A],[B],[C],[D],[E],[F],[G],[H],[I],[J],[K],[L],[M],[N],[O],[P],[Q],[R],[S],[T],[U],[V],[W],[X],[Y],[Z]
-		from dbo.characterize(t.wording)
-	) as c
-	where t.id in (select id from @termIDs)
-	--and len(t.wording)<=10
+    delete from spelling where term_id in (select id from @termIDs)
+    insert into spelling(term_id, word, [A],[B],[C],[D],[E],[F],[G],[H],[I],[J],[K],[L],[M],[N],[O],[P],[Q],[R],[S],[T],[U],[V],[W],[X],[Y],[Z], [length])
+    select t.id, t.wording, [A],[B],[C],[D],[E],[F],[G],[H],[I],[J],[K],[L],[M],[N],[O],[P],[Q],[R],[S],[T],[U],[V],[W],[X],[Y],[Z], LEN(t.wording)
+    from terms as t
+    cross apply (
+        select [A],[B],[C],[D],[E],[F],[G],[H],[I],[J],[K],[L],[M],[N],[O],[P],[Q],[R],[S],[T],[U],[V],[W],[X],[Y],[Z]
+        from dbo.characterize(t.wording)
+    ) as c
+    where t.id in (select id from @termIDs)
+    --and len(t.wording)<=10
 
-	update entries set sortkeyGA=null, sortkeyEN=null where id=@entryID
-	declare @temp table(entry_id int, sortkey nvarchar(max), listingOrder int)
-	insert into @temp(entry_id, sortkey, listingOrder)
-		select e.id, JSON_VALUE(pj.value, '$.term.wording'), pj.[key]
-		from entries as e
-		cross apply openjson(e.json, '$.desigs') as pj
-		where e.id=@entryID and JSON_VALUE(pj.value, '$.term.lang')='ga'
-		update e set e.sortkeyGA=t.sortkey
-			from entries as e
-			inner join @temp as t on t.entry_id=e.id
-			where e.id=@entryID and e.sortkeyGA is null
-	delete from @temp
-	insert into @temp(entry_id, sortkey, listingOrder)
-		select e.id, JSON_VALUE(pj.value, '$.term.wording'), pj.[key]
-		from entries as e
-		cross apply openjson(e.json, '$.desigs') as pj
-		where e.id=@entryID and JSON_VALUE(pj.value, '$.term.lang')='en'
-		update e set e.sortkeyEN=t.sortkey
-			from entries as e
-			inner join @temp as t on t.entry_id=e.id
-			where e.id=@entryID and e.sortkeyEN is null
+    update entries set sortkeyGA=null, sortkeyEN=null where id=@entryID
+    declare @temp table(entry_id int, sortkey nvarchar(max), listingOrder int)
+    insert into @temp(entry_id, sortkey, listingOrder)
+        select e.id, JSON_VALUE(pj.value, '$.term.wording'), pj.[key]
+        from entries as e
+        cross apply openjson(e.json, '$.desigs') as pj
+        where e.id=@entryID and JSON_VALUE(pj.value, '$.term.lang')='ga'
+        update e set e.sortkeyGA=t.sortkey
+            from entries as e
+            inner join @temp as t on t.entry_id=e.id
+            where e.id=@entryID and e.sortkeyGA is null
+    delete from @temp
+    insert into @temp(entry_id, sortkey, listingOrder)
+        select e.id, JSON_VALUE(pj.value, '$.term.wording'), pj.[key]
+        from entries as e
+        cross apply openjson(e.json, '$.desigs') as pj
+        where e.id=@entryID and JSON_VALUE(pj.value, '$.term.lang')='en'
+        update e set e.sortkeyEN=t.sortkey
+            from entries as e
+            inner join @temp as t on t.entry_id=e.id
+            where e.id=@entryID and e.sortkeyEN is null
 
 end
 end
@@ -1392,11 +1392,11 @@ begin
 
 if (select count(*) from metadata where id=@id) = 0
 begin
-	insert into metadata(id, [type], [json]) values(@id, @type, @json)
+    insert into metadata(id, [type], [json]) values(@id, @type, @json)
 end
 else
 begin
-	update metadata set [type]=@type, [json]=@json where id=@id
+    update metadata set [type]=@type, [json]=@json where id=@id
 end
 
 update metadata set
@@ -1428,8 +1428,8 @@ begin
     create table #domainIDs (domainID int);
 
     insert into #domainIDs(domainID)
-		select domainID
-		from dbo.expandDomainID_inline(@domID, default);
+        select domainID
+        from dbo.expandDomainID_inline(@domID, default);
 
     create index ix_domainIDs on #domainIDs(domainID);
 
@@ -1441,26 +1441,26 @@ begin
         rownum int
     );
     create index ix_matches_entry on #matches(entry_id);
-	create index ix_matches_rownum on #matches(rownum) include (entry_id);
+    create index ix_matches_rownum on #matches(rownum) include (entry_id);
 
-	if @lang = 'ga'
-	begin
-		insert into #matches(entry_id, rownum)
-			select e.id, row_number() over (order by e.sortkeyGA)
-			from entries e
-			join entry_domain ed on ed.entry_id = e.id
-			join #domainIDs di on di.domainID = ed.superdomain
-			where e.pStatus = 1;
-	end
-	else
-	begin
-		insert into #matches(entry_id, rownum)
-			select e.id, row_number() over (order by e.sortkeyEN)
-			from entries e
-			join entry_domain ed on ed.entry_id = e.id
-			join #domainIDs di on di.domainID = ed.superdomain
-			where e.pStatus = 1;
-	end
+    if @lang = 'ga'
+    begin
+        insert into #matches(entry_id, rownum)
+            select e.id, row_number() over (order by e.sortkeyGA)
+            from entries e
+            join entry_domain ed on ed.entry_id = e.id
+            join #domainIDs di on di.domainID = ed.superdomain
+            where e.pStatus = 1;
+    end
+    else
+    begin
+        insert into #matches(entry_id, rownum)
+            select e.id, row_number() over (order by e.sortkeyEN)
+            from entries e
+            join entry_domain ed on ed.entry_id = e.id
+            join #domainIDs di on di.domainID = ed.superdomain
+            where e.pStatus = 1;
+    end
 
     -------------------------------------------------------------------------
     -- paging
@@ -1650,12 +1650,12 @@ begin
     create clustered index ix_exacts on #exacts(entry_id, lang);
 
     insert into #exacts(entry_id, lang)
-		select e.id, t.lang
-		from entries e
-		join entry_term et on et.entry_id = e.id
-		join terms t on t.id = et.term_id
-		where t.wordingSpartanized = @wordSpartanized
-		  and e.pStatus = 1;
+        select e.id, t.lang
+        from entries e
+        join entry_term et on et.entry_id = e.id
+        join terms t on t.id = et.term_id
+        where t.wordingSpartanized = @wordSpartanized
+          and e.pStatus = 1;
 
     -------------------------------------------------------------------------
     -- tokenise input
@@ -1700,27 +1700,27 @@ begin
         insert into #tokens(token, lang) values(@word1, '');
 
         insert into #tokens(token, lang)
-			select token, lang from flex where lemma = @word1;
+            select token, lang from flex where lemma = @word1;
 
         insert into #tokens(token, lang)
-			select lemma, lang from flex where token = @word1;
+            select lemma, lang from flex where token = @word1;
 
         insert into #relateds(entry_id, lang, term_id)
-			select distinct e.id, t.lang, t.id
-			from entries e
-			join entry_term et on et.entry_id = e.id
-			join terms t on t.id = et.term_id
-			join words w on w.term_id = t.id
-			join #tokens tok on tok.token = w.word
-			where tok.lang = t.lang
-			union all
-			select distinct e.id, t.lang, t.id
-			from entries e
-			join entry_term et on et.entry_id = e.id
-			join terms t on t.id = et.term_id
-			join words w on w.term_id = t.id
-			join #tokens tok on tok.token = w.word
-			where tok.lang = '';
+            select distinct e.id, t.lang, t.id
+            from entries e
+            join entry_term et on et.entry_id = e.id
+            join terms t on t.id = et.term_id
+            join words w on w.term_id = t.id
+            join #tokens tok on tok.token = w.word
+            where tok.lang = t.lang
+            union all
+            select distinct e.id, t.lang, t.id
+            from entries e
+            join entry_term et on et.entry_id = e.id
+            join terms t on t.id = et.term_id
+            join words w on w.term_id = t.id
+            join #tokens tok on tok.token = w.word
+            where tok.lang = '';
     end
 
     -------------------------------------------------------------------------
@@ -1740,29 +1740,29 @@ begin
         insert into #tokens(token, lang) values(@word2, '');
 
         insert into #tokens(token, lang)
-			select token, lang from flex where lemma = @word2;
+            select token, lang from flex where lemma = @word2;
 
         insert into #tokens(token, lang)
-			select lemma, lang from flex where token = @word2;
+            select lemma, lang from flex where token = @word2;
 
         insert into #relateds(entry_id, lang, term_id)
-			select distinct e.id, t.lang, t.id
-			from entries e
-			join #temp temp on temp.entry_id = e.id
-			join entry_term et on et.entry_id = e.id
-			join terms t on t.id = et.term_id
-			join words w on w.term_id = t.id
-			join #tokens tok on tok.token = w.word
-			where tok.lang = t.lang
-			union all
-			select distinct e.id, t.lang, t.id
-			from entries e
-			join #temp temp on temp.entry_id = e.id
-			join entry_term et on et.entry_id = e.id
-			join terms t on t.id = et.term_id
-			join words w on w.term_id = t.id
-			join #tokens tok on tok.token = w.word
-			where tok.lang = '';
+            select distinct e.id, t.lang, t.id
+            from entries e
+            join #temp temp on temp.entry_id = e.id
+            join entry_term et on et.entry_id = e.id
+            join terms t on t.id = et.term_id
+            join words w on w.term_id = t.id
+            join #tokens tok on tok.token = w.word
+            where tok.lang = t.lang
+            union all
+            select distinct e.id, t.lang, t.id
+            from entries e
+            join #temp temp on temp.entry_id = e.id
+            join entry_term et on et.entry_id = e.id
+            join terms t on t.id = et.term_id
+            join words w on w.term_id = t.id
+            join #tokens tok on tok.token = w.word
+            where tok.lang = '';
     end
 
     -------------------------------------------------------------------------
@@ -1782,29 +1782,29 @@ begin
         insert into #tokens(token, lang) values(@word3, '');
 
         insert into #tokens(token, lang)
-			select token, lang from flex where lemma = @word3;
+            select token, lang from flex where lemma = @word3;
 
         insert into #tokens(token, lang)
-			select lemma, lang from flex where token = @word3;
+            select lemma, lang from flex where token = @word3;
 
         insert into #relateds(entry_id, lang, term_id)
-			select distinct e.id, t.lang, t.id
-			from entries e
-			join #temp temp on temp.entry_id = e.id
-			join entry_term et on et.entry_id = e.id
-			join terms t on t.id = et.term_id
-			join words w on w.term_id = t.id
-			join #tokens tok on tok.token = w.word
-			where tok.lang = t.lang
-			union all
-			select distinct e.id, t.lang, t.id
-			from entries e
-			join #temp temp on temp.entry_id = e.id
-			join entry_term et on et.entry_id = e.id
-			join terms t on t.id = et.term_id
-			join words w on w.term_id = t.id
-			join #tokens tok on tok.token = w.word
-			where tok.lang = '';
+            select distinct e.id, t.lang, t.id
+            from entries e
+            join #temp temp on temp.entry_id = e.id
+            join entry_term et on et.entry_id = e.id
+            join terms t on t.id = et.term_id
+            join words w on w.term_id = t.id
+            join #tokens tok on tok.token = w.word
+            where tok.lang = t.lang
+            union all
+            select distinct e.id, t.lang, t.id
+            from entries e
+            join #temp temp on temp.entry_id = e.id
+            join entry_term et on et.entry_id = e.id
+            join terms t on t.id = et.term_id
+            join words w on w.term_id = t.id
+            join #tokens tok on tok.token = w.word
+            where tok.lang = '';
     end
 
     -------------------------------------------------------------------------
@@ -1836,7 +1836,7 @@ as
 begin
     set nocount on;
 
-	-------------------------------------------------------------------------
+    -------------------------------------------------------------------------
     -- Preprocess input
     -------------------------------------------------------------------------
     declare @wordSpartanized nvarchar(255);
@@ -2044,7 +2044,7 @@ begin
                         else d.dist
                     end
                 from u
-				cross apply (select dbo.levenshtein(word, @word) as dist) d
+                cross apply (select dbo.levenshtein(word, @word) as dist) d
                 where rn = 1
                   and d.dist <= 4
                 order by 2;
@@ -2076,7 +2076,7 @@ begin
     -- EXACT MATCHES
     -------------------------------------------------------------------------
     create table #exacts (entry_id int, lang nvarchar(10) collate Latin1_General_CI_AI);
-	create clustered index IX_exacts on #exacts(entry_id, lang);
+    create clustered index IX_exacts on #exacts(entry_id, lang);
 
     insert into #exacts(entry_id, lang)
         select e.id, t.lang
@@ -2090,7 +2090,7 @@ begin
     -- TOKENISE INPUT (FTS parser) FOR RELATED MATCHES
     -------------------------------------------------------------------------
     create table #words (word nvarchar(255) collate Latin1_General_CI_AI);
-	create index IX_words on #words(word);
+    create index IX_words on #words(word);
 
     insert into #words(word)
         select dbo.spartanize(display_term)
@@ -2102,14 +2102,14 @@ begin
     -- RELATED MATCHES (flex-expanded token matching)
     -------------------------------------------------------------------------
     create table #relateds (entry_id int, lang nvarchar(10) collate Latin1_General_CI_AI, term_id int);
-	create index IX_relateds on #relateds(entry_id, lang);
+    create index IX_relateds on #relateds(entry_id, lang);
 
     create table #tokens (
-		token nvarchar(255) collate Latin1_General_CI_AS,
-		lang nvarchar(10) collate Latin1_General_CI_AI
-	);
-	create index IX_tokens on #tokens(token, lang);
-	
+        token nvarchar(255) collate Latin1_General_CI_AS,
+        lang nvarchar(10) collate Latin1_General_CI_AI
+    );
+    create index IX_tokens on #tokens(token, lang);
+    
     declare @temp table(entry_id int, term_id int);
 
     -------------------------------------------------------------------------
@@ -2135,24 +2135,24 @@ begin
             from flex
             where token = @word1;
 
-		insert into #relateds(entry_id, lang, term_id)
-			-- branch 1: language-specific
-			select e.id, t.lang, t.id
-			from entries as e
-			inner join entry_term as et on et.entry_id = e.id
-			inner join terms as t on t.id = et.term_id
-			inner join words as w on w.term_id = t.id
-			inner join #tokens as tok on tok.token = w.word
-			where tok.lang = t.lang
-			union all
-			-- branch 2: language-agnostic
-			select e.id, t.lang, t.id
-			from entries e
-			inner join entry_term et on et.entry_id = e.id
-			inner join terms t on t.id = et.term_id
-			inner join words w on w.term_id = t.id
-			inner join #tokens tok on tok.token = w.word
-			where tok.lang = '';
+        insert into #relateds(entry_id, lang, term_id)
+            -- branch 1: language-specific
+            select e.id, t.lang, t.id
+            from entries as e
+            inner join entry_term as et on et.entry_id = e.id
+            inner join terms as t on t.id = et.term_id
+            inner join words as w on w.term_id = t.id
+            inner join #tokens as tok on tok.token = w.word
+            where tok.lang = t.lang
+            union all
+            -- branch 2: language-agnostic
+            select e.id, t.lang, t.id
+            from entries e
+            inner join entry_term et on et.entry_id = e.id
+            inner join terms t on t.id = et.term_id
+            inner join words w on w.term_id = t.id
+            inner join #tokens tok on tok.token = w.word
+            where tok.lang = '';
     end
 
     -------------------------------------------------------------------------
@@ -2195,7 +2195,7 @@ begin
             inner join words as w on w.term_id = t.id
             inner join #tokens as tok on tok.token = w.word
             where tok.lang = t.lang
-			union all
+            union all
             select e.id, t.lang, t.id
             from entries as e
             inner join @temp as temp on temp.entry_id = e.id
@@ -2246,7 +2246,7 @@ begin
             inner join words as w on w.term_id = t.id
             inner join #tokens as tok on tok.token = w.word
             where tok.lang = t.lang
-			union all
+            union all
             select e.id, t.lang, t.id
             from entries as e
             inner join @temp as temp on temp.entry_id = e.id
@@ -2291,7 +2291,7 @@ begin
         order by count(*) desc;
     end
 
-	-------------------------------------------------------------------------
+    -------------------------------------------------------------------------
     -- RETURN XREF TARGETS
     -------------------------------------------------------------------------
     select *
@@ -2303,38 +2303,38 @@ begin
         select entry_id from #relateds
     ) as src on src.entry_id = x.source_entry_id;
 
-	if (@lang = '')
-	begin
-		select distinct e.*, case when @sortlang = 'en' then e.sortkeyEN else e.sortkeyGA end as sortkey
-		from entries as e
-		inner join #exacts as ids on ids.entry_id = e.id
-		order by sortkey, e.id;
+    if (@lang = '')
+    begin
+        select distinct e.*, case when @sortlang = 'en' then e.sortkeyEN else e.sortkeyGA end as sortkey
+        from entries as e
+        inner join #exacts as ids on ids.entry_id = e.id
+        order by sortkey, e.id;
 
-		select distinct top (101) e.*, case when @sortlang = 'en' then e.sortkeyEN else e.sortkeyGA end as sortkey
-		from entries as e
-		inner join #relateds as ids on ids.entry_id = e.id
-		where not exists (select 1 from #exacts as ex where ex.entry_id = e.id)
-			and e.pStatus = 1
-		order by sortkey, e.id;
-	end
-	else
-	begin
-		select distinct e.*, case when @sortlang = 'en' then e.sortkeyEN else e.sortkeyGA end as sortkey
-		from entries as e
-		inner join #exacts as ids on ids.entry_id = e.id
-		where ids.lang = @lang
-		order by sortkey, e.id;
+        select distinct top (101) e.*, case when @sortlang = 'en' then e.sortkeyEN else e.sortkeyGA end as sortkey
+        from entries as e
+        inner join #relateds as ids on ids.entry_id = e.id
+        where not exists (select 1 from #exacts as ex where ex.entry_id = e.id)
+            and e.pStatus = 1
+        order by sortkey, e.id;
+    end
+    else
+    begin
+        select distinct e.*, case when @sortlang = 'en' then e.sortkeyEN else e.sortkeyGA end as sortkey
+        from entries as e
+        inner join #exacts as ids on ids.entry_id = e.id
+        where ids.lang = @lang
+        order by sortkey, e.id;
 
-		select distinct top (101) e.*, case when @sortlang = 'en' then e.sortkeyEN else e.sortkeyGA end as sortkey
-		from entries as e
-		inner join #relateds as ids on ids.entry_id = e.id
-		where ids.lang = @lang
-			and not exists (select 1 from #exacts as ex where ex.entry_id = e.id)
-			and e.pStatus = 1
-		order by sortkey, e.id;
-	end
+        select distinct top (101) e.*, case when @sortlang = 'en' then e.sortkeyEN else e.sortkeyGA end as sortkey
+        from entries as e
+        inner join #relateds as ids on ids.entry_id = e.id
+        where ids.lang = @lang
+            and not exists (select 1 from #exacts as ex where ex.entry_id = e.id)
+            and e.pStatus = 1
+        order by sortkey, e.id;
+    end
 
-	-------------------------------------------------------------------------
+    -------------------------------------------------------------------------
     -- AUXILIARY RESULTS (for super.tearma.ie)
     -------------------------------------------------------------------------
     if (@super = 1)
