@@ -1680,7 +1680,7 @@ begin
     create index ix_relateds on #relateds(entry_id);
 
     create table #tokens (
-        token nvarchar(255) collate Latin1_General_CI_AI,
+        token nvarchar(255) collate Latin1_General_CI_AS,
         lang  nvarchar(10) collate Latin1_General_CI_AI
     );
     create index ix_tokens on #tokens(token, lang);

@@ -24,9 +24,7 @@ public class IateController(IateBroker iateBroker) : Controller
     public async Task<IActionResult> Search(string word, string lang)
     {
         if (word.IsNullOrWhiteSpace())
-        {
             return new RedirectToActionResult("Index", "Home", null);
-        }
 
         Search model = new()
         {
@@ -35,10 +33,11 @@ public class IateController(IateBroker iateBroker) : Controller
         };
 
         // superuser mode (with auxilliary glossaries etc.)
-        if (IsSuper(Request)) model.Super = true;
+        if (IsSuper(Request))
+            model.Super = true;
         
         ViewData["PageTitle"] = $"\"{model.Word}\"";
-			ViewData["IsSuper"] = IsSuper(Request);
+		ViewData["IsSuper"] = IsSuper(Request);
 
         await iateBroker.DoSearchAsync(model);
 
