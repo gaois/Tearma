@@ -15,9 +15,12 @@ public class Broker(IConfiguration configuration, IMemoryCache cache)
         configuration.GetConnectionString("DefaultConnection")
             ?? throw new InvalidOperationException("Missing connection string.");
 
-    // ---------------------------
-    // Shared helpers
-    // ---------------------------
+    private static string BuildWhereClause(IEnumerable<string> conditions)
+    {
+        var list = conditions.Where(c => !string.IsNullOrWhiteSpace(c)).ToList();
+        return list.Count == 0 ? "" : "where " + string.Join(" and ", list);
+    }
+
     private async Task<Lookups> GetCachedMetadataAsync(
         string metadataSql,
         IReadOnlyDictionary<string, object?>? parameters = null)
@@ -93,10 +96,9 @@ public class Broker(IConfiguration configuration, IMemoryCache cache)
 
             var jo = JObject.Parse(json);
 
-            Metadatum metadatum =
-                type == "posLabel"
-                    ? new Metadatum(id, jo, hasChildren, lookups.Languages)
-                    : new Metadatum(id, jo, hasChildren);
+            Metadatum metadatum = type == "posLabel"
+                ? new Metadatum(id, jo, hasChildren, lookups.Languages)
+                : new Metadatum(id, jo, hasChildren);
 
             lookups.AddMetadatum(type, metadatum);
         }
@@ -120,13 +122,9 @@ public class Broker(IConfiguration configuration, IMemoryCache cache)
         return dict;
     }
 
-    // ---------------------------
-    // Quick Search
-    // ---------------------------
-
     public async Task DoQuickSearchAsync(QuickSearch model)
     {
-        // metadata
+        // Metadata
         var metadataSql = SqlScripts.Get("pub_tod_metadata.sql");
         var lookups = await GetCachedMetadataAsync(metadataSql);
 
@@ -261,8 +259,7 @@ public class Broker(IConfiguration configuration, IMemoryCache cache)
         //------------------------------------------------------------------
         // Build SELECT clause (language-specific ordering)
         //------------------------------------------------------------------
-        var selectClause =
-            model.Lang == "en"
+        var selectClause = model.Lang == "en"
             ? "select distinct ret.id, row_number() over (order by ret.sortkeyen)"
             : "select distinct ret.id, row_number() over (order by ret.sortkeyga)";
 
@@ -305,11 +302,7 @@ public class Broker(IConfiguration configuration, IMemoryCache cache)
             case "al": where1.Add("(t.wording like @word escape '\\')"); break;
         }
 
-        var where1Clause = where1.Count > 0
-            ? "where " + string.Join(" and ", where1)
-            : "";
-
-        sql = sql.Replace("/**where1**/", where1Clause);
+        sql = sql.Replace("/**where1**/", BuildWhereClause(where1));
 
         //------------------------------------------------------------------
         // Build second WHERE clause dynamically
@@ -327,11 +320,7 @@ public class Broker(IConfiguration configuration, IMemoryCache cache)
             case "mw": where2.Add("(t.wording like '% %')"); break;
         }
 
-        var where2Clause = where2.Count > 0
-            ? "where " + string.Join(" and ", where2)
-            : "";
-
-        sql = sql.Replace("/**where2**/", where2Clause);
+        sql = sql.Replace("/**where2**/", BuildWhereClause(where2));
 
         //------------------------------------------------------------------
         // Build third WHERE clause dynamically
@@ -345,14 +334,10 @@ public class Broker(IConfiguration configuration, IMemoryCache cache)
         if (!string.IsNullOrEmpty(model.Lang))
             where3.Add("(t.lang = @lang)");
 
-        var where3Clause = where3.Count > 0
-            ? "where " + string.Join(" and ", where3)
-            : "";
-
-        sql = sql.Replace("/**where3**/", where3Clause);
+        sql = sql.Replace("/**where3**/", BuildWhereClause(where3));
 
         //------------------------------------------------------------------
-        // Build third WHERE clause dynamically
+        // Build fourth WHERE clause dynamically
         //------------------------------------------------------------------
         var where4 = new List<string>();
 
@@ -364,11 +349,7 @@ public class Broker(IConfiguration configuration, IMemoryCache cache)
         if (model.DomainID != 0)
             where4.Add("(ed.superdomain in (select domainid from expanddomainid_inline(@dom, default)))");
 
-        var where4Clause = where4.Count > 0
-            ? "where " + string.Join(" and ", where4)
-            : "";
-
-        sql = sql.Replace("/**where4**/", where4Clause);
+        sql = sql.Replace("/**where4**/", BuildWhereClause(where4));
 
         //------------------------------------------------------------------
         // Execute and read query results
