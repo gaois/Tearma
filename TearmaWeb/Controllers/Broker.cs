@@ -5,6 +5,7 @@ using System.Data;
 using System.Security.Cryptography;
 using System.Text;
 using TearmaWeb.Controllers.Scripts;
+using TearmaWeb.Models;
 using TearmaWeb.Models.Home;
 
 namespace TearmaWeb.Controllers;
@@ -216,6 +217,30 @@ public class Broker(IConfiguration configuration, IMemoryCache cache)
                     )
                 );
             }
+        }
+    }
+
+    /// <summary>Does the same thing as quick search but only returns the number of results.</summary>
+    public async Task PeekAsync(PeekResult model)
+    {
+        await using var conn = new SqlConnection(_connectionString);
+        await conn.OpenAsync();
+
+        await using var command = new SqlCommand("dbo.pub_peek", conn) 
+        {
+            CommandType = CommandType.StoredProcedure
+        };
+
+        command.Parameters.Add("@word", SqlDbType.NVarChar, 255).Value = model.Word;
+
+        await using var reader = await command.ExecuteReaderAsync();
+
+        while (await reader.ReadAsync())
+        {
+            var countExacts = (int)reader["CountExacts"];
+            var countRelateds = (int)reader["CountRelateds"];
+            model.Count = countExacts + Math.Min(100, countRelateds);
+            model.HasMore = (countRelateds > 100);
         }
     }
 

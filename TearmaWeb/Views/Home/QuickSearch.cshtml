@@ -11,13 +11,15 @@
     @if (Model.Exacts.Count>0 || Model.Relateds.Count > 0)
     {
         <div class="kickbox">
-            @if(Model.Langs.Count > 1) {
+            @if (Model.Langs.Count > 1)
+            {
                 <a class="langlink @(Model.Lang == "" ? "selected" : "")" href="~/q/@Model.Word/">
                     <span class="icon">&mdash;</span>
                     <span class="ga" lang="ga">Torthaí i ngach teanga</span>
                     <span class="en" lang="en">Matches in any language</span>
                 </a>
-                @foreach(Language lang in Model.Langs) {
+                @foreach (Language lang in Model.Langs)
+                {
                     <a class="langlink @(Model.Lang == lang.Abbr ? "selected" : "")" href="~/q/@Model.Word/@lang.Abbr/">
                         <span class="icon">@lang.Abbr.ToUpper()</span>
                         <span class="ga" lang="ga">@lang.Name["ga"] amháin</span>
@@ -51,6 +53,24 @@
         <span class="icon fas fa-search"></span>
     </button>
 </form>
+
+<div class="providers">
+    <span class="provider tearma current">
+        <img src="~/furniture/minilogo-tearma.svg" alt="téarma.ie" />
+        <span class="caption">téarma.ie</span>
+        <span class="count">@(Model.Exacts.Count + Model.Relateds.Count)@if(Model.RelatedMore){<span class="plus">+</span>}</span>
+        <span class="wedge"></span>
+    </span>    
+    <a href="@Model.IateSearchUrl()" class="provider iate noncurrent">
+        <img src="~/furniture/iate.png" alt="IATE" />
+        <span class="multicaption">
+            <span class="line1" lang="ga">Téarmaíocht an Aontais Eorpaigh</span>
+            <span class="line2" lang="en">European Union Terminology</span>
+        </span>
+        <span class="count loading">&nbsp;</span>
+        <span class="wedge"></span>
+    </a>    
+</div>
 
 @if (Model.Similars.Count > 0)
 {
