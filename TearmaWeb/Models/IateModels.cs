@@ -177,7 +177,7 @@ public static class IateSearchPayloadBuilder
             SearchRequest = new IateSearchRequest
             {
                 Sources = [source],
-                Targets = [target, "de", "fr"],
+                Targets = [target, "de", "fr", "es", "it", "la"],
                 Query = word,
                 QueryOperator = 3
             }
@@ -193,7 +193,7 @@ public static class IateSearchPayloadBuilder
             SearchRequest = new IateSearchRequest
             {
                 Sources = [source],
-                Targets = [target, "de", "fr"],
+                Targets = [target, "de", "fr", "es", "it", "la"],
                 Query = word,
                 QueryOperator = 1
             }

@@ -60,7 +60,7 @@ public partial class PrettifyIate
         var sLeft = new StringBuilder();
         var sRight = new StringBuilder();
 
-        foreach (var lang in new[] { "ga", "en", "fr", "de" })
+        foreach (var lang in new[] { "ga", "en", "fr", "de", "es", "it", "la" })
         {
             var block = RenderLanguageBlock(entry, lang);
 
@@ -153,6 +153,9 @@ public partial class PrettifyIate
             "en" => "<span class='prettyLang hintable' title='Béarla/English'>EN</span>",
             "de" => "<span class='prettyLang hintable' title='Gearmáinis/German'>DE</span>",
             "fr" => "<span class='prettyLang hintable' title='Fraincis/French'>FR</span>",
+            "es" => "<span class='prettyLang hintable' title='Spáinnis/Spanish'>ES</span>",
+            "it" => "<span class='prettyLang hintable' title='Iodáilis/Italian'>IT</span>",
+            "la" => "<span class='prettyLang hintable' title='Laidin/Latin'>LA</span>",
             _ => ""
         };
     }
