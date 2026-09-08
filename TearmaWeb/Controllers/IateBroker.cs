@@ -4,6 +4,8 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using TearmaWeb.Models;
 using TearmaWeb.Models.Iate;
+using System.Data;
+using Microsoft.Data.SqlClient;
 
 namespace TearmaWeb.Controllers;
 
@@ -11,6 +13,10 @@ public class IateBroker(IConfiguration config, IHttpClientFactory httpClientFact
 {
     private readonly string _iateUsername = config["IATE:Username"]!;
     private readonly string _iatePassword = config["IATE:Password"]!;
+
+    private readonly string _connectionString = 
+        config.GetConnectionString("IateCacheConnection")
+            ?? throw new InvalidOperationException("Missing connection string.");
 
     private static readonly JsonSerializerOptions JsonOptions = new()
     {
@@ -76,16 +82,27 @@ public class IateBroker(IConfiguration config, IHttpClientFactory httpClientFact
 
     public async Task PeekAsync(PeekResult model)
     {
-        var token = await GetAccessTokenAsync();
-        var client = httpClientFactory.CreateClient("IATE");
+        IateMultiSearchResponse? json;
+        
+        string cached = await TryGetFromCacheAsync(model.Word);
+        if(cached != "")
+        {
+            json = JsonSerializer.Deserialize<IateMultiSearchResponse>(cached, JsonOptions);
+        }
+        else
+        {
+            var token = await GetAccessTokenAsync();
+            var client = httpClientFactory.CreateClient("IATE");
 
-        var payload = IateSearchPayloadBuilder.Build(model.Word);
-        using var request = BuildSearchRequest(token, payload);
+            var payload = IateSearchPayloadBuilder.Build(model.Word);
+            using var request = BuildSearchRequest(token, payload);
 
-        using var response = await client.SendAsync(request);
-        response.EnsureSuccessStatusCode();
+            using var response = await client.SendAsync(request);
+            response.EnsureSuccessStatusCode();
 
-        var json = await response.Content.ReadFromJsonAsync<IateMultiSearchResponse>(JsonOptions);
+            json = await response.Content.ReadFromJsonAsync<IateMultiSearchResponse>(JsonOptions);
+            _ = SaveToCacheAsync(model.Word, JsonSerializer.Serialize(json));
+        }
         if (json == null) return;
 
         var urls = new HashSet<string>();
@@ -123,17 +140,28 @@ public class IateBroker(IConfiguration config, IHttpClientFactory httpClientFact
 
     public async Task DoSearchAsync(Search model)
     {
-        var token = await GetAccessTokenAsync();
-        var client = httpClientFactory.CreateClient("IATE");
+        IateMultiSearchResponse? json;
 
-        var payload = IateSearchPayloadBuilder.Build(model.Word);
-        using var request = BuildSearchRequest(token, payload);
+        string cached = await TryGetFromCacheAsync(model.Word);
+        if(cached != "")
+        {
+            json = JsonSerializer.Deserialize<IateMultiSearchResponse>(cached, JsonOptions);
+        }
+        else
+        {
+            var token = await GetAccessTokenAsync();
+            var client = httpClientFactory.CreateClient("IATE");
 
-        using var response = await client.SendAsync(request);
-        response.EnsureSuccessStatusCode();
+            var payload = IateSearchPayloadBuilder.Build(model.Word);
+            using var request = BuildSearchRequest(token, payload);
 
-        var json = await response.Content
-            .ReadFromJsonAsync<IateMultiSearchResponse>(JsonOptions);
+            using var response = await client.SendAsync(request);
+            response.EnsureSuccessStatusCode();
+
+            json = await response.Content.ReadFromJsonAsync<IateMultiSearchResponse>(JsonOptions);
+            if (json == null) return;
+            _ = SaveToCacheAsync(model.Word, JsonSerializer.Serialize(json));
+        }
         if (json == null) return;
 
         var ids = new HashSet<int>();
@@ -190,5 +218,57 @@ public class IateBroker(IConfiguration config, IHttpClientFactory httpClientFact
             new MediaTypeHeaderValue("application/json"));
 
         return request;
+    }
+
+    private async Task SaveToCacheAsync(string word, string payload)
+    {
+        //Console.WriteLine("saving into iate cache: "+ word);
+
+        await using var conn = new SqlConnection(_connectionString);
+        await conn.OpenAsync();
+
+        await using var command = new SqlCommand("insert into tblCache(Word, Payload) values(@word, @payload)", conn)
+        {
+            CommandType = CommandType.Text
+        };
+
+        command.Parameters.Add("@word", SqlDbType.NVarChar, 255).Value = word;
+        command.Parameters.Add("@payload", SqlDbType.NVarChar).Value = payload;
+
+        await command.ExecuteNonQueryAsync();
+    }
+
+    private async Task<string> TryGetFromCacheAsync(string word)
+    {
+        //Console.WriteLine("trying to get from iate cache: "+ word);
+
+        string payload = "";
+
+        await using var conn = new SqlConnection(_connectionString);
+        await conn.OpenAsync();
+
+        await using var command = new SqlCommand("select top 1 Payload from tblCache where Word = @word", conn)
+        {
+            CommandType = CommandType.Text
+        };
+
+        command.Parameters.Add("@word", SqlDbType.NVarChar, 255).Value = word;
+
+        await using var reader = await command.ExecuteReaderAsync();
+        
+        if (await reader.ReadAsync())
+        {
+            payload = (string)reader["Payload"];
+        }
+
+        //if(payload != "")
+        //{
+        //    Console.WriteLine("found in iate cache: "+ word);
+        //} else
+        //{
+        //    Console.WriteLine("not found in iate cache: "+ word);
+        //}
+
+        return payload;
     }
 }
