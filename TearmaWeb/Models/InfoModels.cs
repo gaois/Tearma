@@ -40,6 +40,7 @@ public static class Toc
             new("tionscadal", "Tionscadal téarma.ie", "The téarma.ie project"),
             new("stair", "Stair téarma.ie", "History of téarma.ie"),
             new("abhar", "Eolas faoin ábhar", "About the content"),
+            new("iate", "Ábhar ó IATE ar téarma.ie", "Content from IATE on téarma.ie"),
             new("coiste", "An Coiste Téarmaíochta", "Terminology Committee"),
             new("cosaint-sonrai", "Eolas cosanta sonraí", "Data protection information")
         ];
