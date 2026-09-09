@@ -177,7 +177,7 @@ div.kickbox label.langlink:last-child {margin-bottom: 10px}
 div.kickbox label.langlink:hover {color: #006699;}
 div.kickbox label.langlink:has(input:disabled) {cursor: default;}
 div.kickbox label.langlink:has(input:disabled):hover {color: #666666;}
-div.kickbox label.langlink span.icon {position: absolute; left: 0px; top: 10px; background-color: #999999; color: #eaedc8; border-radius: 4px; padding: 3px 0px; width: 40px; box-sizing: border-box; text-align: center; font-size: 0.9em; text-shadow: 0px 0px 0px transparent; font-weight: bold; box-shadow: 1px 1px 0px #eeeeee;}
+div.kickbox label.langlink span.icon {position: absolute; left: 0px; top: 10px; background-color: #aaaaaa; color: #eaedc8; border-radius: 4px; padding: 3px 0px; width: 40px; box-sizing: border-box; text-align: center; font-size: 0.9em; text-shadow: 0px 0px 0px transparent; font-weight: bold; box-shadow: 1px 1px 0px #eeeeee;}
 div.kickbox label.langlink:has(input:checked) span.icon {background-color: #666666;}
 div.kickbox label.langlink span {display: inline;}
 

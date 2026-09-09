@@ -370,7 +370,7 @@ function finishPeek(data){
 }
 
 $(document).ready(function () {
-    //count iate languages:
+    //on load, count and show/hide language names in the iate language chooser:
     $("label.langlink").each(function () {
         var lang = $(this).attr("data-lang");
         var count = $("div.prettyDesig[data-lang=" + lang + "]").length;
@@ -380,4 +380,48 @@ $(document).ready(function () {
             $(this).append(" (" + count + ")");
         }
     });
+    //on load, decide which iate langs are checked and which not:
+    if ($("label.langlink").length > 0) {
+        var cookie = Cookies.get("iate_langs");
+        var preflangs = cookie ? cookie.split(",") : ["de", "fr", "la"];
+        $("label.langlink").each(function () {
+            var lang = $(this).attr("data-lang");
+            if (lang == "ga" || lang == "en" || preflangs.indexOf(lang) > -1) {
+                $(this).find("input").prop("checked", true);
+            } else {
+                $(this).find("input").prop("checked", false);
+            }
+        });
+        $("div.prettyDesig").each(function () {
+            var lang = $(this).attr("data-lang");
+            if (lang == "ga" || lang == "en" || preflangs.indexOf(lang) > -1) {
+                $(this).show();
+            } else {
+                $(this).hide();
+            }
+        });
+    }
+    //on load, hook up on/off events for iate language chhoser:
+    $("label.langlink input").on("change", function (e) {
+        var $input = $(e.target);
+        var lang = $input.closest("label.langlink").attr("data-lang");
+        if ($input.prop("checked")) {
+            $("div.prettyDesig[data-lang=" + lang + "]").show();
+            updateIateCookie();
+        } else {
+            $("div.prettyDesig[data-lang=" + lang + "]").hide();
+            updateIateCookie();
+        }
+    });
 });
+
+function updateIateCookie() {
+    var langs = [];
+    $("label.langlink input:checked").each(function () {
+        var lang = $(this).closest("label.langlink").attr("data-lang");
+        if (lang != "ga" && lang != "en") {
+            langs.push(lang);
+        }
+    });
+    Cookies.set("iate_langs", langs.join(","), { expires: 30 });
+}
