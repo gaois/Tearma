@@ -368,3 +368,16 @@ function finishPeek(data){
     $count.html(data.count + (data.hasMore ? `<span class="plus">+</span>` : ""));
     if (data.count > 0) $("a.provider.noncurrent").addClass("available");
 }
+
+$(document).ready(function () {
+    //count iate languages:
+    $("label.langlink").each(function () {
+        var lang = $(this).attr("data-lang");
+        var count = $("div.prettyDesig[data-lang=" + lang + "]").length;
+        if (count == 0) {
+            $(this).remove();
+        } else {
+            $(this).append(" (" + count + ")");
+        }
+    });
+});

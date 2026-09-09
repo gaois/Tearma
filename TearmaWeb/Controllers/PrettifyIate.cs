@@ -60,7 +60,9 @@ public partial class PrettifyIate
         var sLeft = new StringBuilder();
         var sRight = new StringBuilder();
 
-        foreach (var lang in new[] { "ga", "en", "fr", "de", "es", "it", "la" })
+        //foreach(var lang in new[] { "ga", "en", "fr", "de", "es", "it", "la" })
+        string[] langs = ["ga", "en", ..Language.LangAbbrs()];
+        foreach(var lang in langs)
         {
             var block = RenderLanguageBlock(entry, lang);
 
@@ -151,12 +153,7 @@ public partial class PrettifyIate
         {
             "ga" => "<span class='prettyLang hintable' title='Gaeilge/Irish'>GA</span>",
             "en" => "<span class='prettyLang hintable' title='Béarla/English'>EN</span>",
-            "de" => "<span class='prettyLang hintable' title='Gearmáinis/German'>DE</span>",
-            "fr" => "<span class='prettyLang hintable' title='Fraincis/French'>FR</span>",
-            "es" => "<span class='prettyLang hintable' title='Spáinnis/Spanish'>ES</span>",
-            "it" => "<span class='prettyLang hintable' title='Iodáilis/Italian'>IT</span>",
-            "la" => "<span class='prettyLang hintable' title='Laidin/Latin'>LA</span>",
-            _ => ""
+            _ => "<span class='prettyLang hintable' title='"+Language.GetLang(lang)?.Name["ga"]+"/"+Language.GetLang(lang)?.Name["en"]+"'>"+lang.ToUpper()+"</span>",
         };
     }
 }

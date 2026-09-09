@@ -14,6 +14,33 @@
             <span class="ga" lang="ga">Leagan furasta le priontáil</span>
             <span class="en" lang="en">Printer-friendly version</span>
         </a>
+
+        @if(Model.Count > 0)
+        {
+            <div class="sep"></div>
+        
+            <label class="langlink" data-lang="ga">
+                <input type="checkbox" checked disabled />
+                <span class="icon">GA</span>
+                <span class="ga" lang="ga">Gaeilge</span>/<span class="en" lang="en">Irish</span>
+            </label>
+            <label class="langlink" data-lang="en">
+                <input type="checkbox" checked disabled />
+                <span class="icon">EN</span>
+                <span class="ga" lang="ga">Béarla</span>/<span class="en" lang="en">English</span>
+            </label>
+
+            <div class="sep spaceBefore"></div>
+
+            @foreach(Language lang in Model.Langs)
+            {
+                <label class="langlink" data-lang="@lang.Abbr">
+                    <input type="checkbox" checked />
+                    <span class="icon">@lang.Abbr.ToUpper()</span>
+                    <span class="ga" lang="ga">@lang.Name["ga"]</span>/<span class="en" lang="en">@lang.Name["en"]</span>
+                </label>
+            }
+        }
     </div>
 }
 

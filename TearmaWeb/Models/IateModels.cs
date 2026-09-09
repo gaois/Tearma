@@ -2,6 +2,61 @@
 
 namespace TearmaWeb.Models.Iate;
 
+public class Language
+{
+    public string Abbr { get; set; } = "";
+    public Dictionary<string, string> Name { get; set; } = [];
+    public Language(string abbr, string nameGA, string nameEN)
+    {
+        Abbr = abbr;
+        Name["ga"] = nameGA;
+        Name["en"] = nameEN;
+    }
+
+    public static List<Language> Langs { get; set; } = [
+        new Language("bg", "Bulgáiris", "Bulgarian"),
+        new Language("cs", "Seicis", "Czech"),
+        new Language("da", "Danmhairgis", "Danish"),
+        new Language("de", "Gearmáinis", "German"),
+        new Language("el", "Gréigis", "Greek"),
+        new Language("es", "Spáinnis", "Spanish"),
+        new Language("et", "Eastóinis", "Estonian"),
+        new Language("fi", "Fionlainnis", "Finnish"),
+        new Language("fr", "Fraincis", "French"),
+        new Language("hr", "Cróitis", "Croatian"),
+        new Language("hu", "Ungáiris", "Hungarian"),
+        new Language("it", "Iodáilis", "Italian"),
+        new Language("lt", "Liotuáinis", "Lithuanian"),
+        new Language("lv", "Laitvis", "Latvian"),
+        new Language("mt", "Máltais", "Maltese"),
+        new Language("nl", "Ollainnis", "Dutch"),
+        new Language("pl", "Polainnis", "Polish"),
+        new Language("pt", "Portaingéilis", "Polish"),
+        new Language("ro", "Rómáinis", "Romanian"),
+        new Language("sk", "Slóvaicis", "Slovak"),
+        new Language("sl", "Slóivéinis", "Slovenian"),
+        new Language("sv", "Sualainnis", "Swedish"),
+        new Language("la", "Laidin", "Latin"),
+        //new Language("mul", "Ilteangach", "Multilingual"),
+    ];
+
+    public static string[] LangAbbrs()
+    {
+        List<string> ret = new List<string>();
+        foreach(Language lang in Language.Langs) {
+            ret.Add(lang.Abbr);
+        }
+        return ret.ToArray();
+    }
+
+    public static Language? GetLang(string abbr) {
+        foreach(Language l in Language.Langs) {
+            if(l.Abbr == abbr) return l;
+        }
+        return null;
+    }
+}
+
 public class Tools
 {
 	public static string SlashEncode(string text)
@@ -153,6 +208,7 @@ public class Search
 	public bool HasMore = false;
 	public List<string> Exacts = [];
 	public List<string> Relateds = [];
+    public List<Language> Langs { get; set; } = Language.Langs;
 }
 
 public static class IateSearchPayloadBuilder
@@ -177,7 +233,8 @@ public static class IateSearchPayloadBuilder
             SearchRequest = new IateSearchRequest
             {
                 Sources = [source],
-                Targets = [target, "de", "fr", "es", "it", "la"],
+                //Targets = [target, "de", "fr", "es", "it", "la"],
+                Targets = [target, ..Language.LangAbbrs()],
                 Query = word,
                 QueryOperator = 3
             }
@@ -193,7 +250,8 @@ public static class IateSearchPayloadBuilder
             SearchRequest = new IateSearchRequest
             {
                 Sources = [source],
-                Targets = [target, "de", "fr", "es", "it", "la"],
+                //Targets = [target, "de", "fr", "es", "it", "la"],
+                Targets = [target, ..Language.LangAbbrs()],
                 Query = word,
                 QueryOperator = 1
             }
