@@ -383,7 +383,7 @@ $(document).ready(function () {
     //on load, decide which iate langs are checked and which not:
     if ($("label.langlink").length > 0) {
         var cookie = Cookies.get("iate_langs");
-        var preflangs = cookie ? cookie.split(",") : ["de", "fr", "la"];
+        var preflangs = cookie ? cookie.split(",") : ["de", "fr", "es", "it", "la"];
         $("label.langlink").each(function () {
             var lang = $(this).attr("data-lang");
             if (lang == "ga" || lang == "en" || preflangs.indexOf(lang) > -1) {
