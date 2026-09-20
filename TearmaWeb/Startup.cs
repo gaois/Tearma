@@ -141,8 +141,8 @@ public class Startup(IConfiguration configuration, IWebHostEnvironment environme
         app.UseStaticFiles();
         app.UseRouting();
 
-        if (env.IsProduction())
-            app.UseOutputCache();
+        //if (env.IsProduction())
+        //    app.UseOutputCache();
 
         // Endpoint routing (replacement for UseMvc)
         app.UseEndpoints(endpoints =>
