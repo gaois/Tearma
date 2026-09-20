@@ -1,0 +1,21 @@
+﻿@model TearmaWeb.Models.Altcha.AltchaWall
+
+@{
+    Layout = "_HomeLayout";
+    ViewBag.swapper = "";
+}
+
+@section Rightie { }
+
+<div id="altcha-container" data-returnurl="@(Model.returnUrl)" style="max-width: 300px; margin: 50px auto 0px auto">
+    <altcha-widget challenge="/altcha/challenge.json" auto="onload" language="ga" configuration='{"setCookie": {"name": "altcha", "path": "/"}}'></altcha-widget>
+</div>
+
+<script>
+window.addEventListener("load", () => {
+  const widget = document.querySelector('altcha-widget');
+  widget.addEventListener('verified', (ev) => {
+    window.location = document.querySelector("#altcha-container").getAttribute("data-returnurl");
+  });
+});
+</script>

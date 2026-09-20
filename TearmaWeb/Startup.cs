@@ -98,6 +98,7 @@ public class Startup(IConfiguration configuration, IWebHostEnvironment environme
         // Brokers
         services.AddScoped<Controllers.Broker>();
         services.AddSingleton<Controllers.IateBroker>();
+        services.AddSingleton<Controllers.AltchaBroker>();
     }
 
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -257,6 +258,17 @@ public class Startup(IConfiguration configuration, IWebHostEnvironment environme
                 name: "ask",
                 pattern: "/ceist/",
                 defaults: new { controller = "Ask", action = "Ask" });
+
+            // Altcha
+            endpoints.MapControllerRoute(
+                name: "altcha-getchallenge",
+                pattern: "/altcha/challenge.json",
+                defaults: new { controller = "Altcha", action = "GetChallenge" });
+            endpoints.MapControllerRoute(
+                name: "altcha-wall",
+                pattern: "/altcha/",
+                defaults: new { controller = "Altcha", action = "AltchaWall" });
+
         });
     }
 }

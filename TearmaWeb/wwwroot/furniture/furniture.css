@@ -929,3 +929,7 @@ div.iateBlurb a {
 div.iateBlurb a:hover {
     color: #369;
 }
+
+footer div.altcha-container {
+/*    margin-top: 50px;*/
+}

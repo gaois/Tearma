@@ -62,6 +62,9 @@
     </environment>
 
     <link href="@BotDetect.Web.CaptchaUrls.Absolute.LayoutStyleSheetUrl" rel="stylesheet" type="text/css" />
+
+    <script async defer src="https://cdn.jsdelivr.net/gh/altcha-org/altcha/dist/main/altcha.min.js" type="module"></script>
+    <script async defer src="https://cdn.jsdelivr.net/gh/altcha-org/altcha/dist/i18n/ga.min.js" type="module"></script>
 </head>
 <body class="@(ViewData["IsSuper"] is true ? "super" : "")">
     <environment exclude="Production">
@@ -226,6 +229,12 @@
                     <img src="~/furniture/logainm-blue.png" alt="" />&nbsp;logainm.ie
                 </a>
             </div>
+            @if (!(ViewData["NoFooterAltcha"] is true))
+            {
+                <div class="altcha-container">
+                    <altcha-widget display="invisible" challenge="/altcha/challenge.json" auto="onload" language="ga" configuration='{"setCookie": {"name": "altcha", "path": "/"}}'></altcha-widget>
+                </div>
+            }
         </div>
     </footer>
 </body>

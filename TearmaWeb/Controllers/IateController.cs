@@ -5,7 +5,7 @@ using TearmaWeb.Models.Iate;
 
 namespace TearmaWeb.Controllers;
 
-public class IateController(IateBroker iateBroker) : Controller
+public class IateController(IateBroker iateBroker, AltchaBroker altchaBroker) : Controller
 {
     private static bool IsSuper(HttpRequest request)
     {
@@ -23,6 +23,9 @@ public class IateController(IateBroker iateBroker) : Controller
     [OutputCache]
     public async Task<IActionResult> Search(string word, string lang)
     {
+        if(!await altchaBroker.verifyChallenge(Request))
+            return Redirect("/altcha/?returnUrl=" + Request.Path + Request.QueryString);
+
         if (word.IsNullOrWhiteSpace())
             return new RedirectToActionResult("Index", "Home", null);
 

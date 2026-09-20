@@ -8,7 +8,7 @@ using TearmaWeb.Models.Home;
 
 namespace TearmaWeb.Controllers;
 
-public partial class HomeController(IQueryLogger queryLogger, Broker broker) : Controller
+public partial class HomeController(IQueryLogger queryLogger, Broker broker, AltchaBroker altchaBroker) : Controller
 {
 
     [GeneratedRegex(@"^\#[0-9]+$")]
@@ -45,6 +45,9 @@ public partial class HomeController(IQueryLogger queryLogger, Broker broker) : C
     // ---------------------------
     public async Task<IActionResult> Entry(int id)
     {
+        if(!await altchaBroker.verifyChallenge(Request))
+            return Redirect("/altcha/?returnUrl=" + Request.Path + Request.QueryString);
+
         var model = new Entry { Id = id };
         await broker.DoEntryAsync(model);
 
@@ -61,6 +64,9 @@ public partial class HomeController(IQueryLogger queryLogger, Broker broker) : C
     [OutputCache]
     public async Task<IActionResult> QuickSearch(string word, string? lang)
     {
+        if(!await altchaBroker.verifyChallenge(Request))
+            return Redirect("/altcha/?returnUrl=" + Request.Path + Request.QueryString);
+
         if (word.IsNullOrWhiteSpace())
             return RedirectToAction("Index");
 
@@ -123,6 +129,9 @@ public partial class HomeController(IQueryLogger queryLogger, Broker broker) : C
         int domainID,
         int page)
     {
+        if(!await altchaBroker.verifyChallenge(Request))
+            return Redirect("/altcha/?returnUrl=" + Request.Path + Request.QueryString);
+
         using var stopwatch = new SimpleTimer();
 
         lang ??= "";
@@ -179,6 +188,9 @@ public partial class HomeController(IQueryLogger queryLogger, Broker broker) : C
     [OutputCache]
     public async Task<IActionResult> Domains(string? lang)
     {
+        if(!await altchaBroker.verifyChallenge(Request))
+            return Redirect("/altcha/?returnUrl=" + Request.Path + Request.QueryString);
+
         var model = new Domains
         {
             Lang = lang ?? ""
@@ -197,6 +209,9 @@ public partial class HomeController(IQueryLogger queryLogger, Broker broker) : C
     // ---------------------------
     public async Task<IActionResult> Domain(int domID, string? lang, int page = 1)
     {
+        if(!await altchaBroker.verifyChallenge(Request))
+            return Redirect("/altcha/?returnUrl=" + Request.Path + Request.QueryString);
+
         using var stopwatch = new SimpleTimer();
 
         var model = new Domain
