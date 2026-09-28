@@ -31,7 +31,7 @@ public class Language
         new Language("mt", "Máltais", "Maltese"),
         new Language("nl", "Ollainnis", "Dutch"),
         new Language("pl", "Polainnis", "Polish"),
-        new Language("pt", "Portaingéilis", "Polish"),
+        new Language("pt", "Portaingéilis", "Portuguese"),
         new Language("ro", "Rómáinis", "Romanian"),
         new Language("sk", "Slóvaicis", "Slovak"),
         new Language("sl", "Slóivéinis", "Slovenian"),
