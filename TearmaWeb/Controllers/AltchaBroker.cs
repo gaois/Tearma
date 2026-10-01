@@ -32,6 +32,8 @@ public class AltchaBroker(IConfiguration config, IHttpClientFactory httpClientFa
     }
 
     public async Task<bool> verifyChallenge(HttpRequest request){
+        if(IsWhitelisted(request)) return true;
+
         bool ret = false;
         try
         {
@@ -43,5 +45,43 @@ public class AltchaBroker(IConfiguration config, IHttpClientFactory httpClientFa
         } catch(Exception ex) {}
 
         return ret;
+    }
+
+    private static readonly string[] Whitelist =
+    {
+        "Googlebot",
+        "bingbot",
+        "DuckDuckBot",
+        "Applebot",
+        "Wikimedia",
+        "ia_archiver",
+        "archive.org_bot",
+        "CCBot",
+        "PetalBot",
+        "MojeekBot",
+        "Claude-SearchBot",
+        "facebookexternalhit",
+        "WhatsApp",
+        "Instagram",
+        "Twitterbot",
+        "LinkedInBot",
+        "Slackbot",
+        "Discordbot",
+        "TelegramBot",
+        "CFNetwork",
+        "BingPreview",
+        "MicrosoftPreview",
+        "GPTBot",
+        "ChatGPT-User",
+        "ClaudeBot",
+        "Claude-User",
+        "PerplexityBot",
+     };
+
+    private static bool IsWhitelisted(HttpRequest request)
+    {
+        string ua = request.Headers.UserAgent.ToString();
+        return Whitelist.Any(a =>
+            ua.Contains(a, StringComparison.OrdinalIgnoreCase));
     }
 }
