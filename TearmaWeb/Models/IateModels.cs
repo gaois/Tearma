@@ -166,11 +166,20 @@ public class IateSelfLink
 
 public class IateTermEntry
 {
+    [JsonPropertyName("type")]
+    public IateTermType? TermType { get; set; }
+
     [JsonPropertyName("term_value")]
     public string? TermValue { get; set; }
 
     [JsonPropertyName("contexts")]
     public List<IateContext>? Contexts { get; set; }
+}
+
+public class IateTermType
+{
+    [JsonPropertyName("name")]
+    public string? Name { get; set; }
 }
 
 public class IateToken

@@ -101,6 +101,8 @@ public partial class PrettifyIate
 
         foreach (var term in langBlock.TermEntries)
         {
+            if(term.TermType?.Name == "lookup form") continue;
+
             var wording = RemoveAllHtml(term.TermValue ?? "");
             var encoded = WebUtility.HtmlEncode(wording);
 
