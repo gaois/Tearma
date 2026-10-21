@@ -76,6 +76,7 @@ public class AltchaBroker(IConfiguration config, IHttpClientFactory httpClientFa
         "ClaudeBot",
         "Claude-User",
         "PerplexityBot",
+        "DGT-agent" // Coimisiún na hEorpa
      };
 
     private static bool IsWhitelisted(HttpRequest request)
