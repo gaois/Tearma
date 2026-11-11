@@ -1,6 +1,7 @@
 ﻿User-agent: *
-Allow: /
+Disallow: /iate/
 Crawl-Delay: 2
+
 User-agent: AhrefsBot
 Disallow: /
 User-agent: BLEXBot
