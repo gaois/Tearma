@@ -344,14 +344,17 @@ function fallbackCopyTextToClipboard(text) {
 
 let peekDone = false;
 $(document).ready(function () {
-    const widget = document.querySelector('altcha-widget');
-    widget.addEventListener('verified', (ev) => {
-        if(!peekDone){
-            maybePeek();
-            peekDone = true;
-            widget.verify();
-        }
-    });
+    const $provider = $("a.provider.noncurrent");
+    if ($provider) {
+        const widget = document.querySelector('altcha-widget');
+        widget.addEventListener('verified', (ev) => {
+            if (!peekDone) {
+                maybePeek();
+                peekDone = true;
+                widget.verify();
+            }
+        });
+    }
 });
 function maybePeek(){
     const $provider = $("a.provider.noncurrent");
