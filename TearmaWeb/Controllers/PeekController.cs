@@ -4,11 +4,14 @@ using TearmaWeb.Models;
 
 namespace TearmaWeb.Controllers;
 
-public class PeekController(Broker broker, IateBroker iateBroker) : Controller
+public class PeekController(Broker broker, IateBroker iateBroker, AltchaBroker altchaBroker) : Controller
 {
     [OutputCache]
     public async Task<IActionResult> PeekTearma([FromQuery] string word)
     {
+        if(!await altchaBroker.verifyChallenge(Request))
+            return Unauthorized();
+
         PeekResult pr = new()
         {
             Word = word
@@ -22,6 +25,9 @@ public class PeekController(Broker broker, IateBroker iateBroker) : Controller
     [OutputCache]
     public async Task<IActionResult> PeekIate([FromQuery] string word)
     {
+        if(!await altchaBroker.verifyChallenge(Request))
+            return Unauthorized();
+
         PeekResult pr = new()
         {
             Word = word
