@@ -345,12 +345,12 @@ function fallbackCopyTextToClipboard(text) {
 let peekDone = false;
 $(document).ready(function () {
     const $provider = $("a.provider.noncurrent");
-    if ($provider) {
+    if ($provider.length>0) {
         const widget = document.querySelector('altcha-widget');
         widget.addEventListener('verified', (ev) => {
             if (!peekDone) {
-                maybePeek();
                 peekDone = true;
+                maybePeek();
                 widget.verify();
             }
         });
@@ -358,7 +358,7 @@ $(document).ready(function () {
 });
 function maybePeek(){
     const $provider = $("a.provider.noncurrent");
-    if($provider){
+    if($provider.length>0){
         const word = $("input.searchbox").val();
         const provider = $provider.hasClass("iate") ? "iate" : "tearma"; 
         if(provider == "iate"){
