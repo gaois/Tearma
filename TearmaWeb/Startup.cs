@@ -172,7 +172,7 @@ public class Startup(IConfiguration configuration, IWebHostEnvironment environme
                 defaults: new { controller = "Home", action = "QuickSearch" });
 
             endpoints.MapControllerRoute(
-                name: "peaktearma",
+                name: "peektearma",
                 pattern: "/peekTearma.json",
                 defaults: new { controller = "Peek", action = "PeekTearma" });
 

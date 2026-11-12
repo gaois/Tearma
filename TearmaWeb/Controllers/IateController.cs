@@ -40,7 +40,7 @@ public class IateController(IateBroker iateBroker, AltchaBroker altchaBroker) : 
             model.Super = true;
         
         ViewData["PageTitle"] = $"\"{model.Word}\"";
-		ViewData["IsSuper"] = IsSuper(Request);
+        ViewData["IsSuper"] = IsSuper(Request);
 
         await iateBroker.DoSearchAsync(model);
 

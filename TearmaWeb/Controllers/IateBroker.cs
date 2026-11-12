@@ -83,8 +83,16 @@ public class IateBroker(IConfiguration config, IHttpClientFactory httpClientFact
     public async Task PeekAsync(PeekResult model)
     {
         IateMultiSearchResponse? json;
-        
-        string cached = await TryGetFromCacheAsync(model.Word);
+
+        var cacheKey = IateSearchValidator.NormalizeCacheKey(model.Word);
+
+        if (!IateSearchValidator.ShouldQueryIate(model.Word))
+        {
+            return;
+        }
+
+        string cached = await TryGetFromCacheAsync(cacheKey);
+
         if(cached != "")
         {
             json = JsonSerializer.Deserialize<IateMultiSearchResponse>(cached, JsonOptions);
@@ -101,7 +109,7 @@ public class IateBroker(IConfiguration config, IHttpClientFactory httpClientFact
             response.EnsureSuccessStatusCode();
 
             json = await response.Content.ReadFromJsonAsync<IateMultiSearchResponse>(JsonOptions);
-            _ = SaveToCacheAsync(model.Word, JsonSerializer.Serialize(json));
+            await SaveToCacheAsync(model.Word, JsonSerializer.Serialize(json));
         }
         if (json == null) return;
 
@@ -142,8 +150,16 @@ public class IateBroker(IConfiguration config, IHttpClientFactory httpClientFact
     {
         IateMultiSearchResponse? json;
 
-        string cached = await TryGetFromCacheAsync(model.Word);
-        if(cached != "")
+        var cacheKey = IateSearchValidator.NormalizeCacheKey(model.Word);
+
+        if (!IateSearchValidator.ShouldQueryIate(model.Word))
+        {
+            return;
+        }
+
+        string cached = await TryGetFromCacheAsync(cacheKey);
+
+        if (cached != "")
         {
             json = JsonSerializer.Deserialize<IateMultiSearchResponse>(cached, JsonOptions);
         }
@@ -160,7 +176,7 @@ public class IateBroker(IConfiguration config, IHttpClientFactory httpClientFact
 
             json = await response.Content.ReadFromJsonAsync<IateMultiSearchResponse>(JsonOptions);
             if (json == null) return;
-            _ = SaveToCacheAsync(model.Word, JsonSerializer.Serialize(json));
+            await SaveToCacheAsync(model.Word, JsonSerializer.Serialize(json));
         }
         if (json == null) return;
 
