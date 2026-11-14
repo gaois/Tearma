@@ -69,6 +69,7 @@ public class Startup(IConfiguration configuration, IWebHostEnvironment environme
 
         // Http client
         services.AddHttpClient("IateClient");
+        services.AddHttpContextAccessor();
 
         // MiniProfiler
         services.AddMiniProfiler();

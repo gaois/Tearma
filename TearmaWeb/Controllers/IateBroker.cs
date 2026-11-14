@@ -9,7 +9,10 @@ using Microsoft.Data.SqlClient;
 
 namespace TearmaWeb.Controllers;
 
-public class IateBroker(IConfiguration config, IHttpClientFactory httpClientFactory)
+public class IateBroker(
+    IConfiguration config,
+    IHttpClientFactory httpClientFactory,
+    IHttpContextAccessor httpContextAccessor)
 {
     private readonly string _iateUsername = config["IATE:Username"]!;
     private readonly string _iatePassword = config["IATE:Password"]!;
@@ -93,7 +96,7 @@ public class IateBroker(IConfiguration config, IHttpClientFactory httpClientFact
 
         string cached = await TryGetFromCacheAsync(cacheKey);
 
-        if(cached != "")
+        if (cached != "")
         {
             json = JsonSerializer.Deserialize<IateMultiSearchResponse>(cached, JsonOptions);
         }
@@ -101,9 +104,18 @@ public class IateBroker(IConfiguration config, IHttpClientFactory httpClientFact
         {
             var token = await GetAccessTokenAsync();
             var client = httpClientFactory.CreateClient("IATE");
+            var httpContext = httpContextAccessor.HttpContext;
 
             var payload = IateSearchPayloadBuilder.Build(model.Word);
             using var request = BuildSearchRequest(token, payload);
+
+            await IateAuditLog.LogAsync(
+                endpoint: "Peek",
+                word: model.Word,
+                apiUrl: request.RequestUri?.ToString() ?? "",
+                userAgent: httpContext?.Request.Headers.UserAgent.ToString() ?? "",
+                ipAddress: httpContext?.Connection.RemoteIpAddress?.ToString() ?? "",
+                referrer: httpContext?.Request.Headers.Referer.ToString());
 
             using var response = await client.SendAsync(request);
             response.EnsureSuccessStatusCode();
@@ -111,6 +123,7 @@ public class IateBroker(IConfiguration config, IHttpClientFactory httpClientFact
             json = await response.Content.ReadFromJsonAsync<IateMultiSearchResponse>(JsonOptions);
             await SaveToCacheAsync(model.Word, JsonSerializer.Serialize(json));
         }
+
         if (json == null) return;
 
         var urls = new HashSet<string>();
@@ -167,9 +180,18 @@ public class IateBroker(IConfiguration config, IHttpClientFactory httpClientFact
         {
             var token = await GetAccessTokenAsync();
             var client = httpClientFactory.CreateClient("IATE");
+            var httpContext = httpContextAccessor.HttpContext;
 
             var payload = IateSearchPayloadBuilder.Build(model.Word);
             using var request = BuildSearchRequest(token, payload);
+
+            await IateAuditLog.LogAsync(
+                endpoint: "Search",
+                word: model.Word,
+                apiUrl: request.RequestUri?.ToString() ?? "",
+                userAgent: httpContext?.Request.Headers.UserAgent.ToString() ?? "",
+                ipAddress: httpContext?.Connection.RemoteIpAddress?.ToString() ?? "",
+                referrer: httpContext?.Request.Headers.Referer.ToString());
 
             using var response = await client.SendAsync(request);
             response.EnsureSuccessStatusCode();
@@ -178,6 +200,7 @@ public class IateBroker(IConfiguration config, IHttpClientFactory httpClientFact
             if (json == null) return;
             await SaveToCacheAsync(model.Word, JsonSerializer.Serialize(json));
         }
+
         if (json == null) return;
 
         var ids = new HashSet<int>();
